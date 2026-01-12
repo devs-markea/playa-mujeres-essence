@@ -1,0 +1,982 @@
+/* ==========================================================================
+   COMPONENTS INDEX — PM ESSENCE THEME
+   ==========================================================================
+
+   1. HEADER COMPONENTS
+      1.1  Header Default
+      1.2  Header Lang Switcher
+      1.3  Header Responsive
+
+   2. MENU MOBILE
+      2.1  Menu Mobile
+
+   2. FOOTER COMPONENTS
+      2.1  Footer Base
+      2.2  Footer Layout Columns
+      2.3  Footer Menus
+      2.4  Footer Social Icons
+      2.5  Footer Branding
+      2.6  Footer Legal Text
+
+   3. BUTTONS
+      3.1  Base Button
+      3.2  Primary Button
+      3.3  Secondary Button
+      3.4  Outline Button
+      3.5  Ghost Button
+      3.6  Button Sizes
+      3.7  Button States
+
+   4. CARDS
+      4.1  Card Base
+      4.2  Card Shadow Variants
+      4.3  Card With Image
+      4.4  Card Listing
+      4.5  Card Amenities
+
+   5. FORMS
+      5.1  Input Base
+      5.2  Selects
+      5.3  Textareas
+      5.4  Labels & Messages
+      5.5  Form Layouts
+
+   6. NAVIGATION COMPONENTS
+      6.1  Breadcrumb
+      6.2  Pagination
+      6.3  Tabs
+      6.4  Accordion
+
+   7. MEDIA COMPONENTS
+      7.1  Sliders
+      7.2  Video Wrappers
+      7.3  Lazy Images
+
+   8. MISC COMPONENTS
+      8.1  Badges & Pills
+      8.2  Tags
+      8.3  Modals
+      8.4  Tooltips
+      8.5  Alerts / Notifications
+
+   ========================================================================= */
+
+/* ==========================================================================
+   1. HEADER COMPONENTS
+   ========================================================================== */
+
+/* 1.1 Header Base
+   -------------------------------------------------------------------------- */
+
+.pm-header {
+    width: 100%;
+    position: relative;
+    z-index: 999;
+}
+
+.pm-header .menu-open {
+    background: white;
+    transition: background-color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    border-bottom: 1px solid rgba(12, 12, 12, 0.25) !important;
+}
+
+
+.pm-header .navbar {
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    z-index: 1;
+}
+
+.pm-header--fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.pm-header--default .navbar {
+    background-color: #000;
+}
+
+.pm-header__logo {
+    flex: 0 0 auto;
+}
+
+.pm-header__logo .navbar-brand {
+    padding: 0;
+    margin: 0;
+}
+
+.pm-header__logo .site-logo {
+    display: block;
+    width: 150px;
+    height: auto;
+    max-height: 86px;
+}
+
+.pm-header__logo img {
+    display: block;
+    width: 150px;
+    height: auto;
+    max-height: 86px;
+}
+
+.pm-header__menu {
+    display: none;
+}
+
+.pm-header__menu .pm-navbar .menu-item {
+    margin-right: 12px;
+}
+
+.pm-header__menu .pm-navbar .menu-item:last-child {
+    margin-right: 0;
+}
+
+.pm-header__menu .pm-navbar .menu-item.current_page_item > a {
+    font-weight: 500;
+}
+
+.pm-header__menu .pm-navbar .menu-item > a {
+    display: inline-block;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+    font-weight: 300;
+    text-decoration: none;
+    color: #FFF;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.pm-header__menu .pm-navbar .menu-item > a:hover {
+    color: var(--pm-primary-900);
+}
+
+.nav-item-dark {
+    color: #000 !important;
+}
+
+/* Estado activo */
+/*.pm-header__menu .current-menu-item > a,*/
+/*.pm-header__menu .current-menu-ancestor > a {*/
+/*    color: var(--pm-primary);*/
+/*}*/
+
+/* 1.2 Header Lang Switcher
+   -------------------------------------------------------------------------- */
+
+.pm-lang-switcher {
+    position: relative;
+    display: inline-block;
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-right: 1rem;
+}
+
+.pm-lang-switcher .lang-dark{
+    color: #000;
+}
+
+
+.pm-lang-switcher__current {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+.pm-lang-switcher__caret {
+    display: inline-block;
+    transform: rotate(0deg);
+    transition: transform .2s ease;
+}
+
+.pm-lang-switcher.is-open .pm-lang-switcher__caret {
+    transform: rotate(-180deg);
+}
+
+.pm-lang-switcher__list {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 6px;
+    list-style: none;
+    padding: 8px 0;
+    background: rgba(0, 0, 0, 0.8);
+    min-width: 84px;
+    text-align: center;
+    display: none;
+    z-index: 20;
+}
+
+.pm-lang-switcher__current.is-open-black {
+    color: black;
+}
+
+.pm-lang-switcher.is-open .pm-lang-switcher__list {
+    display: block;
+}
+
+.pm-lang-switcher__item a {
+    display: block;
+    padding: 4px 12px;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 0.18em;
+}
+
+.pm-lang-switcher__item.is-active a {
+    opacity: 0.6;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* 1.3 Header Burger Button
+   -------------------------------------------------------------------------- */
+.pm-header__menu-mobile {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* 1.4 Header Responsive
+   -------------------------------------------------------------------------- */
+@media (min-width: 1440px) {
+    .pm-header__menu .pm-navbar .menu-item {
+        margin-right: 32px;
+    }
+}
+
+
+@media (min-width: 1200px) {
+
+    .pm-header__menu {
+        display: block;
+    }
+
+    .pm-header__menu .pm-navbar .menu-item > a {
+        font-size: 0.875rem;
+    }
+
+    .pm-lang-switcher {
+        font-size: 0.875rem;
+        margin-right: 0;
+    }
+
+    .pm-header__menu-mobile {
+        display: none;
+    }
+
+}
+
+/* ==========================================================================
+   END HEADER COMPONENTS
+   ========================================================================== */
+
+/* ==========================================================================
+   2. MENU
+   ========================================================================== */
+
+/* 2.1 Menu Mobile
+   -------------------------------------------------------------------------- */
+.pm-menu-mobile__logo a .site-logo-dark {
+    display: block;
+    width: 150px;
+    height: auto;
+    max-height: 86px;
+}
+
+.pm-menu-mobile__logo a .site-logo-dark img {
+    display: block;
+    width: 150px;
+    height: auto;
+    max-height: 86px;
+}
+
+.pm-menu-mobile__header{
+    padding: 16px;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.pm-menu-mobile__nav .navbar {
+    padding: 0;
+}
+
+.pm-menu-mobile__nav {
+    margin: 48px 0 32px;
+}
+
+.pm-menu-mobile__content{
+    position: relative;
+    padding: 16px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.pm-menu-mobile__scroll {
+    overflow-y: auto;
+}
+
+.pm-menu-mobile__footer {
+    margin-top: 48px;
+}
+
+.pm-menu-mobile {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    z-index: 1500;
+    pointer-events: none;
+    transform: translateX(-100%);
+    transition: transform 0.35s ease-in-out;
+}
+
+.pm-menu-mobile.-is-active {
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.pm-menu-mobile__nav .pm-navbar-mobile .menu-item > a {
+    color: var(--pm-secondary-900);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.pm-menu-mobile__nav .pm-navbar-mobile .menu-item {
+    margin-bottom: 24px;
+}
+
+.pm-menu-mobile__nav .pm-navbar-mobile .menu-item:last-child {
+    margin-bottom: 0;
+}
+
+.pm-menu-mobile__nav .pm-navbar-mobile .menu-item.current_page_item > a {
+    color: var(--pm-primary-900);
+    font-weight: 600;
+}
+
+.decorative-sun {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 110px;
+}
+
+.pm-menu-mobile__footer .social-links h4,
+.pm-menu-mobile__footer .weather-now h4 {
+    font-family: var(--pm-font-secondary);
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--pm-secondary-900);
+}
+
+.pm-menu-mobile__footer .weather-now h4{
+    margin-bottom: 8px;
+}
+
+.pm-menu-mobile__footer .social-links h4{
+    margin-bottom: 16px;
+}
+
+.weather-now .weather-now__content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 50px;
+    background: #E5E0D1;
+}
+
+/* 2.2 Menu Experiences Mobile
+   -------------------------------------------------------------------------- */
+.pm-menu-experiences {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    padding: 1rem;
+    z-index: 10;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(100%);
+    transition: transform 0.35s ease;
+}
+
+.pm-menu-experiences__content {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.pm-menu-experiences__content h4 {
+    color: var(--pm-secondary-900);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.pm-menu-experiences__content p {
+    color: var(--pm-secondary-900);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 1px;
+}
+
+.back-arrow-menu-experiences {
+    cursor: pointer;
+    width: fit-content;
+    padding: 0.5rem 0;
+}
+
+.pm-menu-experiences.is-open {
+    transform: translateX(0);
+}
+
+/* 2.3 Menu Where To Stay Mobile
+   -------------------------------------------------------------------------- */
+.pm-where-to-stay {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    padding: 1rem;
+    z-index: 10;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(100%);
+    transition: transform 0.35s ease;
+}
+
+.where-to-stay__content {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.where-to-stay__content h4 {
+    color: var(--pm-secondary-900);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.where-to-stay__content p {
+    color: var(--pm-secondary-900);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 1px;
+}
+
+.back-arrow-where-to-stay {
+    cursor: pointer;
+    width: fit-content;
+    padding: 0.5rem 0;
+}
+
+.pm-where-to-stay.is-open {
+    transform: translateX(0);
+}
+
+.hotel-card__image-wrapper {
+    cursor:pointer;
+    height: 200px;
+    border-radius: 0.5rem;
+    border: 1px solid #E5E5E5;
+    overflow: hidden;
+    background-size: cover;
+    position: relative;
+}
+
+.hotel-card__image-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+            to top,
+            rgba(255, 255, 255, 0) 50%,
+            rgba(255, 255, 255, 1) 95%
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hotel-card__logo {
+    width: 100%;
+    max-width: 5.5rem;
+    height: auto;
+
+}
+
+/* 2.4 Mega Panel
+   -------------------------------------------------------------------------- */
+
+.mega-panel {
+    position: fixed;
+    overflow: hidden;
+    max-height: 0;
+    transition:
+            max-height 0.45s cubic-bezier(0.25, 1, 0.5, 1),
+            transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+    background: #ffffff;
+    will-change: transform, max-height;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 20;
+}
+
+.mega-panel__inner {
+    margin-top: 114px;
+    padding: 32px 5vw 40px;
+}
+
+.mega-panel__inner .mega-panel__headline {
+    color: #050505;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+}
+
+
+.header-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 10;
+}
+
+/* 2.5 Menu Experience Desktop
+   -------------------------------------------------------------------------- */
+body.is-experiences-open {
+    overflow: hidden;
+}
+
+body.is-where-to-stay-open {
+    overflow: hidden;
+}
+
+body.is-experiences-open .header-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+body.is-experiences-open .pm-header__menu .pm-navbar .menu-item > a {
+    font-weight: 300;
+    color: black;
+}
+
+body.is-experiences-open .pm-header__menu .pm-navbar .menu-item > a:hover {
+    color: var(--pm-primary-900) !important;
+}
+
+body.is-experiences-open .pm-header__menu .pm-navbar .menu-item.current_page_item > a {
+    font-weight: 500;
+}
+
+/* 2.6 Menu Where To Stay Desktop
+   -------------------------------------------------------------------------- */
+body.is-where-to-stay-open .header-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item > a {
+    font-weight: 300;
+    color: black;
+}
+
+body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item > a:hover {
+    color: var(--pm-primary-900) !important;
+}
+
+
+body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_item > a {
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   END MENU COMPONENTS
+   ========================================================================== */
+
+
+/* ==========================================================================
+   3. Hero
+   ========================================================================== */
+
+.arrow-circle__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.arrow-circle__icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+}
+
+.arrow-circle__icon .arrow {
+    position: absolute;
+    display: inline-flex;
+    transition: transform 0.35s ease;
+    transform: translateX(-10px);
+}
+
+.arrow-circle__icon .circle {
+    display: inline-flex;
+    transition: transform 0.35s ease;
+}
+
+.arrow-circle__link:hover .arrow {
+    transform: translateX(0);
+}
+
+/* 3.1 Video Hero Wrapper
+   -------------------------------------------------------------------------- */
+.video-hero {
+    position: relative;
+    width: 100%;
+    min-height: 50vh;
+    overflow: hidden;
+    display: flex;
+    align-items: end;
+}
+
+.video-hero__inner {
+    display: flex;
+    flex-direction: row;
+}
+
+.divider {
+    width: 2px;
+    height: auto;
+    background-color: white;
+    margin-right: 1rem;
+}
+
+.video-hero--overlap {
+    margin-top: -80px;
+}
+
+.video-hero__media video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-hero__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0.3;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+}
+
+.video-hero__video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.video-hero__content {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 32px;
+    z-index: 3;
+    color: #fff;
+}
+
+.video-hero__title {
+    font-family: var(--pm-font-secondary);
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+}
+
+.video-hero__subtitle {
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    margin-bottom: 0.75rem;
+}
+
+.video-hero__button {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.play-button {
+    display: none;
+}
+
+.play-button .play-button__inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    background: none;
+    border: none;
+    color: inherit;
+}
+
+/* 3.2 HERO PLAY INTERACTION (JS STATES)
+   -------------------------------------------------------------------------- */
+.pm-header .navbar {
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.pm-header--hidden {
+    opacity: 0;
+    transform: translateY(-100%);
+}
+
+.video-hero__information,
+.divider {
+    transition: opacity 0.3s ease;
+}
+
+.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.play-button__inner.is-playing {
+
+}
+
+.body-overflow-hidden {
+    overflow: hidden;
+}
+
+@media (min-width: 992px) {
+
+    .video-hero__content {
+        margin-bottom: 90px;
+    }
+
+    .video-hero__title {
+        font-size: 40px;
+        margin-bottom: 1rem;
+    }
+
+    .video-hero__subtitle {
+        font-size: 18px;
+        margin-bottom: 1.5rem;
+    }
+
+    .video-hero {
+        min-height: 100vh;
+    }
+
+    .play-button {
+        display: block;
+    }
+}
+
+/* ==========================================================================
+   END HERO COMPONENTS
+   ========================================================================== */
+
+/* ==========================================================================
+   4. About Highlight Section
+   ========================================================================== */
+.about-highlights {
+    padding-top: 92px;
+    padding-bottom: 84px;
+}
+
+.about-highlight__icon {
+    width: 56px;
+}
+
+.about-highlight__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.about-highlights__title {
+    font-family: var(--pm-font-secondary);
+    font-weight: 500;
+    font-style: italic;
+    font-size: 32px;
+    letter-spacing: 2px;
+    text-align: center;
+    color: var(--pm-secondary-900);
+}
+
+.about-highlights__description {
+    font-weight: 300;
+    font-size: 16px;
+    text-align: start;
+    color: var(--pm-secondary-900);
+}
+
+.about-highlight__item .about-highlight__label {
+    font-weight: 300;
+    font-size: 16px;
+    text-align: center;
+    color: var(--pm-secondary-900);
+}
+
+@media (min-width: 768px) {
+    .about-highlights__description {
+        text-align: center;
+    }
+}
+
+/* ==========================================================================
+   END ABOUT HIGHLIGHT SECTION COMPONENTS
+   ========================================================================== */
+
+/* ==========================================================================
+   5. Content Two Image Section
+   ========================================================================== */
+.content-two-image-section {
+    padding-top: 85px;
+    padding-bottom: 360px;
+}
+.content-two-image-section__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+}
+
+.content-two-image-section__image {
+    max-width: 93%;
+    width: 100%;
+    height: 360px;
+    margin-bottom: 1rem;
+}
+.content-two-image-section__image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.content-two-image-section__decorative-image img {
+    width: 200px;
+    height: auto;
+    object-fit: cover;
+}
+
+.content-two-image-section__decorative-image {
+    position: absolute;
+    right: 0;
+    bottom: -220px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0 0.5rem 0.5rem;
+    background: white;
+}
+
+.content-two-image-section__description {
+    /*max-width: 546px;*/
+    font-weight: 300;
+    font-size: 16px;
+}
+
+
+.content-two-image-section__content{
+    padding: 2rem;
+}
+
+@media (min-width: 576px) {
+    .content-two-image-section__decorative-image {
+        padding: 0.5rem;
+    }
+}
+
+
+@media (min-width: 992px) {
+    .content-two-image-section {
+        padding-top: 128px;
+        padding-bottom: 184px;
+    }
+    .content-two-image-section__image {
+        max-width: 100%;
+        width: 100%;
+        height: 642px;
+    }
+    .content-two-image-section__description {
+        max-width: 100%;
+    }
+
+    .content-two-image-section__content{
+        padding: 0;
+    }
+
+    .content-two-image-section__decorative-image {
+        right: -15%;
+        bottom: -80px;
+    }
+}
+
+/* ==========================================================================
+   END CONTENT TWO IMAGE SECTION COMPONENTS
+   ========================================================================== */

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig host="ssh.markeagroup.com" id="714da1ae-c9e2-4618-8be3-0ca1d7feb026" keyPath="$USER_HOME$/.ssh/id_stg_playa_mujeres" port="18765" nameFormat="DESCRIPTIVE" username="u1637-uc3sxfi4ssyi" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>

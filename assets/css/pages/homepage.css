@@ -1,0 +1,13 @@
+.hero__homepage {
+    object-fit: cover;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+}
+
+@media (min-width: 992px) {
+    .hero__homepage {
+        height: 100vh;
+    }
+}

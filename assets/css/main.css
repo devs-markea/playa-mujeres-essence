@@ -1,0 +1,156 @@
+@font-face {
+    font-family: 'Meridien LT Std';
+    src: url('../fonts/meridien/MeridienLTStd-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Meridien LT Std';
+    src: url('../fonts/meridien/MeridienLTStd-Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Meridien LT Std';
+    src: url('../fonts/meridien/MeridienLTStd-BoldItalic.woff2') format('woff2');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Meridien LT Std';
+    src: url('../fonts/meridien/MeridienLTStd-MediumItalic.woff2') format('woff2');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Meridien LT Std';
+    src: url('../fonts/meridien/MeridienLTStd-Roman.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    /* PRIMARY COLOR */
+    --pm-primary-900: #A89968;
+    --pm-primary-800: #B0A376;
+    --pm-primary-700: #C2B795;
+    --pm-primary-600: #CBC2A4;
+    --pm-primary-500: #D3CCB3;
+    --pm-primary-400: #DCD6C2;
+    --pm-primary-300: #EEEBE1;
+    --pm-primary-200: #F6F5EF;
+    --pm-primary-100: #FBFAF7;
+
+    /* SECONDARY COLOR */
+    --pm-secondary-900: #323232;
+    --pm-secondary-800: #8A8D8F;
+    --pm-secondary-700: #84754E;
+
+    /* FONTS */
+    --pm-font-primary: "Agenda", sans-serif;
+    --pm-font-secondary: "Meridien LT Std", sans-serif;
+
+}
+
+html { scrollbar-gutter: stable; }
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: var(--pm-font-primary);
+    color: var(--pm-secondary-900);
+}
+
+/* LINKS GENERALES */
+a {
+    color: var(--pm-primary);
+    text-decoration: none;
+}
+
+/* TITULOS */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+}
+
+/* Buttons */
+.btn {
+    font-weight: 300;
+}
+
+.btn-primary {
+    background: transparent !important;
+    color: var(--pm-secondary-900) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    text-decoration: none;
+    box-shadow: none !important;
+    transition: opacity .25s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: transparent !important;
+    opacity: 0.6;
+}
+
+.btn-border-bottom-black {
+    border-bottom: 1px solid var(--pm-secondary-900) !important;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+
+
+/* CONTENIDO PRINCIPAL */
+.content-area {
+    flex: 1 0 auto;
+}
+
+/* FOOTER */
+.site-footer {
+    flex-shrink: 0;
+    font-size: 0.875rem;
+}
+
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+    --bs-gutter-x: 4rem;
+    --bs-gutter-y: 0;
+}
+
+/* Media queries */
+@media (min-width: 992px) {
+    .container, .container-lg, .container-md, .container-sm {
+        max-width: 992px !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: 1200px !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1400px !important;
+    }
+}

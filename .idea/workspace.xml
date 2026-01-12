@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="73e2c15c-43d3-414b-a77d-7feafdec44ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sshConfigs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/css/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/css/components.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/css/main.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/css/pages/homepage.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/css/utilities.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/meridien/MeridienLTStd-Bold.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/meridien/MeridienLTStd-BoldItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/meridien/MeridienLTStd-Medium.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/meridien/MeridienLTStd-MediumItalic.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/meridien/MeridienLTStd-Roman.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/decorative-sun-playa-mujeres.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/hotel-example.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/img-video-hero.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/logo-dark.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/bootstrap.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/js/main.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/libs/bootstrap/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/libs/bootstrap/bootstrap.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/footer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/header.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/blocks/class-pm-essence-blocks-loader.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/blocks/video-hero/block.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/blocks/video-hero/video-hero.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/blocks/video-hero/video-hero.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/class-pm-essence-core.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/class-wp-bootstrap-navwalker.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/components/ui/to-top.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/customizer/class-pm-essence-customizer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/enqueue.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/helpers.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/template-functions.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/inc/template-hooks.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/page-templates/homepage.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/page-templates/template-page-sections.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/page.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/screenshot.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/single-hotel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/single.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/footer/footer-default.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/header/header-default.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/header/header-transparent.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/experiences-desktop.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/experiences-mobile.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/experiences.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/menu-desktop.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/menu-mobile.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/where-to-stay-desktop.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/where-to-stay-mobile.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/menu/where-to-stay.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/about-highlight-section.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/content-showcase.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/content-two-image-section.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/featured-article-banner.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/hotels-listing.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/image-banner.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/images-carousel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/newsletter-subscribe-banner.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/single-hotel-example.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/two-column-content-section.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/template-parts/sections/video-hero.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+        <option value="PHP File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="35iIPTc4eXwBI5aH5FXcfsr9WbT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="sortKey" value="BY_TIME_DESCENDING" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/dennisyam/Proyectos/staging-playa-mujeres/assets/images",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/images" />
+      <recent name="$PROJECT_DIR$/assets/fonts/meridien" />
+      <recent name="$PROJECT_DIR$/assets/fonts" />
+      <recent name="$PROJECT_DIR$/inc" />
+      <recent name="$PROJECT_DIR$/assets/js" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/video" />
+      <recent name="$PROJECT_DIR$/template-parts/sections" />
+      <recent name="$PROJECT_DIR$/assets/fonts/meridien" />
+      <recent name="$PROJECT_DIR$/assets/libs/bootstrap" />
+      <recent name="$PROJECT_DIR$/public_html/wp-content/themes/pm-essence" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-e03c56caf84a-JavaScript-PS-252.23892.419" />
+        <option value="bundled-php-predefined-a98d8de5180a-c72577f2c82f-com.jetbrains.php.sharedIndexes-PS-252.23892.419" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="UTF-8" />
+    <option name="myConnectionType" value="NONE" />
+    <option name="myConnectionId" value="" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="73e2c15c-43d3-414b-a77d-7feafdec44ab" name="Changes" comment="" />
+      <created>1763586440917</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763586440917</updated>
+      <workItem from="1763586442733" duration="11164000" />
+      <workItem from="1763652947185" duration="21000" />
+      <workItem from="1763652982123" duration="16796000" />
+      <workItem from="1764001032562" duration="21490000" />
+      <workItem from="1764081298276" duration="481000" />
+      <workItem from="1764083782531" duration="11178000" />
+      <workItem from="1764172691624" duration="20535000" />
+      <workItem from="1764256736392" duration="16129000" />
+      <workItem from="1764347240879" duration="8542000" />
+      <workItem from="1764687571785" duration="12420000" />
+      <workItem from="1764710928605" duration="511000" />
+      <workItem from="1764711458907" duration="3950000" />
+      <workItem from="1764875537535" duration="2497000" />
+      <workItem from="1764879779037" duration="2177000" />
+      <workItem from="1765213621778" duration="1566000" />
+      <workItem from="1765384037905" duration="12801000" />
+      <workItem from="1765466443027" duration="3547000" />
+      <workItem from="1765571570968" duration="745000" />
+      <workItem from="1765812366092" duration="12080000" />
+      <workItem from="1765898701648" duration="11728000" />
+      <workItem from="1765990737996" duration="12945000" />
+      <workItem from="1766072324599" duration="76000" />
+      <workItem from="1766072423515" duration="42000" />
+      <workItem from="1766072485108" duration="2188000" />
+      <workItem from="1766163482275" duration="9652000" />
+      <workItem from="1766425224761" duration="5137000" />
+      <workItem from="1766438662569" duration="2769000" />
+      <workItem from="1766502317541" duration="4004000" />
+      <workItem from="1766591593224" duration="168000" />
+      <workItem from="1766593674143" duration="1392000" />
+      <workItem from="1767385549368" duration="3395000" />
+      <workItem from="1767394770602" duration="655000" />
+      <workItem from="1767395463241" duration="495000" />
+      <workItem from="1767395976785" duration="5110000" />
+      <workItem from="1768196569854" duration="87000" />
+      <workItem from="1768231044849" duration="497000" />
+      <workItem from="1768239369031" duration="2526000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WordPressConfiguration" enabled="true">
+    <wordpressPath>/Applications/XAMPP/xamppfiles/htdocs/live-plants</wordpressPath>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

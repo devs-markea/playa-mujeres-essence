@@ -1,0 +1,18 @@
+{
+  "apiVersion": 2,
+  "name": "pm-essence/video-hero",
+  "title": "PM Video Hero",
+  "category": "pm-essence",
+  "icon": "format-video",
+  "description": "Hero with background video and modal play button.",
+  "supports": {
+    "align": ["wide", "full"],
+    "anchor": true
+  },
+  "acf": {
+    "mode": "preview",
+    "renderTemplate": "video-hero.php"
+  },
+  "style": "pm-essence-video-hero",
+  "viewScript": "file:./video-hero.js"
+}
