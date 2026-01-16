@@ -264,6 +264,52 @@ window.App = window.App || {};
         });
     }
 
+    // Primary Showcase Hero - Contact Dropdown
+    function initPrimaryShowcaseHeroDropdown() {
+        const dropdowns = document.querySelectorAll('[data-psh-dropdown]');
+        if (!dropdowns.length) return;
+
+        function closeAll() {
+            dropdowns.forEach((dd) => {
+                dd.classList.remove('is-open');
+                const btn = dd.querySelector('.primary-showcase-hero__dropdown-toggle');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        dropdowns.forEach((root) => {
+            const btn  = root.querySelector('.primary-showcase-hero__dropdown-toggle');
+            const menu = root.querySelector('.primary-showcase-hero__dropdown-menu');
+            if (!btn || !menu) return;
+
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const isOpen = root.classList.contains('is-open');
+                closeAll();
+
+                if (!isOpen) {
+                    root.classList.add('is-open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+
+            root.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+
+        document.addEventListener('click', function () {
+            closeAll();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeAll();
+        });
+    }
+
+
     // Menú mobile
     function initMobileMenu() {
         if (!header) return;
@@ -823,6 +869,7 @@ window.App = window.App || {};
     // Init global
     App.init = function () {
         cacheElements();
+        initPrimaryShowcaseHeroDropdown();
         if (!header) return;
         initToTopButton();
         initLangSwitcher();

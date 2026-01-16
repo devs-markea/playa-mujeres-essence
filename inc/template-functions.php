@@ -416,3 +416,29 @@ if ( ! function_exists( 'pm_essence_menu_experiences_desktop' ) ) {
         get_template_part( 'template-parts/menu/experiences-desktop', '' );
     }
 }
+
+if ( ! function_exists( 'pm_essence_heading_tag_or_null' ) ) {
+    /**
+     * Select a heading tag
+     *
+     * @return  void
+     */
+    function pm_essence_heading_tag_or_null($level, $default_tag) {
+        if (empty($level)) {
+            return $default_tag;
+        }
+
+        $level = strtolower(trim((string) $level));
+
+        if ($level === 'none') {
+            return null;
+        }
+
+        // Accept only h1..h6 from ACF
+        if (preg_match('/^h([1-6])$/', $level, $m)) {
+            return 'h' . $m[1];
+        }
+
+        return $default_tag;
+    }
+}
