@@ -97,12 +97,12 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary {
-    background: transparent !important;
-    color: var(--pm-secondary-900) !important;
-    border: none !important;
-    border-radius: 0 !important;
+    background: transparent;
+    color: var(--pm-secondary-900);
+    border: none;
+    border-radius: 0;
     text-decoration: none;
-    box-shadow: none !important;
+    box-shadow: none;
     transition: opacity .25s ease;
 }
 
@@ -110,6 +110,21 @@ h1, h2, h3, h4 {
 .btn-primary:focus {
     background: transparent !important;
     opacity: 0.6;
+}
+
+.btn-secondary {
+    color: #fff;
+    background-color: transparent;
+    border-color: #fff;
+    border-radius: 0;
+}
+.btn-secondary:hover,
+.btn-secondary:focus{
+    color: var(--pm-secondary-900);
+    background-color: #fff;
+    border-color: #fff;
+    border-radius: 0;
+    transition: background-color .25s ease;
 }
 
 .btn-border-bottom-black {

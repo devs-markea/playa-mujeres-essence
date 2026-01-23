@@ -397,6 +397,8 @@ window.App = window.App || {};
 
         let isPlaying = false;
 
+        const isYouTubeIframe = (heroVideo.tagName && heroVideo.tagName.toLowerCase() === 'iframe');
+
         playButton.addEventListener('click', function (e) {
             e.preventDefault();
             isPlaying = !isPlaying;
@@ -408,7 +410,6 @@ window.App = window.App || {};
             }
 
             if (isPlaying) {
-                heroVideo.muted = false;
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
@@ -417,8 +418,27 @@ window.App = window.App || {};
                 setTimeout(() => {
                     if (body) body.classList.add('body-overflow-hidden');
                 }, 600);
+
+                // ✅ Unmute
+                if (isYouTubeIframe) {
+                    if (ytPlayer && ytReady && typeof ytPlayer.unMute === 'function') {
+                        ytPlayer.unMute();
+                        if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
+                    }
+                } else {
+                    heroVideo.muted = false;
+                    if (typeof heroVideo.play === 'function') heroVideo.play();
+                }
             } else {
-                heroVideo.muted = true;
+                // ✅ Mute
+                if (isYouTubeIframe) {
+                    if (ytPlayer && ytReady && typeof ytPlayer.mute === 'function') {
+                        ytPlayer.mute();
+                    }
+                } else {
+                    heroVideo.muted = true;
+                }
+
                 if (body) body.classList.remove('body-overflow-hidden');
             }
 
@@ -858,8 +878,12 @@ window.App = window.App || {};
                 events: {
                     onReady: function () {
                         ytReady = true;
-                        ytPlayer.mute();
-                        ytPlayer.playVideo();
+
+                        // Fuerza modo "background"
+                        try {
+                            ytPlayer.mute();
+                            ytPlayer.playVideo();
+                        } catch (e) {}
                     }
                 }
             });

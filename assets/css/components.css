@@ -518,20 +518,22 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-            to top,
-            rgba(255, 255, 255, 0) 50%,
-            rgba(255, 255, 255, 1) 95%
-    );
+    background: linear-gradient( 0deg, rgba(255, 255, 255, 0) 53.7%, rgb(255, 255, 255) 92.2% );
     pointer-events: none;
     z-index: 1;
 }
 
 .hotel-card__logo {
     width: 100%;
-    max-width: 5.5rem;
+    max-width: 4.6rem;
     height: auto;
 
+}
+
+@media (min-width: 768px) {
+    .hotel-card__logo {
+        max-width: 5.6rem;
+    }
 }
 
 /* 2.4 Mega Panel
@@ -979,4 +981,249 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 
 /* ==========================================================================
    END CONTENT TWO IMAGE SECTION COMPONENTS
+   ========================================================================== */
+
+/* ==========================================================================
+   6. Primary Showcase Hero
+   ========================================================================== */
+
+/* ===== Base: estructura / media ===== */
+.hotel-hero__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.hotel-hero__logo img {
+    width: 200px;
+}
+.hotel-hero__logo {
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.hotel-hero__wrapper {
+    position: relative;
+    top: 326px;
+    background: black;
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 24px 20px;
+    gap: 20px;
+    box-shadow: 0 0 20px -3px rgba(0, 0, 0, 0.25);
+    margin-bottom: 326px;
+}
+
+.hotel-hero__content {
+    padding: 0 1rem;
+}
+
+.hotel-hero__description {
+    font-size: 14px;
+    line-height: 20px;
+    margin-top: 10px;
+    margin-bottom: 14px;
+}
+
+/* Pills */
+.hotel-hero__tags {
+    justify-content: center;
+    margin: 0 auto 12px;
+    max-width: 360px;
+}
+
+/*.hotel-hero__tag {*/
+/*    background: rgba(0,0,0,0.06);*/
+/*    color: #323232;*/
+/*    border-radius: 999px;*/
+/*    padding: 6px 12px;*/
+/*    font-size: 12px;*/
+/*    line-height: 14px;*/
+/*    letter-spacing: 0.2px;*/
+/*    font-family: inherit;*/
+/*}*/
+
+.primary-showcase-hero__cta {
+    margin-right: 0;
+}
+
+.primary-showcase-hero__contact {
+    margin-top: 0 !important;
+}
+
+.primary-showcase-hero__dropdown-toggle {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-color: rgba(0,0,0,0.15);
+}
+
+@media (min-width: 992px) {
+    .hotel-hero__tag:not(:first-child)::before {
+        content: " / ";
+        margin-right: 6px;
+    }
+    .hotel-hero__tags {
+        font-size: 16px;
+    }
+    .hotel-hero__wrapper {
+        position: static;
+        top: 0;
+        background: none;
+        flex-direction: column;
+        gap: 0;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        justify-content: space-between;
+    }
+    .hotel-hero__description {
+        font-size: 16px;
+        color: var(--pm-secondary-900);
+        text-shadow: none;
+    }
+    .hotel-hero {
+        min-height: 100vh;
+    }
+    .hotel-hero__tags {
+        justify-content: initial;
+        margin: 0;
+    }
+    .hotel-hero__content {
+        padding: 0 2rem;
+    }
+    .hotel-hero {
+        display: flex;
+        align-items: stretch;
+    }
+    .hotel-hero__content {
+        padding-top: 152px;
+        padding-bottom: 72px;
+    }
+    .primary-showcase-hero__dropdown-toggle {
+        font-size: 16px;
+    }
+    .hotel-hero__cta {
+        white-space: nowrap;
+    }
+}
+
+.arrow-circle {}
+.primary-showcase-hero__cta {
+    margin-right: 1rem;
+}
+.primary-showcase-hero__dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.primary-showcase-hero__dropdown-toggle {
+    display: flex;
+    padding: 0.375rem;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #FFF;
+    background: #FFF;
+    color: #323232;
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.primary-showcase-hero__dropdown-caret {
+    display: block;
+}
+
+.primary-showcase-hero__dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 6px 0;
+    z-index: 50;
+    display: none;
+}
+
+.primary-showcase-hero__dropdown.is-open .primary-showcase-hero__dropdown-menu {
+    display: block;
+}
+
+.primary-showcase-hero__dropdown-item {
+    display: block;
+    padding: 10px 12px;
+    text-decoration: none;
+    color: #323232;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: 0.5px;
+}
+
+.primary-showcase-hero__dropdown-item:hover,
+.primary-showcase-hero__dropdown-item:focus {
+    background: rgba(0, 0, 0, 0.06);
+    outline: none;
+}
+.hotel-hero {
+    position: relative;
+    overflow: visible;
+}
+.hotel-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+.hotel-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+.hotel-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1;
+}
+.hotel-hero__content {
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+}
+.hotel-hero__tags {
+    color: white;
+    font-family: var(--pm-font-secondary);
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 2px;
+}
+.hotel-hero__description {
+    color: white;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+}
+.hotel-hero__cta {
+    color: white;
+}
+.hotel-hero__logo {
+    display: flex;
+    justify-content: start;
+    margin-bottom: 24px;
+    max-width: 200px;
+}
+.hotel-hero__logo img {
+    width: 100%;
+    object-fit: cover;
+    height: auto;
+}
+/* ==========================================================================
+   END PRIMARY SHOWCASE HERO COMPONENTS
    ========================================================================== */
