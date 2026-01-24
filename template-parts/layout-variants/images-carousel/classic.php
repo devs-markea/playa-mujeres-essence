@@ -93,9 +93,9 @@ $images          = get_sub_field('images');
 </section>
 
 <style>
-    /* Scope total al variant para que no afecte otros layouts */
+
     .images-carousel.images-carousel--classic {
-        padding-top: 120px;
+        padding-top: 20px;
         padding-bottom: 80px;
     }
 
@@ -188,6 +188,11 @@ $images          = get_sub_field('images');
     }
 
     @media (min-width: 768px) {
+        .images-carousel.images-carousel--classic {
+            padding-top: 120px;
+            padding-bottom: 80px;
+        }
+
         .images-carousel.images-carousel--classic .images-carousel__title {
             font-size: 32px;
         }

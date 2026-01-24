@@ -3,7 +3,8 @@
  * ACF Layout: primary_showcase_hero (dentro de Flexible Content: sections)
  *
  * Fields:
- * - logo (image array)
+ * - logo (image array)                // desktop
+ * - logo_dark (image array)           // mobile
  * - heading (text)
  * - heading_level (select: none|h1..h6)
  * - description (textarea)
@@ -17,6 +18,7 @@
  * - contact_dropdown_label (text)
  * - contact_options (repeater -> type, label, value)
  */
+
 // Si no hay slides, no hay nada que renderizar
 if ( ! have_rows('slides') ) {
     return;
@@ -26,7 +28,9 @@ if ( ! have_rows('slides') ) {
 the_row();
 
 
-$logo                  = get_sub_field('logo'); // image array
+
+$logo                  = get_sub_field('logo'); // image array (desktop)
+$logo_dark             = get_sub_field('logo_dark'); // image array (mobile)
 $heading               = get_sub_field('heading');
 $heading_level         = get_sub_field('heading_level'); // none|h1..h6
 $description           = get_sub_field('description');
@@ -44,8 +48,18 @@ $contact_options        = get_sub_field('contact_options'); // repeater
 $heading_tag = pm_essence_heading_tag_or_null($heading_level, 'h1');
 
 
-$logo_url = is_array($logo) && !empty($logo['url']) ? $logo['url'] : '';
-$logo_alt = is_array($logo) && !empty($logo['alt']) ? $logo['alt'] : '';
+$heading_tag = pm_essence_heading_tag_or_null($heading_level, 'h1');
+
+
+$logo_desktop_id = (is_array($logo) && ! empty($logo['ID'])) ? (int) $logo['ID'] : 0;
+$logo_mobile_id  = (is_array($logo_dark) && ! empty($logo_dark['ID'])) ? (int) $logo_dark['ID'] : 0;
+
+$logo_alt = '';
+if (is_array($logo) && ! empty($logo['alt'])) {
+    $logo_alt = $logo['alt'];
+} elseif (is_array($logo_dark) && ! empty($logo_dark['alt'])) {
+    $logo_alt = $logo_dark['alt'];
+}
 
 $bg_desktop_id = (is_array($bg_desktop) && ! empty($bg_desktop['ID'])) ? (int) $bg_desktop['ID'] : 0;
 $bg_mobile_id  = (is_array($bg_mobile) && ! empty($bg_mobile['ID'])) ? (int) $bg_mobile['ID'] : 0;
@@ -104,7 +118,7 @@ if ($enable_overlay) {
     <div class="hotel-hero__content container">
         <div class="hotel-hero__wrapper">
             <?php if (have_rows('key_attributes')) : ?>
-                <div class="hotel-hero__tags">
+                <div class="hotel-hero__tags d-none d-md-flex">
                     <?php
                     while (have_rows('key_attributes')) : the_row();
                         $attr_text = get_sub_field('attribute');
@@ -122,14 +136,35 @@ if ($enable_overlay) {
                 <div class="row g-0">
                     <div class="col-12 col-lg-7">
                         <div class="hotel-hero__content-mobile row align-items-center g-0">
-                            <div class="col-6 col-md-12 flex-column-reverse gap-1 align-items-center">
-                                <?php if (!empty($logo_url)) : ?>
+                            <div class="col-6 col-md-12">
+                                <?php if ( $logo_desktop_id || $logo_mobile_id ) : ?>
                                     <div class="hotel-hero__logo">
-                                        <img src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr($logo_alt ? $logo_alt : ($heading ? $heading : get_the_title())); ?>">
+                                        <picture>
+                                            <?php if ( $logo_mobile_id ) : ?>
+                                                <source
+                                                    media="(max-width: 991.98px)"
+                                                    srcset="<?php echo esc_attr( wp_get_attachment_image_srcset( $logo_mobile_id, 'full' ) ); ?>">
+                                            <?php endif; ?>
+
+                                            <?php
+                                            $fallback_logo_id = $logo_desktop_id ? $logo_desktop_id : $logo_mobile_id;
+
+                                            echo wp_get_attachment_image(
+                                                $fallback_logo_id,
+                                                'full',
+                                                false,
+                                                array(
+                                                    'alt'      => $logo_alt ? $logo_alt : ($heading ? $heading : get_the_title()),
+                                                    'loading'  => 'eager',
+                                                    'decoding' => 'async',
+                                                )
+                                            );
+                                            ?>
+                                        </picture>
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <div class="col-6 d-flex d-md-none">
+                            <div class="col-6 d-flex flex-column-reverse align-items-end d-md-none">
                                 <?php if (is_array($location_link) && !empty($location_link['url']) && !empty($location_link['title'])) : ?>
                                     <div class="primary-showcase-hero__cta">
                                         <a class="btn btn-secondary"
@@ -233,7 +268,7 @@ if ($enable_overlay) {
                     <?php if (!empty($cta_url) && !empty($cta_title)) : ?>
                         <div class="arrow-circle">
                             <a href="<?php echo esc_url($cta_url); ?>"
-                               class="video-hero__button arrow-circle__link"
+                               class="hotel-hero__cta arrow-circle__link"
                                     <?php echo !empty($cta_target) ? 'target="' . esc_attr($cta_target) . '"' : ''; ?>
                                     <?php echo ($cta_target === '_blank') ? 'rel="noopener noreferrer"' : ''; ?>>
                                 <span class="arrow-circle__label"><?php echo esc_html($cta_title); ?></span>
@@ -242,7 +277,7 @@ if ($enable_overlay) {
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                              xmlns="http://www.w3.org/2000/svg">
                                             <path d="M17.25 15.75L21 12M21 12L17.25 8.25M21 12H3"
-                                                  stroke="white" stroke-width="0.75"
+                                                  stroke="currentColor" stroke-width="0.75"
                                                   stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
                                     </span>
@@ -252,7 +287,7 @@ if ($enable_overlay) {
                                             <rect x="0.375" y="0.375"
                                                   width="27.25" height="27.25"
                                                   rx="13.625"
-                                                  stroke="white" stroke-width="0.75"/>
+                                                  stroke="currentColor" stroke-width="0.75"/>
                                         </svg>
                                     </span>
                                 </span>
@@ -263,7 +298,7 @@ if ($enable_overlay) {
 
                 </div>
 
-                <div class="col-12 col-lg-5 d-flex justify-content-lg-end align-items-start align-items-lg-end">
+                <div class="col-12 col-lg-5 d-flex justify-content-lg-end align-items-start align-items-lg-end d-none d-md-flex">
                     <?php if (is_array($location_link) && !empty($location_link['url']) && !empty($location_link['title'])) : ?>
                         <div class="primary-showcase-hero__cta">
                             <a class="btn btn-secondary"

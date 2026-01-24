@@ -31,7 +31,7 @@ $images          = get_sub_field('images');
     </div>
 
     <?php if ($images): ?>
-        <div class="images-carousel__media swiper px-4 px-md-0" data-images-carousel-variant="gallery-slider">
+        <div class="images-carousel__media swiper " data-images-carousel-variant="gallery-slider">
             <div class="images-carousel__wrapper swiper-wrapper">
 
                 <?php foreach ($images as $item):
@@ -83,9 +83,9 @@ $images          = get_sub_field('images');
 </section>
 
 <style>
-    /* Scope total al variant para que no afecte otros layouts */
+
     .images-carousel.images-carousel--gallery-slider {
-        padding-top: 120px;
+        padding-top: 60px;
         padding-bottom: 80px;
     }
 
@@ -93,9 +93,6 @@ $images          = get_sub_field('images');
         text-align: center;
     }
 
-    .images-carousel.images-carousel--gallery-slider .images-carousel__description p {
-        text-align: start;
-    }
 
     .images-carousel.images-carousel--gallery-slider .images-carousel__title {
         font-size: 20px;
@@ -105,9 +102,10 @@ $images          = get_sub_field('images');
         letter-spacing: 2px;
     }
 
-    .images-carousel.images-carousel--gallery-slider .images-carousel__description p{
+    .images-carousel.images-carousel--gallery-slider .images-carousel__description{
         font-size: 16px;
         font-weight: 300;
+        text-align: center;
     }
 
     .images-carousel.images-carousel--gallery-slider .images-carousel__media {
@@ -181,12 +179,13 @@ $images          = get_sub_field('images');
     }
 
     @media (min-width: 768px) {
+
+        .images-carousel.images-carousel--gallery-slider {
+            padding-top: 120px;
+            padding-bottom: 80px;
+        }
         .images-carousel.images-carousel--gallery-slider .images-carousel__title {
             font-size: 32px;
-        }
-
-        .images-carousel.images-carousel--gallery-slider .images-carousel__description p {
-            text-align: center;
         }
 
         .images-carousel.images-carousel--gallery-slider .images-carousel__pagination {

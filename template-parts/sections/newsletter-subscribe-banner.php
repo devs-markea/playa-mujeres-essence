@@ -4,6 +4,8 @@ $description        = get_sub_field('description');
 $subscribe_text     = get_sub_field('subscribe_button_text') ?: 'Subscribe';
 $bg                 = get_sub_field('background_image');
 $layout_width       = get_sub_field('layout_width'); // 'full' | 'narrow'
+$form_position      = get_sub_field('form_position');
+
 
 // controla la columna
 $col_class = ($layout_width === 'full_width')
@@ -13,6 +15,19 @@ $col_class = ($layout_width === 'full_width')
 $bg_url = !empty($bg['sizes']['large'])
     ? $bg['sizes']['large']
     : ($bg['url'] ?? '');
+
+$justify_class = 'justify-content-center';
+if (is_string($form_position)) {
+    $pos = strtolower(trim($form_position));
+    if ($pos === 'left') {
+        $justify_class = 'justify-content-start';
+    } elseif ($pos === 'right' || $pos === 'rigth') {
+        $justify_class = 'justify-content-end';
+    } elseif ($pos === 'center') {
+        $justify_class = 'justify-content-center';
+    }
+}
+
 ?>
 
 <section class="newsletter-subscribe-banner">
@@ -26,7 +41,7 @@ $bg_url = !empty($bg['sizes']['large'])
 
                 <div class="newsletter-subscribe-banner__content">
                     <div class="container">
-                        <div class="row g-0">
+                        <div class="row g-0 <?php echo esc_attr($justify_class); ?>">
                             <div class="col-12 col-md-5">
                                 <div class="newsletter-subscribe-banner__inner">
 

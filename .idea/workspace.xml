@@ -4,16 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="73e2c15c-43d3-414b-a77d-7feafdec44ab" name="Changes" comment="[FEAT] News layout variants">
+    <list default="true" id="73e2c15c-43d3-414b-a77d-7feafdec44ab" name="Changes" comment="[FIX] Fixed layouts, variants and components css.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/components.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/components.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/inc/helpers.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/helpers.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/inc/template-functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/inc/template-functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/template-parts/layout-variants/images-carousel/classic.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/layout-variants/images-carousel/classic.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/template-parts/layout-variants/images-carousel/gallery-slider.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/layout-variants/images-carousel/gallery-slider.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template-parts/menu/where-to-stay-desktop.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/menu/where-to-stay-desktop.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template-parts/menu/where-to-stay-mobile.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/menu/where-to-stay-mobile.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/template-parts/menu/where-to-stay.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/menu/where-to-stay.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/template-parts/sections/content-showcase.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/sections/content-showcase.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/template-parts/sections/hotels-listing.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/sections/hotels-listing.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/template-parts/sections/newsletter-subscribe-banner.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/sections/newsletter-subscribe-banner.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/template-parts/sections/primary-showcase-hero.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/sections/primary-showcase-hero.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/template-parts/sections/text-block.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/sections/text-block.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/template-parts/sections/two-column-content-section.php" beforeDir="false" afterPath="$PROJECT_DIR$/template-parts/sections/two-column-content-section.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +153,8 @@
       <workItem from="1768845670641" duration="7000" />
       <workItem from="1768873750609" duration="1199000" />
       <workItem from="1769007414893" duration="1690000" />
-      <workItem from="1769101813019" duration="14202000" />
+      <workItem from="1769101813019" duration="14272000" />
+      <workItem from="1769199592578" duration="15050000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit">
       <option name="closed" value="true" />
@@ -165,7 +172,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768597708258</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="[FIX] Fixed layouts, variants and components css.">
+      <option name="closed" value="true" />
+      <created>1769199469488</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1769199469488</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -174,7 +189,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First Commit" />
     <MESSAGE value="[FEAT] News layout variants" />
-    <option name="LAST_COMMIT_MESSAGE" value="[FEAT] News layout variants" />
+    <MESSAGE value="[FIX] Fixed layouts, variants and components css." />
+    <option name="LAST_COMMIT_MESSAGE" value="[FIX] Fixed layouts, variants and components css." />
   </component>
   <component name="WordPressConfiguration" enabled="true">
     <wordpressPath>/Applications/XAMPP/xamppfiles/htdocs/live-plants</wordpressPath>

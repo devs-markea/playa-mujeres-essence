@@ -49,6 +49,8 @@
     --pm-primary-300: #EEEBE1;
     --pm-primary-200: #F6F5EF;
     --pm-primary-100: #FBFAF7;
+    --pm-primary-50: #C8B18B;
+    --pm-primary-10: #ECEBE5;
 
     /* SECONDARY COLOR */
     --pm-secondary-900: #323232;
@@ -108,8 +110,10 @@ h1, h2, h3, h4 {
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background: transparent !important;
-    opacity: 0.6;
+    color: var(--pm-secondary-900);
+    background-color: #fff;
+    border-color: #fff;
+    border-radius: 0;
 }
 
 .btn-secondary {

@@ -218,7 +218,6 @@ if (!$items) return;
         border: 0;
         background: transparent;
         text-align: center;
-        white-space: nowrap;
         font-size: 16px;
         font-weight: 300;
         cursor: pointer;

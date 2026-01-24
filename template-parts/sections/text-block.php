@@ -46,7 +46,7 @@ $row_direction_class = ($variant === 'stacked') ? ' flex-column' : '';
         <div class="col-12 col-lg-7">
             <div class="pm-text-block__right border-lg-start ps-lg-5">
                 <?php if (!empty($subheading) && !empty($subheading_tag)) : ?>
-                <<?= esc_html($subheading_tag); ?> class="pm-text-block__subheading mb-2">
+                <<?= esc_html($subheading_tag); ?> class="pm-text-block__subheading">
                 <?= esc_html($subheading); ?>
             </<?= esc_html($subheading_tag); ?>>
             <?php endif; ?>
@@ -72,71 +72,3 @@ $row_direction_class = ($variant === 'stacked') ? ' flex-column' : '';
     </div>
     </div>
 </section>
-
-
-<style>
-    /* Base */
-    .pm-text-block {
-        padding: 48px 0;
-        margin: 104px 0;
-    }
-
-    .pm-text-block__heading {
-        margin: 0;
-        font-weight: 400;
-        letter-spacing: 0.5px;
-    }
-
-    .pm-text-block__subheading {
-        margin: 0 0 12px 0;
-        font-weight: 400;
-        letter-spacing: 0.5px;
-    }
-
-    .pm-text-block__text p:last-child {
-        margin-bottom: 0;
-    }
-
-    .pm-text-block__cta {
-        margin-top: 16px;
-    }
-
-    /* =========================
-       STACKED (Vertical)
-       ========================= */
-    .pm-text-block--stacked .pm-text-block__heading {
-        margin-bottom: 12px;
-    }
-
-    .pm-text-block--stacked .pm-text-block__subheading {
-        margin-bottom: 12px;
-    }
-
-    .pm-text-block--stacked .pm-text-block__right {
-        border-left: 0;
-        padding-left: 0;
-    }
-
-    /* En stacked, si quieres que el contenido no quede tan ancho */
-    @media (min-width: 992px) {
-        .pm-text-block--columns .pm-text-block__heading {
-            color: var(--pm-secondary-900);
-            font-family: var(--pm-font-secondary);
-            font-size: 32px;
-            font-style: italic;
-            font-weight: 500;
-            line-height: normal;
-            letter-spacing: 2px;
-        }
-
-        .pm-text-block--columns .pm-text-block__inner {
-            border-right: 1px solid rgba(0, 0, 0, 0.2);
-        }
-    }
-
-    .pm-text-block--columns .pm-text-block__right {
-        border-left: 0;
-        padding-left: 0;
-    }
-
-</style>
