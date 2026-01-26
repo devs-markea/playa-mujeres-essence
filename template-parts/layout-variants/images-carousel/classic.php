@@ -3,12 +3,26 @@ $title           = get_sub_field('title');
 $description     = get_sub_field('description');
 $button_settings = get_sub_field('button_settings');
 $images          = get_sub_field('images');
+
+
+$overlay = get_sub_field('overlay'); // group array
+
+$enable_overlay  = !empty($overlay['enable_images_overlay']);
+$overlay_opacity = isset($overlay['images_overlay_opacity']) ? $overlay['images_overlay_opacity'] : 0;
+
+// normalización 0..75
+$overlay_opacity = is_numeric($overlay_opacity) ? (float) $overlay_opacity : 0.0;
+if ($overlay_opacity < 0) { $overlay_opacity = 0; }
+if ($overlay_opacity > 75) { $overlay_opacity = 75; }
+
+$overlay_alpha = $enable_overlay ? ($overlay_opacity / 100.0) : 0.0;
+
 ?>
 
 <section class="images-carousel images-carousel--classic">
     <div class="images-carousel__header px-4 px-md-0">
         <div class="row g-0">
-            <div class="col-12 col-md-4 mx-auto">
+            <div class="col-12 col-md-8 mx-auto">
                 <?php if ($title): ?>
                     <h2 class="images-carousel__title"><?php echo esc_html($title); ?></h2>
                 <?php endif; ?>
@@ -57,6 +71,13 @@ $images          = get_sub_field('images');
 
                             <figure class="images-carousel__image"
                                     style="background-image:url('<?php echo esc_url($img_url); ?>')">
+
+                                <?php if ($enable_overlay && $overlay_alpha > 0) : ?>
+                                    <div class="images-carousel__overlay"
+                                         style="background: linear-gradient(0deg, rgba(0,0,0,<?php echo esc_attr($overlay_alpha); ?>) 0%, rgba(0,0,0,0) 65%);"></div>
+                                <?php endif; ?>
+
+
                                 <?php if (!empty($item['caption'])): ?>
                                     <div class="images-carousel__caption">
                                         <?php
@@ -91,163 +112,3 @@ $images          = get_sub_field('images');
         </div>
     <?php endif; ?>
 </section>
-
-<style>
-
-    .images-carousel.images-carousel--classic {
-        padding-top: 20px;
-        padding-bottom: 80px;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__header{
-        text-align: center;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__description p {
-        text-align: start;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__title {
-        font-size: 20px;
-        font-family: var(--pm-font-secondary);
-        font-style: italic;
-        font-weight: 500;
-        letter-spacing: 2px;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__description p{
-        font-size: 16px;
-        font-weight: 300;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__media {
-        margin-top: 3rem;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__image {
-        position: relative;
-        height: 360px;
-        background-size: cover;
-        background-position: center;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__caption {
-        position: absolute;
-        bottom: 1.5rem;
-        left: 1.5rem;
-        color: #fff;
-        font-size: 16px;
-        padding: 2px 1rem;
-        border-left: 1px solid white;
-        line-height: 20px;
-        font-weight: 500;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__caption-title-variant{
-        font-family: var(--pm-font-secondary);
-        font-style: italic;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__caption-text{
-        margin: 0;
-    }
-
-    /* Paginación (scope al variant) */
-    .images-carousel.images-carousel--classic .images-carousel__pagination { display: block; }
-
-    .images-carousel.images-carousel--classic .images-carousel__pagination .swiper-pagination-bullet {
-        width: 16px;
-        height: 8px;
-        background: #A9AAAA;
-        opacity: 0.6;
-        border-radius: 12px;
-        margin: 0 !important;
-        transition: all 0.3s ease;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__pagination .swiper-pagination-bullet-active {
-        width: 32px;
-        height: 8px;
-        background: #CFAB76;
-        opacity: 1;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__pagination .swiper-pagination-bullet,
-    .images-carousel.images-carousel--classic .images-carousel__pagination .swiper-pagination-bullet-active {
-        transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-    }
-
-    .images-carousel.images-carousel--classic .images-carousel__pagination {
-        position: static;
-        margin-top: 12px;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    @media (min-width: 768px) {
-        .images-carousel.images-carousel--classic {
-            padding-top: 120px;
-            padding-bottom: 80px;
-        }
-
-        .images-carousel.images-carousel--classic .images-carousel__title {
-            font-size: 32px;
-        }
-
-        .images-carousel.images-carousel--classic .images-carousel__caption-title-variant {
-            font-size: 18px;
-        }
-
-        .images-carousel.images-carousel--classic .images-carousel__description p {
-            text-align: center;
-        }
-
-        .images-carousel.images-carousel--classic .images-carousel__pagination {
-            display: flex !important;
-        }
-
-        .images-carousel.images-carousel--classic .images-carousel__image { height: 580px; }
-    }
-</style>
-
-<script>
-    (function () {
-        function initImagesCarouselSwipers() {
-            if (typeof window.Swiper === 'undefined') return;
-
-            let els = document.querySelectorAll('.images-carousel__media[data-images-carousel-variant="classic"]');
-
-            if (!els || !els.length) return;
-
-            els.forEach(function (el) {
-                if (el.dataset.swiperInitialized === '1') return;
-                el.dataset.swiperInitialized = '1';
-
-                new Swiper(el, {
-                    slidesPerView: 1.25,
-                    spaceBetween: 16,
-                    speed: 600,
-                    pagination: {
-                        el: el.querySelector('.images-carousel__pagination'),
-                        clickable: true
-                    },
-                    breakpoints: {
-                        768: {
-                            slidesPerView: 3,
-                            spaceBetween: 16
-                        },
-                        992: {
-                            slidesPerView: 3,
-                            spaceBetween: 16
-                        }
-                    }
-                });
-            });
-        }
-
-        window.addEventListener('load', initImagesCarouselSwipers);
-    })();
-</script>

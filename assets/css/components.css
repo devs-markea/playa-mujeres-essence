@@ -1589,3 +1589,267 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 /* ==========================================================================
    END HOTELS PARALLAX COMPONENTS
    ========================================================================== */
+
+/* ==========================================================================
+   10. Images Carousel — Classic
+   ========================================================================== */
+
+/* =========================
+   MOBILE FIRST (default)
+   ========================= */
+.images-carousel.images-carousel--classic {
+    padding-top: 20px;
+    padding-bottom: 80px;
+}
+
+.images-carousel.images-carousel--classic .images-carousel__header {
+    text-align: center;
+}
+
+.images-carousel.images-carousel--classic .images-carousel__title {
+    font-family: var(--pm-font-secondary);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+
+.images-carousel.images-carousel--classic .images-carousel__description p {
+    text-align: start;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.images-carousel.images-carousel--classic .images-carousel__media {
+    margin-top: 3rem;
+}
+
+/* Slides */
+.images-carousel.images-carousel--classic .images-carousel__image {
+    position: relative;
+    height: 360px;
+    background-size: cover;
+    background-position: center;
+}
+
+.images-carousel.images-carousel--classic .images-carousel__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* Caption */
+.images-carousel.images-carousel--classic .images-carousel__caption {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 1;
+
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+
+    padding: 2px 1rem;
+    border-left: 2px solid #fff;
+}
+
+.images-carousel.images-carousel--classic
+.images-carousel__caption-title-variant {
+    font-family: var(--pm-font-secondary);
+    font-style: italic;
+}
+
+.images-carousel.images-carousel--classic
+.images-carousel__caption-text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+/* Pagination (variant scoped) */
+.images-carousel.images-carousel--classic .images-carousel__pagination {
+    position: static;
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.images-carousel.images-carousel--classic
+.images-carousel__pagination .swiper-pagination-bullet {
+    width: 16px;
+    height: 8px;
+    background: #A9AAAA;
+    opacity: 0.6;
+    border-radius: 12px;
+    margin: 0 !important;
+    transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.images-carousel.images-carousel--classic
+.images-carousel__pagination .swiper-pagination-bullet-active {
+    width: 32px;
+    height: 8px;
+    background: #CFAB76;
+    opacity: 1;
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* =========================
+   DESKTOP (>= 768px)
+   ========================= */
+@media (min-width: 768px) {
+    .images-carousel.images-carousel--classic {
+        padding-top: 120px;
+        padding-bottom: 80px;
+    }
+
+    .images-carousel.images-carousel--classic .images-carousel__title {
+        font-size: 32px;
+    }
+
+    .images-carousel.images-carousel--classic
+    .images-carousel__description p {
+        text-align: center;
+    }
+
+    .images-carousel.images-carousel--classic
+    .images-carousel__caption-title-variant {
+        font-size: 18px;
+    }
+
+    .images-carousel.images-carousel--classic
+    .images-carousel__image {
+        height: 580px;
+    }
+}
+
+/* ==========================================================================
+   END IMAGES CAROUSEL — CLASSIC COMPONENTS
+   ========================================================================== */
+
+/* ==========================================================================
+   11. Images Carousel — Gallery Slider
+   ========================================================================== */
+
+/* =========================
+   MOBILE FIRST (default)
+   ========================= */
+.images-carousel.images-carousel--gallery-slider {
+    padding-top: 60px;
+    padding-bottom: 80px;
+}
+
+.images-carousel.images-carousel--gallery-slider .images-carousel__header {
+    text-align: center;
+}
+
+.images-carousel.images-carousel--gallery-slider .images-carousel__title {
+    font-family: var(--pm-font-secondary);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+
+.images-carousel.images-carousel--gallery-slider .images-carousel__description {
+    font-size: 16px;
+    font-weight: 300;
+    text-align: center;
+}
+
+.images-carousel.images-carousel--gallery-slider .images-carousel__media {
+    margin-top: 3rem;
+}
+
+/* Slides */
+.images-carousel.images-carousel--gallery-slider .images-carousel__image {
+    position: relative;
+    height: 360px;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Caption */
+.images-carousel.images-carousel--gallery-slider .images-carousel__caption {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+
+    color: #fff;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 20px;
+
+    padding: 2px 1rem;
+    border-left: 1px solid #fff;
+}
+
+.images-carousel.images-carousel--gallery-slider
+.images-carousel__caption-title {
+    font-family: var(--pm-font-secondary);
+    font-size: 18px;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.images-carousel.images-carousel--gallery-slider
+.images-carousel__caption-text {
+    margin: 0;
+}
+
+/* Pagination (variant scoped) */
+.images-carousel.images-carousel--gallery-slider .images-carousel__pagination {
+    position: static;
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-direction: row-reverse;
+}
+
+.images-carousel.images-carousel--gallery-slider
+.images-carousel__pagination .swiper-pagination-bullet {
+    width: 16px;
+    height: 8px;
+    background: #A9AAAA;
+    opacity: 0.6;
+    border-radius: 12px;
+    margin: 0 !important;
+    transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.images-carousel.images-carousel--gallery-slider
+.images-carousel__pagination .swiper-pagination-bullet-active {
+    width: 32px;
+    height: 8px;
+    background: #CFAB76;
+    opacity: 1;
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* =========================
+   DESKTOP (>= 768px)
+   ========================= */
+@media (min-width: 768px) {
+    .images-carousel.images-carousel--gallery-slider {
+        padding-top: 120px;
+        padding-bottom: 80px;
+    }
+
+    .images-carousel.images-carousel--gallery-slider .images-carousel__title {
+        font-size: 32px;
+    }
+
+    .images-carousel.images-carousel--gallery-slider
+    .images-carousel__image {
+        height: 580px;
+    }
+}
+
+/* ==========================================================================
+   END IMAGES CAROUSEL — GALLERY SLIDER COMPONENTS
+   ========================================================================== */

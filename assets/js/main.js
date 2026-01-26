@@ -862,12 +862,66 @@ window.App = window.App || {};
         }, { passive: true });
     }
 
+    function initImagesCarouselClassicSwiper() {
+        if (typeof window.Swiper === 'undefined') return;
+
+        let els = document.querySelectorAll('.images-carousel__media[data-images-carousel-variant="classic"]');
+
+        if (!els || !els.length) return;
+
+        els.forEach(function (el) {
+            if (el.dataset.swiperInitialized === '1') return;
+            el.dataset.swiperInitialized = '1';
+
+            new Swiper(el, {
+                slidesPerView: 1.25,
+                spaceBetween: 16,
+                speed: 600,
+                pagination: {
+                    el: el.querySelector('.images-carousel__pagination'),
+                    clickable: true
+                },
+                breakpoints: {
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 16
+                    },
+                    992: {
+                        slidesPerView: 3,
+                        spaceBetween: 16
+                    }
+                }
+            });
+        });
+    }
+
+    function initImagesCarouselGallerySwipers() {
+        if (typeof window.Swiper === 'undefined') return;
+
+        let els = document.querySelectorAll('.images-carousel__media[data-images-carousel-variant="gallery-slider"]');
+
+        if (!els || !els.length) return;
+
+        els.forEach(function (el) {
+            if (el.dataset.swiperInitialized === '1') return;
+            el.dataset.swiperInitialized = '1';
+            let slideCount = el.querySelectorAll('.swiper-slide').length;
+            let lastIndex = slideCount > 0 ? (slideCount - 1) : 0;
 
 
-
-
-
-
+            new Swiper(el, {
+                initialSlide: lastIndex,
+                centeredSlides: true,
+                slidesPerView: 1.25,
+                spaceBetween: 16,
+                speed: 600,
+                pagination: {
+                    el: el.querySelector('.images-carousel__pagination'),
+                    clickable: true
+                }
+            });
+        });
+    }
 
     // API YouTube
     App.initYouTubePlayer = function () {
@@ -904,6 +958,8 @@ window.App = window.App || {};
         initScrollHandler();
         initHotelsParallax();
         initExperiencesTabsSwiper();
+        initImagesCarouselClassicSwiper();
+        initImagesCarouselGallerySwipers();
     };
 
 })(window.App);
