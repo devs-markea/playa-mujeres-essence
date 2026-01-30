@@ -33,6 +33,7 @@ $pm_essence = (object) array(
 
 require PM_ESSENCE_TEMPLATE_DIR . '/inc/enqueue.php';
 require PM_ESSENCE_TEMPLATE_DIR . '/inc/helpers.php';
+require PM_ESSENCE_TEMPLATE_DIR . '/inc/ajax-handler.php';
 require PM_ESSENCE_TEMPLATE_DIR . '/inc/class-wp-bootstrap-navwalker.php';
 
 require PM_ESSENCE_TEMPLATE_DIR . '/inc/template-hooks.php';

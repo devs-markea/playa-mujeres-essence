@@ -923,6 +923,104 @@ window.App = window.App || {};
         });
     }
 
+    //Funciones de Adriel
+    function initRecaptchaV3() {
+        if (typeof grecaptcha === 'undefined') return;
+
+        const forms = document.querySelectorAll('.newsletter-subscribe-banner__form');
+        if (!forms || !forms.length) return;
+
+        forms.forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                grecaptcha.ready(function () {
+                    grecaptcha.execute('', { action: 'newsletter_submit' })
+                        .then(function (token) {
+                            let input = form.querySelector('input[name="recaptcha_token"]');
+                            if (!input) {
+                                input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = 'recaptcha_token';
+                                form.appendChild(input);
+                            }
+                            input.value = token;
+                            
+                            sendFormAjax(form, token);
+                        })
+                        .catch(function(error) {
+                            console.error('reCAPTCHA error:', error);
+                            alert('Security verification failed. Please reload the page.');
+                        });
+                });
+            });
+        });
+    }
+
+    //funcion para initRecaptchaV3
+    function sendFormAjax(form, token) {
+        const emailInput = form.querySelector('input[type="email"]');
+        if (!emailInput) {
+            alert('Email field not found.');
+            return;
+        }
+        
+        // Validar email básico
+        const email = emailInput.value;
+        if (!email || !email.includes('@')) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+
+        // Mostrar loader opcional
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn ? submitBtn.innerHTML : '';
+        if (submitBtn) {
+            submitBtn.innerHTML = 'Sending...';
+            submitBtn.disabled = true;
+        }
+
+        const data = new URLSearchParams();
+        data.append('action', 'newsletter_submit');
+        data.append('email', email);
+        data.append('recaptcha_token', token);
+
+        fetch('/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: data.toString()
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network error');
+            return res.json();
+        })
+        .then(res => {
+            console.log('AJAX response:', res);
+            if (res.success) {
+                // Mensaje según el status (opcional)
+                const message = res.data.response || '¡Operation completed successfully.!';
+                alert(message);
+                
+                // Resetear formulario
+                form.reset();
+                
+            } else {
+                alert(res.data?.response || 'There was an error processing your subscription.');
+            }
+        })
+        .catch(err => {
+            console.error('AJAX error:', err);
+            alert('Connection error. Please try again.');
+        })
+        .finally(() => {
+            // Restaurar botón
+            if (submitBtn) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
     // API YouTube
     App.initYouTubePlayer = function () {
         const heroIframe = document.querySelector('.video-hero__video');
@@ -948,6 +1046,7 @@ window.App = window.App || {};
     App.init = function () {
         cacheElements();
         initPrimaryShowcaseHeroDropdown();
+        initRecaptchaV3();
         if (!header) return;
         initToTopButton();
         initLangSwitcher();

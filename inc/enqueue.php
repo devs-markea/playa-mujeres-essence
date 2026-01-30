@@ -65,6 +65,8 @@ function pm_enqueue_assets() {
     wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', [], null);
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
 
+    wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js?render=6LeGNlgsAAAAAHc_b3oI50c6z0qJf5WNrNOrpY3_', [], null, true);
+
     /* ---------------------------------
      *  SPLIDE
      * --------------------------------- */
