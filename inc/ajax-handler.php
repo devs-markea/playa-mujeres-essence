@@ -6,7 +6,11 @@ Plugin Name: Newsletter Recaptcha + Mailchimp
 if ( ! function_exists( 'handle_newsletter_submit' ) ) {
 
     function handle_newsletter_submit() {
-        
+
+        $recaptcha = defined('SECRET_API_RECAPTCHA') ? SECRET_API_RECAPTCHA : '';
+        $mailchimp = defined('KEY_API_MAILCHIMP') ? KEY_API_MAILCHIMP : '';
+
+
         $email = sanitize_email($_POST['email']);
         $token = $_POST['recaptcha_token'];
 
@@ -21,7 +25,7 @@ if ( ! function_exists( 'handle_newsletter_submit' ) ) {
         // 1. Verificar reCAPTCHA
         $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
             'body' => [
-                'secret' => '',
+                'secret' => $recaptcha,
                 'response' => $token
             ]
         ]);
@@ -36,8 +40,8 @@ if ( ! function_exists( 'handle_newsletter_submit' ) ) {
         }
 
         // 2. Enviar a Mailchimp
-        $api_key = '';
-        $list_id = '';
+        $api_key = $mailchimp;
+        $list_id = 'bed36c7058';
         $dc = substr($api_key, strpos($api_key, '-') + 1);
         
         // Crear hash del email (requerido para PUT)

@@ -935,7 +935,7 @@ window.App = window.App || {};
                 e.preventDefault();
 
                 grecaptcha.ready(function () {
-                    grecaptcha.execute('', { action: 'newsletter_submit' })
+                    grecaptcha.execute('6LeGNlgsAAAAAHc_b3oI50c6z0qJf5WNrNOrpY3_', { action: 'newsletter_submit' })
                         .then(function (token) {
                             let input = form.querySelector('input[name="recaptcha_token"]');
                             if (!input) {
