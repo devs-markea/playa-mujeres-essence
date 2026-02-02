@@ -1,4 +1,4 @@
 <?php
 
 ?>
-<h1>Prueba componente Residences</h1>
+<h1>Hola Mundo</h1>
