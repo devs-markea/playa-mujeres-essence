@@ -28,6 +28,15 @@ if ($layout_height === '' || ! in_array($layout_height, $allowed_heights, true))
 $classic_group = get_sub_field('classic'); // array
 $essence_group = get_sub_field('essence'); // array
 
+// Heading tag (none => null)
+$heading               = get_sub_field('heading');
+$heading_level         = get_sub_field('heading_level'); // none|h1..h6
+$description           = get_sub_field('description');
+
+$heading_tag = pm_essence_heading_tag_or_null($heading_level, 'h1');
+$hero_alt    = $heading ? $heading : get_the_title();
+
+
 if (! function_exists('pm_page_cover_image_id_from_group')) {
     function pm_page_cover_image_id_from_group($group, $key) {
         if (! is_array($group) || empty($group[$key]) || ! is_array($group[$key]) || empty($group[$key]['ID'])) {

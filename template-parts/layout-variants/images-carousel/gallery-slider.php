@@ -42,10 +42,21 @@ $images          = get_sub_field('images');
                         continue;
                     }
 
+                    // Usar tamaño "medium" de WordPress a partir del ID del adjunto (ACF).
+                    $img_id  = 0;
+                    if (!empty($img['ID'])) {
+                        $img_id = (int) $img['ID'];
+                    } elseif (!empty($img['id'])) {
+                        $img_id = (int) $img['id'];
+                    }
+
                     $img_url = '';
-                    if (!empty($img['sizes']) && is_array($img['sizes']) && !empty($img['sizes']['large'])) {
-                        $img_url = $img['sizes']['large'];
-                    } elseif (!empty($img['url'])) {
+                    if ($img_id) {
+                        $img_url = wp_get_attachment_image_url($img_id, 'large');
+                    }
+
+                    // Fallback si no hay ID o no existe ese tamaño por alguna razón.
+                    if (empty($img_url) && !empty($img['url'])) {
                         $img_url = $img['url'];
                     }
                     ?>

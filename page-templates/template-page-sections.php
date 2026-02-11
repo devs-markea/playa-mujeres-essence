@@ -11,11 +11,6 @@ if ( have_posts() ) :
         ?>
 
         <main id="primary" class="site-main">
-            <?php
-            if ( is_page( 'residences' ) ) {
-                get_template_part( 'template-parts/sections/residences' );
-            }
-            ?>
 
             <?php
             // Recorremos las secciones definidas en el Flexible Content "sections".

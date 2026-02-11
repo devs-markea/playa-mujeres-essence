@@ -20,58 +20,136 @@ $classes = array(
 );
 ?>
 
-<section class="<?php echo esc_attr(implode(' ', $classes)); ?>">
-    <div class="page-cover__media" aria-hidden="true">
-        <?php if ($primary_image_id) : ?>
-            <div class="page-cover__primary">
-                <?php
-                echo wp_get_attachment_image(
-                    $primary_image_id,
-                    'full',
-                    false,
-                    array(
-                        'class'   => 'page-cover__image page-cover__image--primary',
-                        'alt'     => esc_attr($hero_alt),
-                        'loading' => 'lazy',
-                    )
-                );
-                ?>
-            </div>
-        <?php endif; ?>
+<section class="<?php echo esc_attr(implode(' ', $classes)); ?>"
+         data-force-header-theme="menu">
+    <div class="page-cover__essence">
+        <div class="container">
+            <div class="page-cover__essence-grid row g-5">
+                <div class="col-12 col-lg-5">
+                    <div class="page-cover__essence-inner-left">
+                        <div class="page-cover__essence-heading row">
+                            <div class="col-12 col-lg-8 mx-auto">
+                                <?php if (! empty($heading_tag) && ! empty($heading)) : ?>
+                                <<?php echo tag_escape($heading_tag); ?> class="page-cover__heading">
+                                <?php echo esc_html($heading); ?>
+                            </<?php echo tag_escape($heading_tag); ?>>
+                            <?php elseif (! empty($heading)) : ?>
+                                <div class="page-cover__heading page-cover__heading--text-only">
+                                    <?php echo esc_html($heading); ?>
+                                </div>
+                            <?php endif; ?>
+                            </div>
+                        </div>
 
-        <?php if ($secondary_image_id) : ?>
-            <div class="page-cover__secondary">
-                <?php
-                echo wp_get_attachment_image(
-                    $secondary_image_id,
-                    'full',
-                    false,
-                    array(
-                        'class'   => 'page-cover__image page-cover__image--secondary',
-                        'alt'     => esc_attr($hero_alt),
-                        'loading' => 'lazy',
-                    )
-                );
-                ?>
+                        <div class="page-cover__essence-media-b" aria-hidden="true">
+                        <?php if ($secondary_image_id) : ?>
+                            <?php
+                            echo wp_get_attachment_image(
+                                    $secondary_image_id,
+                                    'large',
+                                    false,
+                                    array(
+                                            'class'   => 'page-cover__image page-cover__image--secondary',
+                                            'alt'     => esc_attr($hero_alt),
+                                            'loading' => 'lazy',
+                                    )
+                            );
+                            ?>
+                        <?php endif; ?>
+                    </div>
+                    </div>
+                </div>
+            <div class="col-12 col-lg-7">
+                <div class="page-cover__essence-inner-right">
+                    <div class="page-cover__essence-media-a" aria-hidden="true">
+                        <?php if ($primary_image_id) : ?>
+                            <?php
+                            echo wp_get_attachment_image(
+                                    $primary_image_id,
+                                    'large',
+                                    false,
+                                    array(
+                                            'class'   => 'page-cover__image page-cover__image--primary',
+                                            'alt'     => esc_attr($hero_alt),
+                                            'loading' => 'lazy',
+                                    )
+                            );
+                            ?>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="page-cover__essence-description row">
+                        <div class="col-12 col-lg-8 mx-auto">
+                            <?php if (! empty($description)) : ?>
+                                <div class="page-cover__description">
+                                    <?=  wp_kses_post($description); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
             </div>
-        <?php endif; ?>
+        </div>
+        </div>
     </div>
 
-    <div class="page-cover__content">
-        <?php if (! empty($heading_tag) && ! empty($heading)) : ?>
-        <<?php echo tag_escape($heading_tag); ?> class="page-cover__heading">
-        <?php echo esc_html($heading); ?>
-    </<?php echo tag_escape($heading_tag); ?>>
-    <?php elseif (! empty($heading)) : ?>
-        <div class="page-cover__heading page-cover__heading--text-only">
-            <?php echo esc_html($heading); ?>
-        </div>
-    <?php endif; ?>
+    <style>
+        /* Essence layout (ideal: mover a tu CSS del theme) */
+        .page-cover--variant-essence .page-cover__essence{
+            padding: 3rem 0;
+        }
+        .page-cover__essence-inner-left,
+        .page-cover__essence-inner-right{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
 
-    <?php if (! empty($description)) : ?>
-        <div class="page-cover__description">
-            <?php echo esc_html($description); ?>
-        </div>
-    <?php endif; ?>
-    </div>
+        .page-cover__essence-inner-left .page-cover__essence-heading,
+        .page-cover__essence-inner-right .page-cover__essence-description{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            margin-top: 5rem;
+            margin-bottom: 5rem;
+        }
+
+
+        .page-cover--variant-essence .page-cover__image{
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        @media (min-width: 992px){
+            .page-cover__heading,
+            .page-cover__heading--text-only{
+                text-align: center;
+            }
+            .page-cover__heading {
+                font-family: var(--pm-font-secondary);
+                font-size: 40px;
+                font-style: italic;
+                font-weight: 500;
+                line-height: normal;
+                letter-spacing: 2px;
+                color: var(--pm-secondary-900);
+            }
+
+            .page-cover__essence-media-a {
+                max-height: 420px;
+            }
+            .page-cover__essence-media-b {
+                max-height: 326px;
+            }
+
+            .page-cover--variant-essence.page-cover--height-compact .page-cover__essence{ padding: 2.25rem 0; }
+            .page-cover--variant-essence.page-cover--height-tall .page-cover__essence{ padding: 8.25rem 0; }
+            .page-cover--variant-essence.page-cover--height-full_height .page-cover__essence{ padding: 5.5rem 0; }
+        }
+    </style>
 </section>

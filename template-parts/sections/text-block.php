@@ -10,6 +10,10 @@ $text             = get_sub_field('text');
 $button_link      = get_sub_field('button_link');
 $layout_variant   = get_sub_field('layout_variant');
 
+// NEW: Decorative image (below title)
+$enable_decorative_image = (bool) get_sub_field('enable_decorative_image');
+$decorative_image        = get_sub_field('decorative_image'); // puede ser array (con ID) o ID según config ACF
+
 $heading_tag    = pm_essence_heading_tag_or_null($heading_level, 'h2');
 $subheading_tag = pm_essence_heading_tag_or_null($subheading_level, 'h3');
 
@@ -28,47 +32,110 @@ if ($variant === '') {
     $variant = 'stacked';
 }
 
-$row_direction_class = ($variant === 'stacked') ? ' flex-column' : '';
+// Helpers de contenido para alinear correctamente cuando faltan título/descr.
+$has_heading     = (! empty($heading) && ! empty($heading_tag));
+$has_decor_image = ($enable_decorative_image && ! empty($decorative_image));
+$has_left        = ($has_heading || $has_decor_image);
 
+$has_subheading = (! empty($subheading) && ! empty($subheading_tag));
+$has_text       = (! empty($text));
+$has_button     = (! empty($btn_url) && ! empty($btn_title));
+$has_right      = ($has_subheading || $has_text || $has_button);
+
+// Soporte para ACF image como array o ID.
+$decorative_image_id = 0;
+if ($has_decor_image) {
+    if (is_array($decorative_image) && ! empty($decorative_image['ID'])) {
+        $decorative_image_id = (int) $decorative_image['ID'];
+    } elseif (is_numeric($decorative_image)) {
+        $decorative_image_id = (int) $decorative_image;
+    }
+}
+
+// Clases dependientes de variante y “excepciones” cuando falta título/descr.
+$row_direction_class = ($variant === 'stacked') ? ' flex-column' : '';
+$row_align_class     = ($variant === 'stacked') ? ' text-center' : ' text-center text-lg-start';
+
+$left_col_class  = 'col-12 col-lg-4 text-center pm-text-block__inner';
+$right_col_class = 'col-12 col-lg-8 text-center';
+
+$right_inner_class = 'pm-text-block__right';
+if ($variant === 'columns' && $has_left && $has_right) {
+    $right_inner_class .= ' border-lg-start ps-lg-5';
+}
+
+if (! $has_left && $has_right) {
+    $right_col_class = 'col-4 mx-auto text-center';
+}
+if ($has_left && ! $has_right) {
+    $left_col_class = 'col-4 mx-auto text-center';
+}
 ?>
 
 <section class="pm-text-block pm-text-block--<?= esc_attr(sanitize_title($variant)); ?>">
     <div class="container">
-        <div class="row align-items-center text-center g-4 g-lg-5<?= esc_attr($row_direction_class); ?>">
-            <div class="col-12 col-lg-5 pm-text-block__inner">
-                <?php if (!empty($heading) && !empty($heading_tag)) : ?>
-                <<?= esc_html($heading_tag); ?> class="pm-text-block__heading mb-0">
-                <?= esc_html($heading); ?>
-            </<?= esc_html($heading_tag); ?>>
-            <?php endif; ?>
-        </div>
+        <div class="row g-0">
+            <div class="col-12 col-md-10 mx-auto">
+                <div class="row align-items-center g-4 g-lg-5<?= esc_attr($row_direction_class); ?><?= esc_attr($row_align_class); ?>">
 
-        <div class="col-12 col-lg-7">
-            <div class="pm-text-block__right border-lg-start ps-lg-5">
-                <?php if (!empty($subheading) && !empty($subheading_tag)) : ?>
-                <<?= esc_html($subheading_tag); ?> class="pm-text-block__subheading">
-                <?= esc_html($subheading); ?>
-            </<?= esc_html($subheading_tag); ?>>
-            <?php endif; ?>
+                    <?php if ($has_left) : ?>
+                    <div class="<?= esc_attr($left_col_class); ?>">
+                        <?php if ($has_heading) : ?>
+                        <<?= esc_html($heading_tag); ?> class="pm-text-block__heading mb-0">
+                        <?= esc_html($heading); ?>
+                    </<?= esc_html($heading_tag); ?>>
+                <?php endif; ?>
 
-            <?php if (!empty($text)) : ?>
-                <div class="pm-text-block__text">
-                    <?= wp_kses_post($text); ?>
+                    <?php if ($decorative_image_id) : ?>
+                        <div class="pm-text-block__decorative-image mt-3" aria-hidden="true">
+                            <?php
+                            echo wp_get_attachment_image(
+                                    $decorative_image_id,
+                                    'full',
+                                    false,
+                                    array(
+                                            'class'   => 'img-fluid',
+                                            'alt'     => '',
+                                            'loading' => 'lazy',
+                                    )
+                            );
+                            ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
+
+                    <?php if ($has_right) : ?>
+                <div class="<?= esc_attr($right_col_class); ?>">
+                    <div class="<?= esc_attr($right_inner_class); ?>">
+                        <?php if ($has_subheading) : ?>
+                        <<?= esc_html($subheading_tag); ?> class="pm-text-block__subheading">
+                        <?= esc_html($subheading); ?>
+                    </<?= esc_html($subheading_tag); ?>>
+                    <?php endif; ?>
+
+                    <?php if ($has_text) : ?>
+                        <div class="pm-text-block__text">
+                            <?= wp_kses_post($text); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($has_button) : ?>
+                        <div class="pm-text-block__cta mt-3">
+                            <a class="btn btn-primary"
+                               href="<?= esc_url($btn_url); ?>"
+                                    <?= ! empty($btn_target) ? 'target="' . esc_attr($btn_target) . '"' : ''; ?>
+                                    <?= ($btn_target === '_blank') ? 'rel="noopener noreferrer"' : ''; ?>>
+                                <?= esc_html($btn_title); ?>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
             <?php endif; ?>
 
-            <?php if (!empty($btn_url) && !empty($btn_title)) : ?>
-                <div class="pm-text-block__cta mt-3">
-                    <a class="btn btn-primary"
-                       href="<?= esc_url($btn_url); ?>"
-                        <?= !empty($btn_target) ? 'target="' . esc_attr($btn_target) . '"' : ''; ?>
-                        <?= ($btn_target === '_blank') ? 'rel="noopener noreferrer"' : ''; ?>>
-                        <?= esc_html($btn_title); ?>
-                    </a>
                 </div>
-            <?php endif; ?>
+            </div>
         </div>
-    </div>
-    </div>
     </div>
 </section>

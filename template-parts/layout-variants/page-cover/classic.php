@@ -53,14 +53,11 @@ $classes = array(
         <?php endif; ?>
 
         <?php if ($enable_overlay && $overlay_alpha > 0) : ?>
-            <div
-                class="page-cover__overlay"
-                style="background-color: rgba(0,0,0,<?php echo esc_attr((string) $overlay_alpha); ?>);"
-            ></div>
+            <div class="page-cover__overlay" style="background-color: rgba(0,0,0,<?php echo esc_attr((string) $overlay_alpha); ?>);"></div>
         <?php endif; ?>
     </div>
 
-    <div class="page-cover__content">
+    <div class="page-cover__content container">
         <?php if (! empty($heading_tag) && ! empty($heading)) : ?>
         <<?php echo tag_escape($heading_tag); ?> class="page-cover__heading">
         <?php echo esc_html($heading); ?>
@@ -78,3 +75,64 @@ $classes = array(
     <?php endif; ?>
     </div>
 </section>
+<style>
+    .page-cover--variant-classic{
+        position: relative;
+        overflow: visible;
+        display: flex;
+        align-items: stretch;
+        min-height: 50vh;
+    }
+    .page-cover--variant-classic .page-cover__media{
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .page-cover--variant-classic .page-cover__media .page-cover__overlay{
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+    .page-cover--variant-classic .page-cover__media .page-cover__image{
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        object-position: top;
+    }
+    .page-cover--variant-classic .page-cover__content{
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 32px;
+        z-index: 3;
+        color: #fff;
+    }
+    .page-cover--variant-classic .page-cover__heading{
+        font-family: var(--pm-font-secondary);
+        font-size: 24px;
+        font-style: italic;
+        font-weight: 500;
+        line-height: normal;
+        letter-spacing: 2px;
+        margin-bottom: 0.5rem;
+    }
+
+    @media (min-width: 992px){
+        .page-cover--variant-classic{
+            min-height: 75vh;
+        }
+        .page-cover--variant-classic .page-cover__media .page-cover__image{
+            object-position: 36%;
+        }
+        .page-cover--variant-classic .page-cover__heading {
+            font-size: 40px;
+            margin-bottom: 1rem;
+        }
+    }
+</style>

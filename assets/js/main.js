@@ -41,7 +41,8 @@ window.App = window.App || {};
         heroVideo,
         info,
         divider,
-        overlayVideo;
+        overlayVideo,
+        forceHeaderThemeEl;
 
     // Cache de elementos
     function cacheElements() {
@@ -71,6 +72,29 @@ window.App = window.App || {};
         info                  = document.querySelector('.video-hero__information');
         divider               = document.querySelector('.divider');
         overlayVideo          = document.querySelector('.video-hero__overlay');
+
+        // ✅ Si existe, forzamos el tema "menu" del header (como cuando haces scroll)
+        forceHeaderThemeEl    = document.querySelector('[data-force-header-theme="menu"]');
+    }
+
+
+    // Decide tema según scroll y estado
+    function updateHeaderTheme() {
+        const SCROLL_THRESHOLD = 150;
+
+        // ✅ Forzado (solo cuando exista la marca, o sea Essence)
+        if (forceHeaderThemeEl) {
+            setHeaderTheme(true);
+            return;
+        }
+
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const pastHero  = scrollTop >= SCROLL_THRESHOLD;
+
+        const anyPanelOpen = state.isWhereOpen || state.isExperiencesOpen;
+
+        const useMenuTheme = pastHero || anyPanelOpen;
+        setHeaderTheme(useMenuTheme);
     }
 
     // Actualiza límite inferior del video-hero
@@ -137,6 +161,12 @@ window.App = window.App || {};
     // Decide tema según scroll y estado
     function updateHeaderTheme() {
         const SCROLL_THRESHOLD = 150;
+
+        if (forceHeaderThemeEl) {
+            setHeaderTheme(true);
+            return;
+        }
+
 
 
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
