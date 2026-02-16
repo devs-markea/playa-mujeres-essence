@@ -953,6 +953,44 @@ window.App = window.App || {};
         });
     }
 
+    function initContentCarouselClassicSwiper() {
+        if (typeof window.Swiper === 'undefined') return;
+
+        let roots = document.querySelectorAll('[data-content-carousel-swiper]');
+        if (!roots || !roots.length) return;
+
+        Array.prototype.forEach.call(roots, function (el) {
+            if (el.dataset.swiperInitialized === '1') return;
+            el.dataset.swiperInitialized = '1';
+
+            new Swiper(el, {
+                slidesPerView: 1.15,
+                spaceBetween: 16,
+                speed: 600,
+                watchOverflow: true,
+                pagination: {
+                    el: el.querySelector('.content-carousel__pagination'),
+                    clickable: true
+                },
+                breakpoints: {
+                    768: {
+                        slidesPerView: 3,
+                        spaceBetween: 24
+                    },
+                    992: {
+                        slidesPerView: 3,
+                        spaceBetween: 24
+                    }
+                }
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initContentCarouselClassicSwiper();
+    });
+
+
     //Funciones de Adriel
     function initRecaptchaV3() {
         if (typeof grecaptcha === 'undefined') return;
@@ -1089,6 +1127,7 @@ window.App = window.App || {};
         initExperiencesTabsSwiper();
         initImagesCarouselClassicSwiper();
         initImagesCarouselGallerySwipers();
+        initContentCarouselClassicSwiper();
     };
 
 })(window.App);

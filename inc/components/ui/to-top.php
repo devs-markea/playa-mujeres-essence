@@ -7,7 +7,7 @@
     /* Back to Top Button */
     .toTopButton {
         position: fixed;
-        bottom: 85px;
+        bottom: 15px;
         right: 15px;
         width: 60px;
         height: 60px;

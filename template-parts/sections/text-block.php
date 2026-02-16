@@ -56,8 +56,8 @@ if ($has_decor_image) {
 $row_direction_class = ($variant === 'stacked') ? ' flex-column' : '';
 $row_align_class     = ($variant === 'stacked') ? ' text-center' : ' text-center text-lg-start';
 
-$left_col_class  = 'col-12 col-lg-4 text-center pm-text-block__inner';
-$right_col_class = 'col-12 col-lg-8 text-center';
+$left_col_class  = 'col-12 col-lg-5 text-start text-md-center pm-text-block__inner';
+$right_col_class = 'col';
 
 $right_inner_class = 'pm-text-block__right';
 if ($variant === 'columns' && $has_left && $has_right) {
@@ -70,13 +70,19 @@ if (! $has_left && $has_right) {
 if ($has_left && ! $has_right) {
     $left_col_class = 'col-4 mx-auto text-center';
 }
+
+if ($has_decor_image && $variant === 'stacked'){
+    $text_block_class = 'text-start';
+} else {
+    $text_block_class = 'text-start text-md-center';
+}
 ?>
 
 <section class="pm-text-block pm-text-block--<?= esc_attr(sanitize_title($variant)); ?>">
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">
-                <div class="row align-items-center g-4 g-lg-5<?= esc_attr($row_direction_class); ?><?= esc_attr($row_align_class); ?>">
+                <div class="row align-items-center g-4 g-lg-1<?= esc_attr($row_direction_class); ?><?= esc_attr($row_align_class); ?>">
 
                     <?php if ($has_left) : ?>
                     <div class="<?= esc_attr($left_col_class); ?>">
@@ -87,7 +93,7 @@ if ($has_left && ! $has_right) {
                 <?php endif; ?>
 
                     <?php if ($decorative_image_id) : ?>
-                        <div class="pm-text-block__decorative-image mt-3" aria-hidden="true">
+                        <div class="pm-text-block__decorative-image" aria-hidden="true">
                             <?php
                             echo wp_get_attachment_image(
                                     $decorative_image_id,
@@ -107,7 +113,7 @@ if ($has_left && ! $has_right) {
 
                     <?php if ($has_right) : ?>
                 <div class="<?= esc_attr($right_col_class); ?>">
-                    <div class="<?= esc_attr($right_inner_class); ?>">
+                    <div class="<?= esc_attr($right_inner_class); ?> <?= esc_attr($text_block_class); ?>">
                         <?php if ($has_subheading) : ?>
                         <<?= esc_html($subheading_tag); ?> class="pm-text-block__subheading">
                         <?= esc_html($subheading); ?>

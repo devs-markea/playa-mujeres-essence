@@ -1276,6 +1276,8 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 }
 
 .pm-text-block__heading {
+    font-family: var(--pm-font-secondary);
+    font-style: italic;
     margin: 0;
     font-weight: 400;
     letter-spacing: 0.5px;
@@ -1346,10 +1348,21 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 
     .pm-text-block--columns .pm-text-block__heading {
         font-size: 32px;
+        letter-spacing: 2px;
+    }
+
+    .pm-text-block--stacked .pm-text-block__heading {
+        font-size: 32px;
+        letter-spacing: 2px;
     }
 
     .pm-text-block--columns .pm-text-block__inner {
         border-right: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    .pm-text-block__decorative-image img {
+        width: 154px;
+        height: auto;
+        object-fit: cover;
     }
 }
 
@@ -1399,6 +1412,8 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 }
 
 .two-column-layout__content-image img {
+    width: 100%;
+    height: auto;
     object-fit: cover;
 }
 
@@ -1428,6 +1443,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
         box-shadow: none;
         position: static;
         top: 0;
+        align-content: center;
     }
 
     .two-column-layout__content h2 {
@@ -1676,8 +1692,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     gap: 10px;
 }
 
-.images-carousel.images-carousel--classic
-.images-carousel__pagination .swiper-pagination-bullet {
+.images-carousel.images-carousel--classic .images-carousel__pagination .swiper-pagination-bullet {
     width: 16px;
     height: 8px;
     background: #A9AAAA;
@@ -1687,8 +1702,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.images-carousel.images-carousel--classic
-.images-carousel__pagination .swiper-pagination-bullet-active {
+.images-carousel.images-carousel--classic .images-carousel__pagination .swiper-pagination-bullet-active {
     width: 32px;
     height: 8px;
     background: #CFAB76;

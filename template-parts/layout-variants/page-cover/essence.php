@@ -113,10 +113,12 @@ $classes = array(
             align-items: center;
             justify-content: center;
             flex: 1;
-            margin-top: 5rem;
-            margin-bottom: 5rem;
+            margin-top: 4rem;
+            margin-bottom: 4rem;
         }
-
+        .pm-text-block__decorative-image{
+            display: none;
+        }
 
         .page-cover--variant-essence .page-cover__image{
             width: 100%;
@@ -129,6 +131,9 @@ $classes = array(
             .page-cover__heading,
             .page-cover__heading--text-only{
                 text-align: center;
+            }
+            .pm-text-block__decorative-image{
+                display: block;
             }
             .page-cover__heading {
                 font-family: var(--pm-font-secondary);
@@ -148,7 +153,9 @@ $classes = array(
             }
 
             .page-cover--variant-essence.page-cover--height-compact .page-cover__essence{ padding: 2.25rem 0; }
-            .page-cover--variant-essence.page-cover--height-tall .page-cover__essence{ padding: 8.25rem 0; }
+            .page-cover--variant-essence.page-cover--height-tall .page-cover__essence{
+                padding: 8.25rem 0;
+            }
             .page-cover--variant-essence.page-cover--height-full_height .page-cover__essence{ padding: 5.5rem 0; }
         }
     </style>
