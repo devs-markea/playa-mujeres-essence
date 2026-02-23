@@ -1,24 +1,31 @@
 <?php
 // Campos ACF principales
 $title       = get_sub_field( 'title' );
+$title_level    = get_sub_field('title_level');
 $description = get_sub_field( 'description' );
 $poster      = get_sub_field( 'poster' );
 
 // Repeater de highlights
 $highlights = get_sub_field( 'highlights' );
+
+$title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
+if (empty($title_tag)) {
+    $title_tag = 'h2';
+}
 ?>
 
 <section class="about-highlights">
     <div class="container">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-                <?php if ( $title ) : ?>
-                    <h2 class="about-highlights__title mb-3">
-                        <?php echo esc_html( $title ); ?>
-                    </h2>
-                <?php endif; ?>
+                <?php if ($title) : ?>
+                <<?php echo esc_html($title_tag); ?> class="about-highlights__title mb-3">
+                <?php echo esc_html($title); ?>
+            </<?php echo esc_html($title_tag); ?>>
+            <?php endif; ?>
 
-                <?php if ( $description ) : ?>
+
+            <?php if ( $description ) : ?>
                     <div class="about-highlights__description mb-4">
                         <?php echo wp_kses_post( $description ); ?>
                     </div>

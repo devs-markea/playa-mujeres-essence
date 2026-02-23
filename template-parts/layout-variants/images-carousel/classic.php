@@ -1,5 +1,6 @@
 <?php
-$title           = get_sub_field('title');
+$title        = get_sub_field('title');
+$title_level  = get_sub_field('title_level');
 $description     = get_sub_field('description');
 $button_settings = get_sub_field('button_settings');
 $images          = get_sub_field('images');
@@ -17,14 +18,21 @@ if ($overlay_opacity > 75) { $overlay_opacity = 75; }
 
 $overlay_alpha = $enable_overlay ? ($overlay_opacity / 100.0) : 0.0;
 
+$title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
+if (empty($title_tag)) {
+    $title_tag = 'h2';
+}
+
 ?>
 
 <section class="images-carousel images-carousel--classic">
     <div class="images-carousel__header px-4 px-md-0">
         <div class="row g-0">
             <div class="col-12 col-md-8 mx-auto">
-                <?php if ($title): ?>
-                    <h2 class="images-carousel__title"><?php echo esc_html($title); ?></h2>
+                <?php if ( $title ) : ?>
+                    <<?php echo esc_html($title_tag); ?> class="images-carousel__title">
+                        <?php echo esc_html( $title ); ?>
+                    </<?php echo esc_html($title_tag); ?>>
                 <?php endif; ?>
 
                 <?php if ($description): ?>
@@ -85,9 +93,17 @@ $overlay_alpha = $enable_overlay ? ($overlay_opacity / 100.0) : 0.0;
                                         $caption_class = $has_item_description
                                                 ? 'images-carousel__caption-title-variant'
                                                 : 'images-carousel__caption-title';
+                                        $caption_level = isset($item['caption_level']) ? $item['caption_level'] : '';
+                                        $caption_tag   = pm_essence_heading_tag_or_null($caption_level, 'h3');
+                                        if (empty($caption_tag)) {
+                                            $caption_tag = 'h3';
+                                        }
                                         ?>
-                                        <figcaption class="<?php echo esc_attr($caption_class); ?>">
-                                            <?php echo esc_html($item['caption']); ?>
+
+                                        <figcaption>
+                                            <<?php echo esc_html($caption_tag); ?> class="<?php echo esc_attr($caption_class); ?>">
+                                                <?php echo esc_html($item['caption']); ?>
+                                            </<?php echo esc_html($caption_tag); ?>>
                                         </figcaption>
 
                                         <?php if ($has_item_description): ?>

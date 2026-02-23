@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53">
+  <g id="Boton" transform="translate(-335 -30)">
+    <g id="Elipse_17" data-name="Elipse 17" transform="translate(335 30)" fill="none" stroke="#000" stroke-width="1">
+      <circle cx="26.5" cy="26.5" r="26.5" stroke="none"/>
+      <circle cx="26.5" cy="26.5" r="26" fill="none"/>
+    </g>
+    <text id="X" transform="translate(354 65)" font-size="23" font-family="Raleway-Regular, Raleway"><tspan x="0" y="0">X</tspan></text>
+  </g>
+</svg>

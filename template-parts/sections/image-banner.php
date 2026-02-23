@@ -15,29 +15,30 @@ $height_modifier_class = 'things-events--' . $layout_height;
 
 $image_id  = (is_array($image) && !empty($image['ID'])) ? (int) $image['ID'] : 0;
 $image_alt = (is_array($image) && !empty($image['alt'])) ? $image['alt'] : ($title ?: '');
-// ... existing code ...
+
 ?>
 
 <section class="things-events <?php echo esc_attr($height_modifier_class); ?>">
-    <div class="things-events__header">
-        <div class="row g-0 justify-content-center">
-            <div class="col-12 col-md-8 d-flex flex-column align-items-center text-center">
-                <?php if ($title): ?>
-                    <h2 class="things-events__title"><?php echo esc_html($title); ?></h2>
-                <?php endif; ?>
+    <div class="container">
+        <div class="row g-0">
+            <div class="col-12 col-md-8 mx-auto">
+                <div class="things-events__content">
+                    <?php if ($title): ?>
+                        <h2 class="things-events__title"><?php echo esc_html($title); ?></h2>
+                    <?php endif; ?>
 
-                <?php if ($description): ?>
-                    <p class="things-events__description"><?php echo esc_html($description); ?></p>
-                <?php endif; ?>
+                    <?php if ($description): ?>
+                        <p class="things-events__description"><?php echo esc_html($description); ?></p>
+                    <?php endif; ?>
 
-                <?php if (!empty($button_link)): ?>
-                    <a class="things-events__button btn btn-primary btn-border-bottom-black"
-                       href="<?php echo esc_url($button_link['url']); ?>"
-                       target="<?php echo esc_attr($button_link['target'] ?? '_self'); ?>">
-                        <?php echo esc_html($button_link['title']); ?>
-                    </a>
-                <?php endif; ?>
-
+                    <?php if (!empty($button_link)): ?>
+                        <a class="things-events__button btn btn-primary btn-border-bottom-black"
+                           href="<?php echo esc_url($button_link['url']); ?>"
+                           target="<?php echo esc_attr($button_link['target'] ?? '_self'); ?>">
+                            <?php echo esc_html($button_link['title']); ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
@@ -75,7 +76,13 @@ $image_alt = (is_array($image) && !empty($image['alt'])) ? $image['alt'] : ($tit
     }
 
     .things-events__header{
-        padding: 0 1.25rem;
+
+    }
+
+    .things-events__content {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
     }
 
     .things-events__title{
@@ -104,6 +111,7 @@ $image_alt = (is_array($image) && !empty($image['alt'])) ? $image['alt'] : ($tit
     }
 
     .things-events__media{
+        padding: 0 2rem;
         margin-top: 3rem;
     }
 
@@ -157,8 +165,16 @@ $image_alt = (is_array($image) && !empty($image['alt'])) ? $image['alt'] : ($tit
 
     /* DESKTOP */
     @media (min-width: 768px){
-        .things-events__header{
+
+        .things-events__media{
             padding: 0;
+            margin-top: 3rem;
+        }
+        .things-events__content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
         .things-events__title{

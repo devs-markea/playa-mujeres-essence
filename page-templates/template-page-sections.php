@@ -13,6 +13,13 @@ if ( have_posts() ) :
         <main id="primary" class="site-main">
 
             <?php
+            // Si quieres incluir un template de "single page" (opcional).
+            if ( is_page( 'gallery' ) ) {
+                get_template_part( 'template-parts/sections/single-hotel-example' );
+            }
+            ?>
+
+            <?php
             // Recorremos las secciones definidas en el Flexible Content "sections".
             if ( have_rows( 'sections' ) ) :
 

@@ -92,22 +92,24 @@ if ($has_decor_image && $variant === 'stacked'){
                     </<?= esc_html($heading_tag); ?>>
                 <?php endif; ?>
 
-                    <?php if ($decorative_image_id) : ?>
-                        <div class="pm-text-block__decorative-image" aria-hidden="true">
-                            <?php
-                            echo wp_get_attachment_image(
-                                    $decorative_image_id,
-                                    'full',
-                                    false,
-                                    array(
-                                            'class'   => 'img-fluid',
-                                            'alt'     => '',
-                                            'loading' => 'lazy',
-                                    )
-                            );
-                            ?>
-                        </div>
-                    <?php endif; ?>
+                    <?php if ($has_heading) : ?>
+                        <?php if ($decorative_image_id) : ?>
+                            <div class="pm-text-block__decorative-image" aria-hidden="true">
+                                <?php
+                                echo wp_get_attachment_image(
+                                        $decorative_image_id,
+                                        'full',
+                                        false,
+                                        array(
+                                                'class'   => 'img-fluid',
+                                                'alt'     => '',
+                                                'loading' => 'lazy',
+                                        )
+                                );
+                                ?>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif;?>
                 </div>
                 <?php endif; ?>
 

@@ -20,6 +20,20 @@ function pm_enqueue_assets() {
         'all'
     );
 
+    // Lightbox
+    wp_enqueue_style('pm-light-box2-css', PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/css/lightbox2.css',
+    array(),
+    $pm_essence_version,
+    'all'
+    );
+
+    // Lightbox JS
+    wp_enqueue_script('pm-light-box2-js',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/js/lightbox2.js',
+        array('jquery'),
+        $pm_essence_version,
+        true);
+
     // Bootstrap JS
     wp_enqueue_script(
         'pm-bootstrap-js',
@@ -60,7 +74,28 @@ function pm_enqueue_assets() {
             $pm_essence_version,
             'all'
         );
+
     }
+
+
+    /* ---------------------------------
+     *  PAGE-SPECIFIC: Gallery
+     * --------------------------------- */
+
+    if ( is_page( 'gallery' ) ) {
+        wp_enqueue_style(
+            'custom-gallery-style',
+            PM_ESSENCE_TEMPLATE_URI . '/assets/css/custom-gallery.css',
+            array(),
+            $pm_essence_version,
+            'all'
+        );
+        wp_enqueue_script('lightbox2-init', PM_ESSENCE_TEMPLATE_URI . '/assets/js/custom-gallery-init.js',
+            ['pm-light-box2-js', 'jquery']);
+    }
+
+    // WordPress core icons (Dashicons) en frontend
+    wp_enqueue_style('dashicons');
 
     wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', [], null);
     wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);

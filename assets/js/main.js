@@ -736,6 +736,8 @@ window.App = window.App || {};
         const contentRoot = document.querySelector('[data-experiences-swiper]');
         if (!contentRoot) return;
 
+        const sectionEl = contentRoot.closest('.experiences-tabs') || document;
+
         // Swiper contenido (imagen/copy)
         const contentSwiper = new Swiper(contentRoot, {
             slidesPerView: 1,
@@ -746,16 +748,16 @@ window.App = window.App || {};
             observeParents: true,
             resizeObserver: true,
             navigation: {
-                nextEl: document.querySelector('.experiences-content__next'),
-                prevEl: document.querySelector('.experiences-content__prev'),
+                nextEl: sectionEl.querySelector('.experiences-content__next'), // ✅ ahora sí existe
+                prevEl: sectionEl.querySelector('.experiences-content__prev'), // ✅ ahora sí existe
             },
             pagination: {
-                el: document.querySelector('.experiences-content__pagination'),
+                el: sectionEl.querySelector('.experiences-content__pagination'), // ✅ ahora sí existe
                 clickable: true
             }
         });
 
-        const sectionEl = document.querySelector('.experiences-tabs');
+
         //Function ScrollLock Experiences
         //initExperiencesDesktopScrollLock(sectionEl, contentSwiper);
 
@@ -775,7 +777,7 @@ window.App = window.App || {};
         if (tabsRoot) {
             tabsSwiper = new Swiper(tabsRoot, {
                 slidesPerView: 3,
-                slidesPerGroup: 3, // grupos de 3
+                slidesPerGroup: 1,
                 spaceBetween: 0,
                 allowTouchMove: true,
                 watchSlidesProgress: true,
@@ -810,7 +812,7 @@ window.App = window.App || {};
                 ? tabsSwiper.translate
                 : tabsSwiper.getTranslate();
 
-            // ✅ posición dentro del contenedor (no uses getBoundingClientRect aquí)
+            // Posición dentro del contenedor (no uses getBoundingClientRect aquí)
             const x = pl + slideEl.offsetLeft + tx;
 
             underline.style.transform = `translate3d(${x}px,0,0)`;
@@ -821,38 +823,66 @@ window.App = window.App || {};
             if (!desktopRail || !desktopIndicator || !desktopTabs[index]) return;
 
             const btn = desktopTabs[index];
-
-            // offset dentro del rail (no uses document)
-            const y = btn.offsetTop + 10; // el +10 es para alinear como tu diseño (ajustable)
+            const y = btn.offsetTop + 10;
             desktopIndicator.style.transform = `translateY(${y}px)`;
         }
 
 
-        function setActive(index) {
-            // Activo para TODOS los tabs (mobile + desktop)
+        requestAnimationFrame(() => setActive(0, { moveUi: true }));
+
+        // Se sincroniza “estado” apenas cambie el slide (sin mover rail/underline)
+        contentSwiper.on('slideChange', () => {
+            setActive(contentSwiper.activeIndex, { moveUi: false });
+        });
+
+        // Al terminar animación, se mueve rail/underline
+        contentSwiper.on('slideChangeTransitionEnd', () => {
+            setActive(contentSwiper.activeIndex, { moveUi: true });
+        });
+
+
+
+        function setActive(index, opts) {
+            opts = opts || {};
+            const moveUi = (opts.moveUi !== false);
+
             block.querySelectorAll('.experiences-tab').forEach((btn) => {
                 const active = Number(btn.dataset.slide) === index;
                 btn.classList.toggle('is-active', active);
                 btn.setAttribute('aria-selected', active ? 'true' : 'false');
             });
 
-            // ✅ Desktop: mover indicador vertical
             if (window.innerWidth >= 768) {
-                requestAnimationFrame(() => moveDesktopIndicatorTo(index));
-                return; // desktop no necesita mover tabsSwiper
+                if (moveUi) requestAnimationFrame(() => moveDesktopIndicatorTo(index));
+                return;
             }
 
-            // ✅ Mobile: mover tabs al grupo + underline
-            if (tabsSwiper && window.innerWidth < 768) {
-                const groupStart = Math.floor(index / 3) * 3;
-                tabsSwiper.slideTo(groupStart, 250);
+            if (!moveUi) return;
 
-                tabsSwiper.once('transitionEnd', () => moveUnderlineTo(index));
+            if (tabsSwiper && window.innerWidth < 768) {
+                const total = tabsSwiper.slides ? tabsSwiper.slides.length : 0;
+                const VISIBLE = 3;
+                const lastStart = Math.max(0, total - VISIBLE);
+
+                let desiredStart;
+                if (index <= 0) desiredStart = 0;
+                else if (index >= total - 1) desiredStart = lastStart;
+                else desiredStart = index - 1;
+
+                desiredStart = Math.max(0, Math.min(desiredStart, lastStart));
+
+                const isAlreadyThere = (tabsSwiper.activeIndex === desiredStart);
+                if (!isAlreadyThere) {
+                    tabsSwiper.slideTo(desiredStart, 250);
+                    tabsSwiper.once('transitionEnd', () => moveUnderlineTo(index));
+                }
+
                 requestAnimationFrame(() => moveUnderlineTo(index));
             } else {
                 requestAnimationFrame(() => moveUnderlineTo(index));
             }
         }
+
 
 
         /* Mantener underline pegado al tab activo mientras el wrapper se mueve */
@@ -868,28 +898,42 @@ window.App = window.App || {};
             });
         }
 
-// Click tab -> ir al slide
         block.querySelectorAll('.experiences-tab').forEach((tab) => {
             tab.addEventListener('click', () => {
                 const idx = Number(tab.dataset.slide || 0);
                 contentSwiper.slideTo(idx);
-                setActive(idx);
+                setActive(idx, { moveUi: true });
             });
         });
 
-        requestAnimationFrame(() => setActive(0));
 
-        contentSwiper.on('activeIndexChange', () => {
-            setActive(contentSwiper.activeIndex);
+        requestAnimationFrame(() => setActive(0, { moveUi: true }));
+
+        // Desktop: que el indicador arranque junto con el slide (sin “retraso”)
+        contentSwiper.on('slideChangeTransitionStart', () => {
+            if (window.innerWidth >= 768) {
+                setActive(contentSwiper.activeIndex, { moveUi: true });
+            } else {
+                setActive(contentSwiper.activeIndex, { moveUi: false });
+            }
         });
+
+        // Mobile: mover underline/rail al final (layout estable, sin brincos)
+        contentSwiper.on('slideChangeTransitionEnd', () => {
+            if (window.innerWidth < 768) {
+                setActive(contentSwiper.activeIndex, { moveUi: true });
+            }
+        });
+
 
 
         // Reajuste en resize
         window.addEventListener('resize', () => {
             if (tabsSwiper) tabsSwiper.update();
             contentSwiper.update();
-            setActive(contentSwiper.activeIndex);
+            setActive(contentSwiper.activeIndex, { moveUi: true });
         }, { passive: true });
+
     }
 
     function initImagesCarouselClassicSwiper() {
@@ -963,23 +1007,40 @@ window.App = window.App || {};
             if (el.dataset.swiperInitialized === '1') return;
             el.dataset.swiperInitialized = '1';
 
+            let variant = el.getAttribute('data-content-carousel-variant') || '';
+
+
+            // Defaults (classic)
+            let slidesMobile = 1.15;
+            let spaceMobile = 16;
+            let slidesTablet = 3;
+            let spaceTablet = 24;
+
+            if (variant === 'essence') {
+                slidesMobile = 1;
+                spaceMobile = 16;
+                slidesTablet = 3;
+                spaceTablet = 24;
+            }
+
             new Swiper(el, {
-                slidesPerView: 1.15,
-                spaceBetween: 16,
+                slidesPerView: slidesMobile,
+                spaceBetween: spaceMobile,
                 speed: 600,
-                watchOverflow: true,
+                centerInsufficientSlides: true,
+                watchOverflow: false,
                 pagination: {
                     el: el.querySelector('.content-carousel__pagination'),
                     clickable: true
                 },
                 breakpoints: {
                     768: {
-                        slidesPerView: 3,
-                        spaceBetween: 24
+                        slidesPerView: slidesTablet,
+                        spaceBetween: spaceTablet
                     },
                     992: {
-                        slidesPerView: 3,
-                        spaceBetween: 24
+                        slidesPerView: slidesTablet,
+                        spaceBetween: spaceTablet
                     }
                 }
             });
@@ -1013,7 +1074,7 @@ window.App = window.App || {};
                                 form.appendChild(input);
                             }
                             input.value = token;
-                            
+
                             sendFormAjax(form, token);
                         })
                         .catch(function(error) {
@@ -1032,7 +1093,7 @@ window.App = window.App || {};
             alert('Email field not found.');
             return;
         }
-        
+
         // Validar email básico
         const email = emailInput.value;
         if (!email || !email.includes('@')) {
@@ -1068,10 +1129,10 @@ window.App = window.App || {};
                 // Mensaje según el status (opcional)
                 const message = res.data.response || '¡Operation completed successfully.!';
                 alert(message);
-                
+
                 // Resetear formulario
                 form.reset();
-                
+
             } else {
                 alert(res.data?.response || 'There was an error processing your subscription.');
             }

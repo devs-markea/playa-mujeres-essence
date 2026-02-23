@@ -938,6 +938,16 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     background: white;
 }
 
+.content-two-image-section__heading {
+    font-family: var(--pm-font-secondary);
+    font-weight: 500;
+    font-style: italic;
+    font-size: 28px;
+    letter-spacing: 2px;
+    text-align: start;
+    color: var(--pm-secondary-900);
+}
+
 .content-two-image-section__description {
     /*max-width: 546px;*/
     font-weight: 300;
@@ -965,6 +975,9 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
         max-width: 100%;
         width: 100%;
         height: 642px;
+    }
+    .content-two-image-section__heading {
+        font-size: 32px;
     }
     .content-two-image-section__description {
         max-width: 100%;
@@ -1381,7 +1394,8 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     align-items: center;
 }
 
-.two-column-layout__content {
+
+.two-column-layout__content-variant-card {
     text-align: center;
     margin: 0 32px 42px;
     padding: 24px;
@@ -1392,7 +1406,14 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     z-index: 1;
 }
 
-.two-column-layout__content h2 {
+.two-column-layout__content-variant-inline {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+
+
+.two-column-layout__content .two-column-layout__heading {
     font-family: var(--pm-font-secondary);
     font-style: italic;
     font-size: 20px;
@@ -1446,7 +1467,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
         align-content: center;
     }
 
-    .two-column-layout__content h2 {
+    .two-column-layout__content .two-column-layout__heading {
         font-size: 32px;
     }
 
@@ -1491,7 +1512,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     margin-bottom: 32px;
 }
 
-.hotel-extraordinary-heading h2 {
+.hotel-extraordinary-heading .hotel-extraordinary-heading__title {
     font-family: var(--pm-font-secondary);
     font-weight: 500;
     font-style: italic;
@@ -1568,7 +1589,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
         padding: 128px var(--parallax-safe) 216px;
     }
 
-    .hotel-extraordinary-heading h2 {
+    .hotel-extraordinary-heading .hotel-extraordinary-heading__title {
         font-size: 32px;
         text-align: start;
     }
@@ -1618,9 +1639,9 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     padding-bottom: 80px;
 }
 
-.images-carousel.images-carousel--classic .images-carousel__header {
-    text-align: center;
-}
+/*.images-carousel.images-carousel--classic .images-carousel__header {*/
+/*    text-align: center;*/
+/*}*/
 
 .images-carousel.images-carousel--classic .images-carousel__title {
     font-family: var(--pm-font-secondary);
@@ -1670,14 +1691,13 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     border-left: 2px solid #fff;
 }
 
-.images-carousel.images-carousel--classic
-.images-carousel__caption-title-variant {
+.images-carousel.images-carousel--classic .images-carousel__caption-title-variant {
+    font-size: 16px;
     font-family: var(--pm-font-secondary);
     font-style: italic;
 }
 
-.images-carousel.images-carousel--classic
-.images-carousel__caption-text {
+.images-carousel.images-carousel--classic .images-carousel__caption-text {
     margin: 0;
     font-size: 14px;
     font-weight: 300;
@@ -1724,18 +1744,18 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
         font-size: 32px;
     }
 
-    .images-carousel.images-carousel--classic
-    .images-carousel__description p {
+    .images-carousel.images-carousel--classic .images-carousel__header {
+        text-align: center;
+    }
+    .images-carousel.images-carousel--classic .images-carousel__description p {
         text-align: center;
     }
 
-    .images-carousel.images-carousel--classic
-    .images-carousel__caption-title-variant {
+    .images-carousel.images-carousel--classic .images-carousel__caption-title-variant {
         font-size: 18px;
     }
 
-    .images-carousel.images-carousel--classic
-    .images-carousel__image {
+    .images-carousel.images-carousel--classic .images-carousel__image {
         height: 580px;
     }
 }

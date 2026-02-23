@@ -1,12 +1,26 @@
 <?php
 $image_media       = get_sub_field( 'media' );
 $title = get_sub_field('title');
+$title_level = get_sub_field('title_level');
 $description = get_sub_field('description');
 $button_settings = get_sub_field('button_settings');
 $button_title  = '';
 $button_url    = '';
 $button_target = '_self';
 $layout_direction = get_sub_field('desktop_layout_direction') ?: 'right';
+$variant = get_sub_field('mobile_content_style');
+
+$variant = is_string($variant) ? trim($variant) : '';
+if ($variant === '') {
+    $variant = 'card';
+}
+
+
+$title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
+if (empty($title_tag)) {
+    $title_tag = 'h2';
+}
+
 
 if ( $button_settings ) {
 
@@ -33,11 +47,14 @@ if ( is_array( $image_media ) && ! empty( $image_media['alt'] ) ) {
     <div class="col-12 col-lg-6 col-content">
         <div class="row g-0">
             <div class="col-12 col-lg-8 mx-auto">
-                <div class="two-column-layout__content">
+                <div class="two-column-layout__content two-column-layout__content-variant-<?php echo esc_attr($variant); ?>">
                     <?php if ( $title ) : ?>
-                        <h2 class="mb-3"><?php echo esc_html( $title ); ?></h2>
-                    <?php endif; ?>
-                    <?php if ( $description ) : ?>
+                    <<?php echo esc_html($title_tag); ?> class="mb-3 two-column-layout__heading">
+                    <?php echo esc_html( $title ); ?>
+                </<?php echo esc_html($title_tag); ?>>
+                <?php endif; ?>
+
+                <?php if ( $description ) : ?>
                         <div class="two-column-layout__content-description mb-3">
                             <?php echo wp_kses_post( $description ); ?>
                         </div>

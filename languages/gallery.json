@@ -1,0 +1,59 @@
+{
+    "en" : {
+        "title" : "Gallery",
+        "subtitle" : "Pictures of Playa Mujeres",
+        "content" : "Take a glimpse at this collection of photos that showcase some of the best spots and captured moments, courtesy of our magnificent resorts.",
+        "gallery": {
+            "title" : "Filters", 
+            "all" : "All", 
+            "search" : "Search by keyword", 
+            "notFoundTitle" : "No results found", 
+            "notFoundTryAgain" : "It seems that there are no images with the selected parameters, please try again.", 
+            "notFoundReset" : "Reset parameters" 
+        } ,
+        "download": {
+            "title": "Download our Destination Guide",
+            "content": "Share your email with us to receive our curated guide of Playa Mujeres Destination.",
+            "placeholder": "Your email address",
+            "button": "Submit"
+        }
+    },
+    "es" : {
+        "title" : "Galería",
+        "subtitle" : "Fotos de Playa Mujeres",
+        "content" : "Eche un vistazo a esta colección de algunos de los mejores lugares, momentos e imágenes de Playa Mujeres, cortesía de nuestros magníficos resorts.",
+        "gallery": {
+            "title" : "Filtros", 
+            "all" : "Todos", 
+            "search" : "Buscar por palabra clave", 
+            "notFoundTitle" : "No se han encontrado resultados", 
+            "notFoundTryAgain" : "Parece que no hay imágenes con los parámetros seleccionados, por favor inténtelo de nuevo.", 
+            "notFoundReset" : "Restablecer parámetros" 
+        } ,
+        "download": {
+            "title": "Descargue nuestra Guía de Destinos",
+            "content": "Comparta su correo electrónico con nosotros para recibir nuestra guía seleccionada del destino Playa Mujeres.",
+            "placeholder": "Correo electrónico",
+            "button": "Enviar"
+        }
+    },
+    "fr" : {
+        "title" : "GALERIE",
+        "subtitle" : "Photos de Playa Mujeres",
+        "content" : "Jetez un coup d'œil à cette collection de photos qui présentent quelques-uns des meilleurs endroits et moments capturés, grâce à nos magnifiques stations.",
+        "gallery": {
+            "title" : "Filtres", 
+            "all" : "Tous", 
+            "search" : "Rechercher par nom", 
+            "notFoundTitle" : "Aucun résultat trouvé", 
+            "notFoundTryAgain" : "Il semble qu'aucune image ne corresponde aux paramètres sélectionnés, veuillez réessayer.", 
+            "notFoundReset" : "Réinitialisation des paramètres" 
+        } ,
+        "download": {
+            "title": "Téléchargez notre guide des destinations",
+            "content": "Partagez votre e-mail avec nous pour recevoir notre guide organisé de la destination Playa Mujeres.",
+            "placeholder": "Votre adresse email",
+            "button": "S'abonner"
+        }
+    }
+}

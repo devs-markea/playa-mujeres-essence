@@ -23,12 +23,12 @@ $classes = array(
 <section class="<?php echo esc_attr(implode(' ', $classes)); ?>"
          data-force-header-theme="menu">
     <div class="page-cover__essence">
-        <div class="container">
-            <div class="page-cover__essence-grid row g-5">
+        <div class="container px-0 px-md-5">
+            <div class="page-cover__essence-grid row g-0 g-md-5">
                 <div class="col-12 col-lg-5">
                     <div class="page-cover__essence-inner-left">
                         <div class="page-cover__essence-heading row">
-                            <div class="col-12 col-lg-8 mx-auto">
+                            <div class="col-7 col-lg-8 mx-auto">
                                 <?php if (! empty($heading_tag) && ! empty($heading)) : ?>
                                 <<?php echo tag_escape($heading_tag); ?> class="page-cover__heading">
                                 <?php echo esc_html($heading); ?>
@@ -79,7 +79,7 @@ $classes = array(
                     </div>
 
                     <div class="page-cover__essence-description row">
-                        <div class="col-12 col-lg-8 mx-auto">
+                        <div class="col-11 col-lg-8 mx-auto">
                             <?php if (! empty($description)) : ?>
                                 <div class="page-cover__description">
                                     <?=  wp_kses_post($description); ?>
@@ -95,15 +95,39 @@ $classes = array(
 
     <style>
         /* Essence layout (ideal: mover a tu CSS del theme) */
-        .page-cover--variant-essence .page-cover__essence{
-            padding: 3rem 0;
+        .page-cover__heading {
+            font-family: var(--pm-font-secondary);
+            font-size: 24px;
+            font-style: italic;
+            font-weight: 500;
+            line-height: normal;
+            letter-spacing: 2px;
+            color: var(--pm-secondary-900);
         }
-        .page-cover__essence-inner-left,
+        .page-cover__heading,
+        .page-cover__heading--text-only{
+            text-align: center;
+        }
+        .page-cover--variant-essence .page-cover__essence{
+            padding: 7.5rem 0;
+            /*display: flex;*/
+            /*flex-direction: column;*/
+            /*justify-content: end;*/
+            /*height: 100vh;*/
+        }
         .page-cover__essence-inner-right{
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            flex-direction: column-reverse;
+            align-items: end;
             height: 100%;
+        }
+
+        .page-cover__essence-media-a {
+            width: 65%;
+        }
+        .page-cover__essence-media-b {
+            width: 100%;
+            height: auto;
         }
 
         .page-cover__essence-inner-left .page-cover__essence-heading,
@@ -113,14 +137,14 @@ $classes = array(
             align-items: center;
             justify-content: center;
             flex: 1;
-            margin-top: 4rem;
-            margin-bottom: 4rem;
+            margin: 2rem 0;
         }
         .pm-text-block__decorative-image{
             display: none;
         }
 
-        .page-cover--variant-essence .page-cover__image{
+        .page-cover--variant-essence .page-cover__image,
+        .page-cover--variant-essence .page-cover__image img{
             width: 100%;
             height: 100%;
             display: block;
@@ -128,35 +152,38 @@ $classes = array(
         }
 
         @media (min-width: 992px){
-            .page-cover__heading,
-            .page-cover__heading--text-only{
-                text-align: center;
-            }
+
             .pm-text-block__decorative-image{
                 display: block;
             }
             .page-cover__heading {
-                font-family: var(--pm-font-secondary);
                 font-size: 40px;
-                font-style: italic;
-                font-weight: 500;
-                line-height: normal;
-                letter-spacing: 2px;
-                color: var(--pm-secondary-900);
+            }
+            .page-cover__essence-inner-left,
+            .page-cover__essence-inner-right{
+                flex-direction: column;
+                align-items: start;
             }
 
+
             .page-cover__essence-media-a {
+                width: 100%;
                 max-height: 420px;
             }
             .page-cover__essence-media-b {
-                max-height: 326px;
+                width: 100%;
+               height: 326px;
             }
 
-            .page-cover--variant-essence.page-cover--height-compact .page-cover__essence{ padding: 2.25rem 0; }
-            .page-cover--variant-essence.page-cover--height-tall .page-cover__essence{
-                padding: 8.25rem 0;
+            .page-cover__essence-inner-left .page-cover__essence-heading,
+            .page-cover__essence-inner-right .page-cover__essence-description{
+                margin: 4rem 0;
             }
-            .page-cover--variant-essence.page-cover--height-full_height .page-cover__essence{ padding: 5.5rem 0; }
+
+            .page-cover--variant-essence .page-cover__essence{
+                padding: 8.25rem 0;
+                /*justify-content: center;*/
+            }
         }
     </style>
 </section>

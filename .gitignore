@@ -1,7 +1,6 @@
 .vscode/sftp.json
 
+.gitignore
 
 .vscode
 .idea
-.idea/workspace.xml
-.idea/deployment.xml

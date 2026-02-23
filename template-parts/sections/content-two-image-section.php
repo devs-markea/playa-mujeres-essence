@@ -1,13 +1,38 @@
 <?php
 // Campos ACF principales
-$main_image       = get_sub_field( 'main_image' );
-$decorative_image = get_sub_field( 'decorative_image' );
-$description      = get_sub_field( 'description' );
-$button_settings   = get_sub_field( 'button_settings' );
+$main_image       = get_sub_field('main_image');
+$decorative_image = get_sub_field('decorative_image');
 
-$show_button = $button_settings['show_button'] ?? false;
-$button_link = $button_settings['button_link'] ?? null;
+$title        = get_sub_field('title');
+$title_level  = get_sub_field('title_level');
+$description  = get_sub_field('description');
 
+$button_settings = get_sub_field('button_settings');
+$show_button     = is_array($button_settings) && !empty($button_settings['show_button']);
+$button_link     = (is_array($button_settings) && !empty($button_settings['button_link']) && is_array($button_settings['button_link']))
+    ? $button_settings['button_link']
+    : null;
+
+$title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
+if (empty($title_tag)) {
+    $title_tag = 'h2';
+}
+
+// Normaliza IDs + alt
+$main_image_id = (is_array($main_image) && !empty($main_image['ID'])) ? (int) $main_image['ID'] : 0;
+$main_image_alt = '';
+if (is_array($main_image) && !empty($main_image['alt'])) {
+    $main_image_alt = $main_image['alt'];
+} elseif (!empty($title)) {
+    $main_image_alt = $title;
+}
+
+$decor_image_id = (is_array($decorative_image) && !empty($decorative_image['ID'])) ? (int) $decorative_image['ID'] : 0;
+// decorativa normalmente es decorativa => alt vacío (o usa el alt del campo si sí quieres)
+$decor_image_alt = '';
+if (is_array($decorative_image) && !empty($decorative_image['alt'])) {
+    $decor_image_alt = $decorative_image['alt'];
+}
 ?>
 <section class="content-two-image-section">
     <div class="container p-0 px-md-3">
@@ -16,6 +41,11 @@ $button_link = $button_settings['button_link'] ?? null;
                 <div class="row align-items-stretch g-0 gx-md-4">
                     <div class="col-12 col-lg-6 order-2 order-lg-1">
                         <div class="content-two-image-section__content h-100">
+                            <?php if ( $title ) : ?>
+                                <<?php echo esc_html($title_tag); ?> class="mb-3 content-two-image-section__heading">
+                                    <?php echo esc_html( $title ); ?>
+                                </<?php echo esc_html($title_tag); ?>>
+                            <?php endif; ?>
                             <?php if ( $description ) : ?>
                                 <div class="content-two-image-section__description mb-3">
                                     <?php echo wp_kses_post( $description ); ?>
@@ -36,20 +66,62 @@ $button_link = $button_settings['button_link'] ?? null;
                                 </a>
                             <?php endif; ?>
                             <div class="content-two-image-section__decorative-image">
-                                <?php if ( $decorative_image ) : ?>
-                                    <img src="<?php echo esc_url( $decorative_image['url'] ); ?>"
-                                         alt="<?php echo esc_attr( $decorative_image['alt'] ); ?>"
-                                         class="img-fluid">
+                                <?php
+                                $decor_image_id = (is_array($decorative_image) && !empty($decorative_image['ID'])) ? (int) $decorative_image['ID'] : 0;
+
+                                $decor_image_alt = '';
+                                if (is_array($decorative_image) && !empty($decorative_image['alt'])) {
+                                    $decor_image_alt = $decorative_image['alt'];
+                                }
+                                ?>
+
+                                <?php if ($decor_image_id) : ?>
+                                    <?php
+                                    echo wp_get_attachment_image(
+                                            $decor_image_id,
+                                            'large',
+                                            false,
+                                            array(
+                                                    'class'    => 'img-fluid',
+                                                    'alt'      => $decor_image_alt,
+                                                    'loading'  => 'lazy',
+                                                    'decoding' => 'async',
+                                            )
+                                    );
+                                    ?>
+                                <?php elseif (is_array($decorative_image) && !empty($decorative_image['url'])) : ?>
+                                    <img src="<?php echo esc_url($decorative_image['url']); ?>"
+                                         alt="<?php echo esc_attr($decor_image_alt); ?>"
+                                         class="img-fluid"
+                                         loading="lazy"
+                                         decoding="async">
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-12 col-lg-6 order-1 order-lg-2">
                         <div class="content-two-image-section__image">
-                            <?php if ( $main_image ) : ?>
-                                <img src="<?php echo esc_url( $main_image['url'] ); ?>"
-                                     alt="<?php echo esc_attr( $main_image['alt'] ); ?>"
-                                     class="img-fluid">
+                            <?php if ($main_image_id) : ?>
+                                <?php
+                                echo wp_get_attachment_image(
+                                    $main_image_id,
+                                    'large',
+                                    false,
+                                    array(
+                                        'class'    => 'img-fluid',
+                                        'alt'      => $main_image_alt,
+                                        'loading'  => 'lazy',
+                                        'decoding' => 'async',
+                                    )
+                                );
+                                ?>
+                            <?php elseif (is_array($main_image) && !empty($main_image['url'])) : ?>
+                                <img src="<?php echo esc_url($main_image['url']); ?>"
+                                     alt="<?php echo esc_attr($main_image_alt); ?>"
+                                     class="img-fluid"
+                                     loading="lazy"
+                                     decoding="async">
                             <?php endif; ?>
                         </div>
                     </div>

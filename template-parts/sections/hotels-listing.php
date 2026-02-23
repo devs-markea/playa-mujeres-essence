@@ -1,5 +1,6 @@
 <?php
-$title = get_sub_field('title');
+$title        = get_sub_field('title');
+$title_level  = get_sub_field('title_level');
 $description = get_sub_field('description');
 $hotels = get_posts([
         'post_type'      => 'hotel',
@@ -16,6 +17,10 @@ $half  = (int) ceil($count / 2);
 
 $row1 = array_slice($hotels, 0, $half);
 $row2 = array_slice($hotels, $half);
+$title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
+if (empty($title_tag)) {
+    $title_tag = 'h2';
+}
 ?>
 
 <section class="hotels-parallax" id="hotels-parallax">
@@ -32,7 +37,12 @@ $row2 = array_slice($hotels, $half);
                         }
                         $formatted_title = implode(' ', $words);
                         ?>
-                        <h2><?= $formatted_title; ?></h2>
+
+                        <?php if ( $title ) : ?>
+                            <<?php echo esc_html($title_tag); ?> class="hotel-extraordinary-heading__title">
+                                <?= $formatted_title; ?>
+                            </<?php echo esc_html($title_tag); ?>>
+                        <?php endif; ?>
                     </div>
                     <div class="col-12 col-md-7 offset-md-1">
                         <div class="hotel-extraordinary-heading__description">

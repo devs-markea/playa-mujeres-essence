@@ -1,8 +1,16 @@
 <?php
-$title = get_sub_field('title');
+$title        = get_sub_field('title');
+$title_level  = get_sub_field('title_level');
 $description = get_sub_field('description');
-$items = get_sub_field('items'); // <- tu repeater
+
+$title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
+if (empty($title_tag)) {
+    $title_tag = 'h2';
+}
+
+$items = get_sub_field('items');
 if (!$items) return;
+
 ?>
 
 <section class="experiences-tabs">
@@ -12,7 +20,11 @@ if (!$items) return;
             <div class="col-12 col-md-5 offset-md-1">
                 <!-- Tabs -->
                 <aside class="experiences-tabs__nav" aria-label="Experiences" data-experiences-block>
-                    <h2 class="experiences-tabs__title"><?= esc_html($title ?: 'Experiences'); ?></h2>
+                    <?php if ( $title ) : ?>
+                        <<?php echo esc_html($title_tag); ?> class="experiences-tabs__title">
+                            <?php echo esc_html( $title ); ?>
+                        </<?php echo esc_html($title_tag); ?>>
+                    <?php endif; ?>
 
                     <!-- Desktop rail (vertical) -->
                     <div class="experiences-tabs__rail experiences-tabs__rail--desktop">
@@ -32,7 +44,6 @@ if (!$items) return;
                     </div>
 
                     <!-- Mobile tabs swiper (horizontal) -->
-                    <!-- Mobile tabs swiper (horizontal) -->
                     <div class="experiences-tabs__tabs-swiper experiences-tabs__rail--mobile">
                         <div class="swiper experiences-tabs-swiper" data-experiences-tabs-swiper>
                             <div class="swiper-wrapper">
@@ -43,8 +54,7 @@ if (!$items) return;
                                                 class="experiences-tab <?php echo $i === 0 ? 'is-active' : ''; ?>"
                                                 data-slide="<?php echo esc_attr($i); ?>"
                                                 aria-controls="experience-slide-<?php echo esc_attr($i); ?>"
-                                                aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"
-                                        >
+                                                aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>">
                                             <?php echo esc_html($item['name']); ?>
                                         </button>
                                     </div>
@@ -73,6 +83,14 @@ if (!$items) return;
 
                                 $btn_ok = !empty($btn['show_button']) && !empty($btn['button_link']);
                                 $link   = $btn_ok ? $btn['button_link'] : null;
+
+                                $img_id  = (is_array($img) && !empty($img['ID'])) ? (int) $img['ID'] : 0;
+                                $img_alt = '';
+                                if (is_array($img) && !empty($img['alt'])) {
+                                    $img_alt = $img['alt'];
+                                } elseif (!empty($item['name'])) {
+                                    $img_alt = $item['name'];
+                                }
                                 ?>
                                 <article
                                         class="swiper-slide experience-slide"
@@ -80,11 +98,25 @@ if (!$items) return;
                                         data-slide-index="<?php echo esc_attr($i); ?>"
                                 >
                                     <div class="experience-slide__media">
-                                        <?php if (!empty($img['url'])): ?>
+                                        <?php if ($img_id) : ?>
+                                            <?php
+                                            echo wp_get_attachment_image(
+                                                $img_id,
+                                                'large',
+                                                false,
+                                                array(
+                                                    'alt'      => $img_alt,
+                                                    'loading'  => 'lazy',
+                                                    'decoding' => 'async',
+                                                )
+                                            );
+                                            ?>
+                                        <?php elseif (!empty($img['url'])): ?>
                                             <img
                                                     src="<?php echo esc_url($img['url']); ?>"
-                                                    alt="<?php echo esc_attr($img['alt'] ?: $item['name']); ?>"
+                                                    alt="<?php echo esc_attr($img_alt); ?>"
                                                     loading="lazy"
+                                                    decoding="async"
                                             />
                                         <?php endif; ?>
                                     </div>
@@ -221,7 +253,7 @@ if (!$items) return;
         font-size: 16px;
         font-weight: 300;
         cursor: pointer;
-        transition: opacity .2s ease;
+        transition: opacity .25s ease;
     }
 
     .experiences-tabs__rail--mobile .experiences-tab.is-active { opacity: 1; }
@@ -329,7 +361,7 @@ if (!$items) return;
         opacity: 0.6;
         border-radius: 12px;
         margin: 0 !important;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
     }
     .experiences-content__pagination .swiper-pagination-bullet-active {
         width: 32px;
@@ -337,11 +369,11 @@ if (!$items) return;
         background: #CFAB76;
         opacity: 1;
         border-radius: 12px;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
     }
     .experiences-content__pagination .swiper-pagination-bullet,
     .experiences-content__pagination .swiper-pagination-bullet-active {
-        transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        transition: all 0.25s cubic-bezier(0.77, 0, 0.175, 1);
     }
     .experiences-content__pagination {
         position: static;
@@ -414,7 +446,7 @@ if (!$items) return;
             border: 0;
             text-align: left;
             cursor: pointer;
-            transition: opacity .2s ease;
+            transition: opacity .25s ease;
         }
 
 
