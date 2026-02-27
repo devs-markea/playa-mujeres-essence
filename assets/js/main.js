@@ -62,9 +62,21 @@ window.App = window.App || {};
 
         langSwitcher          = document.querySelector('.pm-lang-switcher__current');
         navDesktop            = document.querySelectorAll('.pm-header__menu .pm-navbar .menu-item > a');
+
         logoPicture           = document.querySelector('.site-logo.logo-desktop');
-        logoImg               = logoPicture ? logoPicture.querySelector('img') : null;
-        logoSource            = logoPicture ? logoPicture.querySelector('source') : null;
+        logoImg               = null;
+        logoSource            = null;
+
+        if (logoPicture) {
+            const tag = (logoPicture.tagName || '').toLowerCase();
+
+            if (tag === 'img') {
+                logoImg = logoPicture;
+            } else {
+                logoImg = logoPicture.querySelector('img');
+                logoSource = logoPicture.querySelector('source');
+            }
+        }
 
         videoHero             = document.querySelector('.video-hero');
         playButton            = document.getElementById('play-button-hero');
@@ -73,7 +85,6 @@ window.App = window.App || {};
         divider               = document.querySelector('.divider');
         overlayVideo          = document.querySelector('.video-hero__overlay');
 
-        // ✅ Si existe, forzamos el tema "menu" del header (como cuando haces scroll)
         forceHeaderThemeEl    = document.querySelector('[data-force-header-theme="menu"]');
     }
 
@@ -109,8 +120,9 @@ window.App = window.App || {};
     function setHeaderTheme(isMenuTheme) {
         if (!logoPicture || !logoImg || !header) return;
 
-        const lightUrl = logoPicture.dataset.logoLight || logoImg.dataset.logoLight;
-        const darkUrl  = logoPicture.dataset.logoDark  || logoImg.dataset.logoDark;
+        // dataset puede estar en el wrapper o en el <img> (con la nueva función queda en el <img>)
+        const lightUrl = (logoPicture.dataset && logoPicture.dataset.logoLight) || (logoImg.dataset && logoImg.dataset.logoLight);
+        const darkUrl  = (logoPicture.dataset && logoPicture.dataset.logoDark)  || (logoImg.dataset && logoImg.dataset.logoDark);
 
         if (isMenuTheme) {
             if (darkUrl) {

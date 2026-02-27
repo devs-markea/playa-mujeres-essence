@@ -82,7 +82,7 @@
 
 
 .pm-header .navbar {
-    padding: 1rem 0;
+    padding: 1.9rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.25);
     z-index: 1;
 }
@@ -99,7 +99,8 @@
 }
 
 .pm-header__logo {
-    flex: 0 0 auto;
+    max-width: 92px;
+    height: auto;
 }
 
 .pm-header__logo .navbar-brand {
@@ -109,14 +110,15 @@
 
 .pm-header__logo .site-logo {
     display: block;
-    width: 150px;
+    width: 100%;
     height: auto;
 }
 
 .pm-header__logo img {
     display: block;
-    width: 150px;
+    width: 100%;
     height: auto;
+    object-fit: cover;
 }
 
 .pm-header__menu {
@@ -265,7 +267,7 @@
     }
 
     .pm-header .navbar {
-        padding: 2px 0;
+        padding: 0.5rem 0;
     }
 
     .pm-lang-switcher {
@@ -289,22 +291,24 @@
 
 /* 2.1 Menu Mobile
    -------------------------------------------------------------------------- */
+.pm-menu-mobile__logo {
+    max-width: 92px;
+}
+
 .pm-menu-mobile__logo a .site-logo-dark {
     display: block;
-    width: 150px;
+    width: 100%;
     height: auto;
-    max-height: 86px;
 }
 
 .pm-menu-mobile__logo a .site-logo-dark img {
     display: block;
-    width: 150px;
+    width: 100%;
     height: auto;
-    max-height: 86px;
 }
 
 .pm-menu-mobile__header{
-    padding: 16px;
+    padding: 1.9rem 1rem;
     border-bottom: 1px solid #E5E5E5;
 }
 

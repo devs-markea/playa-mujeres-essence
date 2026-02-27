@@ -108,12 +108,14 @@ $classes = array(
         .page-cover__heading--text-only{
             text-align: center;
         }
-        .page-cover--variant-essence .page-cover__essence{
-            padding: 7.5rem 0;
-            /*display: flex;*/
-            /*flex-direction: column;*/
-            /*justify-content: end;*/
-            /*height: 100vh;*/
+        .page-cover--variant-essence{
+            /*padding: 7.5rem 0;*/
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: start;
+            min-height: calc(100vh - 134px);
+            margin-top: 134px;
         }
         .page-cover__essence-inner-right{
             display: flex;
@@ -180,9 +182,14 @@ $classes = array(
                 margin: 4rem 0;
             }
 
-            .page-cover--variant-essence .page-cover__essence{
-                padding: 8.25rem 0;
+            .page-cover--variant-essence{
+                /*padding: 8.25rem 0;*/
                 /*justify-content: center;*/
+                /*align-items: center;*/
+                min-height: calc(100vh - 92px);
+                margin-top: 92px;
+                align-items: center;
+                justify-content: center;
             }
         }
     </style>

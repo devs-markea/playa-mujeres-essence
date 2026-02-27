@@ -1,5 +1,5 @@
 <?php
-$footer_logo       = get_theme_mod( 'pm_footer_logo' );
+
 $footer_menu_col_1 = (int) get_theme_mod( 'pm_footer_menu_col_1' );
 $footer_menu_col_2 = (int) get_theme_mod( 'pm_footer_menu_col_2' );
 $footer_menu_col_3 = (int) get_theme_mod( 'pm_footer_menu_col_3' );
@@ -14,12 +14,9 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
         <div class="col-12 col-lg-8 mx-auto">
             <div class="row gx-0 gy-4 gx-md-3 gy-md-3 justify-content-center">
                 <div class="col-md-3 col-12 footer-top__logo">
-                    <?php if ( $footer_logo ) : ?>
-                        <div class="footer-logo mb-3">
-                            <img src="<?php echo esc_url( $footer_logo ); ?>"
-                                 alt="<?php bloginfo( 'name' ); ?>">
-                        </div>
-                    <?php endif; ?>
+                    <div class="footer-logo mb-3">
+                        <?php echo pm_get_footer_logo('logo-footer', 'full'); ?>
+                    </div>
                 </div>
 
                 <div class="col-md-3 col-12 footer-top__find-us">
@@ -129,8 +126,12 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
         text-align: center;
     }
 
+    .footer-logo {
+        max-width: 92px;
+    }
+
     .footer-logo img {
-        max-width: 180px;
+        width: 100%;
         height: auto;
     }
 

@@ -12,7 +12,7 @@ $col_class = ($layout_width === 'full_width')
     ? 'col-12'
     : 'col-12 col-md-10';
 
-$bg_url = !empty($bg['sizes']['large'])
+$bg_url = !empty($bg['sizes']['full'])
     ? $bg['sizes']['large']
     : ($bg['url'] ?? '');
 

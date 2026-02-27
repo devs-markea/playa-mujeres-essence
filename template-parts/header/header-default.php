@@ -40,6 +40,12 @@
 <?php pm_essence_menu_experiences_desktop(); ?>
 <div class="header-overlay"></div>
 <?php pm_essence_menu_mobile(); ?>
+<?php
+$pm_filter_path = dirname(__DIR__) . '/menu/filters/gastronomy/filter-by-hotel.php';
+if (is_string($pm_filter_path) && file_exists($pm_filter_path)) {
+    require $pm_filter_path;
+}
+?>
 <style>
     .pm-header__menu-mobile {
         color: #FFF;

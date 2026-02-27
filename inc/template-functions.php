@@ -9,6 +9,10 @@ if ( ! function_exists( 'pm_get_logo' ) ) {
     /**
      * Get the logo image from theme mods.
      *
+     * Soporta:
+     * - theme_mod como ID de attachment (recomendado)
+     * - theme_mod como URL (fallback, convierte a attachment si es posible)
+     *
      * @param string $class   Extra CSS classes for the image.
      * @param string $size    Image size (for attachment-based logos).
      * @param string $variant Logo variant: desktop_light (default), desktop_dark, mobile_light, mobile_dark.
@@ -17,185 +21,291 @@ if ( ! function_exists( 'pm_get_logo' ) ) {
      */
     function pm_get_logo( $class = '', $size = 'full', $variant = 'desktop_light' ) {
 
-        // Elegimos el theme_mod según el variant.
+        static $cache = array();
+
+        $cache_key = $class . '|' . $size . '|' . $variant;
+        if ( isset( $cache[ $cache_key ] ) ) {
+            return $cache[ $cache_key ];
+        }
+
         switch ( $variant ) {
             case 'desktop_dark':
                 $mod_key = 'pm_header_logo_dark';
                 break;
-
             case 'mobile_light':
                 $mod_key = 'pm_header_logo_mobile';
                 break;
-
             case 'mobile_dark':
                 $mod_key = 'pm_header_logo_mobile_dark';
                 break;
-
             case 'desktop_light':
             default:
                 $mod_key = 'pm_header_logo';
                 break;
         }
 
-        // Obtenemos la URL principal según el variant.
-        $logo_url = get_theme_mod( $mod_key );
+        $raw_value = get_theme_mod( $mod_key );
 
         // Fallback: si ese variant no tiene logo, usamos el desktop_light clásico.
-        if ( empty( $logo_url ) ) {
-            $logo_url = get_theme_mod( 'pm_header_logo' );
+        if ( empty( $raw_value ) ) {
+            $raw_value = get_theme_mod( 'pm_header_logo' );
         }
 
         // Si sigue sin haber logo, mostramos el título del sitio.
-        if ( empty( $logo_url ) ) {
-            return '<span class="site-title ' . esc_attr( $class ) . '">' . get_bloginfo( 'name' ) . '</span>';
+        if ( empty( $raw_value ) ) {
+            $cache[ $cache_key ] = '<span class="site-title ' . esc_attr( $class ) . '">' . esc_html( get_bloginfo( 'name' ) ) . '</span>';
+            return $cache[ $cache_key ];
         }
 
-        // Intentamos obtener el ID del adjunto (para srcset, sizes, etc.).
-        $logo_id = attachment_url_to_postid( $logo_url );
+        // Permite guardar el customizer como ID o como URL.
+        $logo_id  = 0;
+        $logo_url = '';
 
-        // Si no es un adjunto de la librería (URL externa, etc.), devolvemos un <img> sencillo.
+        if ( is_numeric( $raw_value ) ) {
+            $logo_id = absint( $raw_value );
+        } else {
+            $logo_url = (string) $raw_value;
+            $logo_id  = attachment_url_to_postid( $logo_url );
+        }
+
+        // data-logo-* (para JS): siempre en URL
+        $light_raw = get_theme_mod( 'pm_header_logo' );
+        $dark_raw  = get_theme_mod( 'pm_header_logo_dark' );
+
+        $light_url = is_numeric( $light_raw ) ? wp_get_attachment_image_url( absint( $light_raw ), 'full' ) : (string) $light_raw;
+        $dark_url  = is_numeric( $dark_raw )  ? wp_get_attachment_image_url( absint( $dark_raw ), 'full' )  : (string) $dark_raw;
+
+        // Si no es attachment (URL externa, etc.), devolvemos <img> simple.
         if ( ! $logo_id ) {
-            return sprintf(
-                    '<img src="%1$s" alt="%2$s" class="site-logo %3$s" loading="lazy" />',
+            if ( $logo_url === '' ) {
+                $logo_url = is_numeric( $raw_value ) ? wp_get_attachment_image_url( absint( $raw_value ), $size ) : (string) $raw_value;
+            }
+
+            $cache[ $cache_key ] = sprintf(
+                    '<img src="%1$s" alt="%2$s" class="site-logo %3$s" loading="lazy" decoding="async" data-logo-light="%4$s" data-logo-dark="%5$s" />',
                     esc_url( $logo_url ),
+                    esc_attr( get_bloginfo( 'name' ) ),
+                    esc_attr( $class ),
+                    esc_url( $light_url ),
+                    esc_url( $dark_url )
+            );
+            return $cache[ $cache_key ];
+        }
+
+        // Attachment: usa wp_get_attachment_image() => incluye srcset/sizes/width/height automáticamente.
+        $html = wp_get_attachment_image(
+                $logo_id,
+                $size,
+                false,
+                array(
+                        'class'           => trim( 'site-logo ' . $class ),
+                        'loading'         => 'lazy',
+                        'decoding'        => 'async',
+                        'data-logo-light' => esc_url( $light_url ),
+                        'data-logo-dark'  => esc_url( $dark_url ),
+                        'alt'             => get_bloginfo( 'name' ),
+                )
+        );
+
+        // Si por alguna razón WP no devuelve HTML, fallback seguro.
+        if ( empty( $html ) ) {
+            $src = wp_get_attachment_image_url( $logo_id, $size );
+            $html = sprintf(
+                    '<img src="%1$s" alt="%2$s" class="site-logo %3$s" loading="lazy" decoding="async" data-logo-light="%4$s" data-logo-dark="%5$s" />',
+                    esc_url( $src ),
+                    esc_attr( get_bloginfo( 'name' ) ),
+                    esc_attr( $class ),
+                    esc_url( $light_url ),
+                    esc_url( $dark_url )
+            );
+        }
+
+        $cache[ $cache_key ] = $html;
+        return $cache[ $cache_key ];
+    }
+}
+
+if ( ! function_exists( 'pm_get_footer_logo' ) ) {
+    /**
+     * Get the footer logo image from theme mods.
+     *
+     * Soporta:
+     * - theme_mod como ID de attachment (recomendado)
+     * - theme_mod como URL (fallback, convierte a attachment si es posible)
+     *
+     * @param string $class Extra CSS classes for the image.
+     * @param string $size  Image size (for attachment-based logos).
+     *
+     * @return string HTML image tag o string vacío si no hay logo.
+     */
+    function pm_get_footer_logo( $class = '', $size = 'full' ) {
+
+        static $cache = array();
+
+        $cache_key = $class . '|' . $size;
+        if ( isset( $cache[ $cache_key ] ) ) {
+            return $cache[ $cache_key ];
+        }
+
+        $raw_value = get_theme_mod( 'pm_footer_logo' );
+
+        if ( empty( $raw_value ) ) {
+            $cache[ $cache_key ] = '';
+            return $cache[ $cache_key ];
+        }
+
+        $logo_id  = 0;
+        $logo_url = '';
+
+        if ( is_numeric( $raw_value ) ) {
+            $logo_id = absint( $raw_value );
+        } else {
+            $logo_url = (string) $raw_value;
+            $logo_id  = attachment_url_to_postid( $logo_url );
+        }
+
+        // Si no es attachment (URL externa, etc.), devolvemos <img> simple.
+        if ( ! $logo_id ) {
+            if ( $logo_url === '' ) {
+                $logo_url = is_numeric( $raw_value ) ? wp_get_attachment_image_url( absint( $raw_value ), $size ) : (string) $raw_value;
+            }
+
+            $cache[ $cache_key ] = sprintf(
+                    '<img src="%1$s" alt="%2$s" class="footer-logo %3$s" loading="lazy" decoding="async" />',
+                    esc_url( $logo_url ),
+                    esc_attr( get_bloginfo( 'name' ) ),
+                    esc_attr( $class )
+            );
+            return $cache[ $cache_key ];
+        }
+
+        // Attachment: wp_get_attachment_image() genera srcset/sizes/width/height cuando aplica.
+        $html = wp_get_attachment_image(
+                $logo_id,
+                $size,
+                false,
+                array(
+                        'class'    => trim( 'footer-logo ' . $class ),
+                        'loading'  => 'lazy',
+                        'decoding' => 'async',
+                        'alt'      => get_bloginfo( 'name' ),
+                )
+        );
+
+        // Fallback seguro si WP no devuelve HTML.
+        if ( empty( $html ) ) {
+            $src = wp_get_attachment_image_url( $logo_id, $size );
+            $html = sprintf(
+                    '<img src="%1$s" alt="%2$s" class="footer-logo %3$s" loading="lazy" decoding="async" />',
+                    esc_url( $src ),
                     esc_attr( get_bloginfo( 'name' ) ),
                     esc_attr( $class )
             );
         }
 
-        // Con adjunto: usamos srcset, sizes y dimensiones.
-        $src    = wp_get_attachment_image_url( $logo_id, $size );
-        $srcset = wp_get_attachment_image_srcset( $logo_id, $size );
-        $sizes  = wp_get_attachment_image_sizes( $logo_id, $size );
-
-        $meta   = wp_get_attachment_metadata( $logo_id );
-        $width  = isset( $meta['width'] )  ? $meta['width']  : '';
-        $height = isset( $meta['height'] ) ? $meta['height'] : '';
-
-        return sprintf(
-                '<img 
-                src="%1$s"
-                srcset="%2$s"
-                sizes="%3$s"
-                width="%4$s"
-                height="%5$s"
-                alt="%6$s"
-                class="site-logo %7$s"
-                loading="lazy"
-                data-logo-light="%8$s"
-                data-logo-dark="%9$s"
-            />',
-                esc_url( $src ),
-                esc_attr( $srcset ),
-                esc_attr( $sizes ),
-                esc_attr( $width ),
-                esc_attr( $height ),
-                esc_attr( get_bloginfo( 'name' ) ),
-                esc_attr( $class ),
-                esc_url( get_theme_mod('pm_header_logo') ),
-                esc_url( get_theme_mod('pm_header_logo_dark'))
-        );
+        $cache[ $cache_key ] = $html;
+        return $cache[ $cache_key ];
     }
 }
 
-if ( ! function_exists( 'pm_get_logo_with_dark' ) ) {
-
-    /**
-     * Muestra el logo principal desde el Customizer
-     * Y además agrega data-logo-light y data-logo-dark
-     * para intercambiarlo con JS.
-     *
-     * @param string $class
-     * @param string $size
-     * @param string $dark_filename     Archivo dark dentro de /assets/images/
-     * @param string $light_filename    Archivo light dentro de /assets/images/
-     *
-     * @return string
-     */
-    function pm_get_logo_with_dark( $class = '', $size = 'full', $dark_filename = 'logo-dark.svg', $light_filename = 'logo-light.svg' ) {
-
-        // Rutas a las imágenes locales
-        $dark_url  = PM_ESSENCE_TEMPLATE_URI . '/assets/images/' . $dark_filename;
-        $light_url = PM_ESSENCE_TEMPLATE_URI . '/assets/images/' . $light_filename;
-
-        // Logo del Customizer
-        $logo_url = get_theme_mod('pm_header_logo');
-
-        // Si no hay logo en customizer → mostrar el "light" por defecto
-        if ( empty( $logo_url ) ) {
-            return sprintf(
-                    '<img 
-                    src="%1$s"
-                    alt="%2$s"
-                    class="site-logo %3$s"
-                    loading="lazy"
-                    data-logo-light="%4$s"
-                    data-logo-dark="%5$s"
-                />',
-                    esc_url( $light_url ),
-                    esc_attr( get_bloginfo('name') ),
-                    esc_attr( $class ),
-                    esc_url( $light_url ),
-                    esc_url( $dark_url )
-            );
-        }
-
-        // Convertir URL a ID
-        $logo_id = attachment_url_to_postid( $logo_url );
-
-        // Si NO es un attachment → usamos sin srcset
-        if ( ! $logo_id ) {
-            return sprintf(
-                    '<img 
-                    src="%1$s"
-                    alt="%2$s"
-                    class="site-logo %3$s"
-                    loading="lazy"
-                    data-logo-light="%4$s"
-                    data-logo-dark="%5$s"
-                />',
-                    esc_url( $logo_url ),
-                    esc_attr( get_bloginfo('name') ),
-                    esc_attr( $class ),
-                    esc_url( $light_url ),
-                    esc_url( $dark_url )
-            );
-        }
-
-        // Obtener imágenes responsive
-        $src     = wp_get_attachment_image_url( $logo_id, $size );
-        $srcset  = wp_get_attachment_image_srcset( $logo_id, $size );
-        $sizes   = wp_get_attachment_image_sizes( $logo_id, $size );
-
-        $meta = wp_get_attachment_metadata( $logo_id );
-        $width  = isset( $meta['width'] ) ? $meta['width'] : '';
-        $height = isset( $meta['height'] ) ? $meta['height'] : '';
-
-        return sprintf(
-                '<img 
-                src="%1$s"
-                srcset="%2$s"
-                sizes="%3$s"
-                width="%4$s"
-                height="%5$s"
-                alt="%6$s"
-                class="site-logo %7$s"
-                loading="lazy"
-                data-logo-light="%8$s"
-                data-logo-dark="%9$s"
-            />',
-                esc_url( $src ),
-                esc_attr( $srcset ),
-                esc_attr( $sizes ),
-                esc_attr( $width ),
-                esc_attr( $height ),
-                esc_attr( get_bloginfo('name') ),
-                esc_attr( $class ),
-                esc_url( $light_url ),
-                esc_url( $dark_url )
-        );
-    }
-}
+//if ( ! function_exists( 'pm_get_logo_with_dark' ) ) {
+//
+//    /**
+//     * Muestra el logo principal desde el Customizer
+//     * Y además agrega data-logo-light y data-logo-dark
+//     * para intercambiarlo con JS.
+//     *
+//     * @param string $class
+//     * @param string $size
+//     * @param string $dark_filename     Archivo dark dentro de /assets/images/
+//     * @param string $light_filename    Archivo light dentro de /assets/images/
+//     *
+//     * @return string
+//     */
+//    function pm_get_logo_with_dark( $class = '', $size = 'full', $dark_filename = 'logo-dark.svg', $light_filename = 'logo-light.svg' ) {
+//
+//        // Rutas a las imágenes locales
+//        $dark_url  = PM_ESSENCE_TEMPLATE_URI . '/assets/images/' . $dark_filename;
+//        $light_url = PM_ESSENCE_TEMPLATE_URI . '/assets/images/' . $light_filename;
+//
+//        // Logo del Customizer
+//        $logo_url = get_theme_mod('pm_header_logo');
+//
+//        // Si no hay logo en customizer → mostrar el "light" por defecto
+//        if ( empty( $logo_url ) ) {
+//            return sprintf(
+//                    '<img
+//                    src="%1$s"
+//                    alt="%2$s"
+//                    class="site-logo %3$s"
+//                    loading="lazy"
+//                    data-logo-light="%4$s"
+//                    data-logo-dark="%5$s"
+//                />',
+//                    esc_url( $light_url ),
+//                    esc_attr( get_bloginfo('name') ),
+//                    esc_attr( $class ),
+//                    esc_url( $light_url ),
+//                    esc_url( $dark_url )
+//            );
+//        }
+//
+//        // Convertir URL a ID
+//        $logo_id = attachment_url_to_postid( $logo_url );
+//
+//        // Si NO es un attachment → usamos sin srcset
+//        if ( ! $logo_id ) {
+//            return sprintf(
+//                    '<img
+//                    src="%1$s"
+//                    alt="%2$s"
+//                    class="site-logo %3$s"
+//                    loading="lazy"
+//                    data-logo-light="%4$s"
+//                    data-logo-dark="%5$s"
+//                />',
+//                    esc_url( $logo_url ),
+//                    esc_attr( get_bloginfo('name') ),
+//                    esc_attr( $class ),
+//                    esc_url( $light_url ),
+//                    esc_url( $dark_url )
+//            );
+//        }
+//
+//        // Obtener imágenes responsive
+//        $src     = wp_get_attachment_image_url( $logo_id, $size );
+//        $srcset  = wp_get_attachment_image_srcset( $logo_id, $size );
+//        $sizes   = wp_get_attachment_image_sizes( $logo_id, $size );
+//
+//        $meta = wp_get_attachment_metadata( $logo_id );
+//        $width  = isset( $meta['width'] ) ? $meta['width'] : '';
+//        $height = isset( $meta['height'] ) ? $meta['height'] : '';
+//
+//        return sprintf(
+//                '<img
+//                src="%1$s"
+//                srcset="%2$s"
+//                sizes="%3$s"
+//                width="%4$s"
+//                height="%5$s"
+//                alt="%6$s"
+//                class="site-logo %7$s"
+//                loading="lazy"
+//                data-logo-light="%8$s"
+//                data-logo-dark="%9$s"
+//            />',
+//                esc_url( $src ),
+//                esc_attr( $srcset ),
+//                esc_attr( $sizes ),
+//                esc_attr( $width ),
+//                esc_attr( $height ),
+//                esc_attr( get_bloginfo('name') ),
+//                esc_attr( $class ),
+//                esc_url( $light_url ),
+//                esc_url( $dark_url )
+//        );
+//    }
+//}
 
 if ( ! function_exists( 'pm_essence_nav_menu' ) ) {
     /**
