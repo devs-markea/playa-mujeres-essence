@@ -1,5 +1,5 @@
 <div class="pm-menu-mobile">
-    <div class="pm-menu-mobile__header container d-flex align-items-center justify-content-between">
+    <div class="pm-menu-mobile__header d-flex align-items-center justify-content-between">
         <div class="pm-menu-mobile__logo">
             <a href="<?php echo esc_url( home_url( '/' ) ); ?>">
                 <?php echo pm_get_logo( 'site-logo-dark', 'full', 'desktop_dark' ); ?>
@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <div class="pm-menu-mobile__content container d-flex flex-column">
+    <div class="pm-menu-mobile__content d-flex flex-column">
         <div class="pm-menu-mobile__scroll">
             <div class="pm-menu-mobile__nav">
                 <nav class="navbar navbar-expand-lg navbar-light">

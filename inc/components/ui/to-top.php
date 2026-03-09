@@ -7,7 +7,7 @@
     /* Back to Top Button */
     .toTopButton {
         position: fixed;
-        bottom: 15px;
+        bottom: 70px;
         right: 15px;
         width: 60px;
         height: 60px;
@@ -49,5 +49,12 @@
         display: block;
         transform: rotate(180deg);
         font-size: 20px;
+    }
+
+    @media (min-width: 768px) {
+        .toTopButton {
+            bottom: 15px;
+            right: 15px;
+        }
     }
 </style>

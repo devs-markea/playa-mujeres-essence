@@ -99,8 +99,9 @@ if ( ! function_exists( 'pm_get_logo' ) ) {
                 false,
                 array(
                         'class'           => trim( 'site-logo ' . $class ),
-                        'loading'         => 'lazy',
+                        'loading'         => 'eager',
                         'decoding'        => 'async',
+                        'fetchpriority'   => 'high',
                         'data-logo-light' => esc_url( $light_url ),
                         'data-logo-dark'  => esc_url( $dark_url ),
                         'alt'             => get_bloginfo( 'name' ),

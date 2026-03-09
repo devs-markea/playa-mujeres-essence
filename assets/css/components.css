@@ -77,7 +77,9 @@
 .pm-header .menu-open {
     background: white;
     transition: background-color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-    border-bottom: 1px solid rgba(12, 12, 12, 0.25) !important;
+    /*border-bottom: 1px solid rgba(12, 12, 12, 0.25) !important;*/
+    box-shadow: 0 2px 4px 0 rgba(50, 50, 105, 0.08);
+
 }
 
 
@@ -99,7 +101,7 @@
 }
 
 .pm-header__logo {
-    max-width: 92px;
+    width: 90px;
     height: auto;
 }
 
@@ -308,8 +310,9 @@
 }
 
 .pm-menu-mobile__header{
+    z-index: 20;
     padding: 1.9rem 1rem;
-    border-bottom: 1px solid #E5E5E5;
+    box-shadow: 0 2px 4px 0 rgba(50, 50, 105, 0.08);
 }
 
 .pm-menu-mobile__nav .navbar {

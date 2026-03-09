@@ -287,7 +287,7 @@ if ($pill_mode === 'taxonomy') {
                         />
                     </div>
 
-                    <div class="content-collection__filter-button-mobile" style="display:none;">
+                    <div class="content-collection__filter-button-mobile">
                         <button type="button"
                                 class="content-collection__pill"
                                 data-collection-pill
@@ -397,50 +397,20 @@ if ($pill_mode === 'taxonomy') {
     </div>
     <div class="content-collection__bottom-sentinel" aria-hidden="true"></div>
 
-    <div class="content-collection__filter-button-mobile-bottom" aria-hidden="true">
-        <button type="button"
-                class="content-collection__pill"
-                data-collection-pill
-                data-collection-filters-mobile-trigger
-                data-filter-slug="">
-            Filter By hotel
-        </button>
-    </div>
+    <button type="button"
+            class="content-collection__filter-button content-collection__filter-button-mobile-bottom" aria-hidden="true""
+    data-collection-pill
+    data-collection-filters-mobile-trigger
+    data-filter-slug="">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4.5 15.75L12 8.25L19.5 15.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Filter By hotel
+    </button>
 
 </section>
 
 <style>
-    .content-collection__filter-button-mobile-bottom{
-        position: fixed;
-        left: 50%;
-        bottom: 16px;
-        transform: translateX(-50%);
-        z-index: 999;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity 200ms ease, visibility 200ms ease;
-        will-change: transform, opacity;
-    }
-
-    .content-collection__filter-button-mobile-bottom.is-visible{
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        animation: contentCollectionBounceIn 450ms cubic-bezier(.2,.9,.25,1.2);
-    }
-
-    @keyframes contentCollectionBounceIn{
-        0%   { transform: translateX(-50%) translateY(18px) scale(0.98); }
-        60%  { transform: translateX(-50%) translateY(-6px) scale(1.02); }
-        100% { transform: translateX(-50%) translateY(0) scale(1); }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-        .content-collection__filter-button-mobile-bottom.is-visible{
-            animation: none;
-        }
-    }
 
     /* opcional: no mostrar en desktop */
     @media (min-width: 991px){
@@ -450,7 +420,7 @@ if ($pill_mode === 'taxonomy') {
 
     .content-collection__heading {
         font-family: var(--pm-font-secondary);
-        font-size: 32px;
+        font-size: 24px;
         font-style: italic;
         line-height: 1.2;
         font-weight: 600;
@@ -470,12 +440,17 @@ if ($pill_mode === 'taxonomy') {
         flex-direction: column;
         gap: 2rem;
     }
-    
+
     .content-collection__filters {
         display: none;
     }
 
-    .content-collection__description { margin-top: 14px; }
+    .content-collection__description {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 300;
+        color: var(--pm-secondary-900);
+    }
     .content-collection__grid { margin-top: 48px; }
 
     .content-collection__pill {
@@ -549,9 +524,10 @@ if ($pill_mode === 'taxonomy') {
         margin: 0 0 12px;
         font-family: var(--pm-font-secondary);
         font-style: italic;
-        font-weight: 600;
-        font-size: 28px;
-        line-height: 1.2;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: normal;
+        letter-spacing: 2px;
     }
 
     .content-collection__card-description {
@@ -669,6 +645,41 @@ if ($pill_mode === 'taxonomy') {
     .content-collection__pill[data-filter-slug=""] .content-collection__pill-x {
         display: none !important;
     }
+    .content-collection__filter-button-mobile-bottom{
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform: translateX(-50%);
+        z-index: 10;
+        opacity: 0;
+        visibility: hidden;
+        background: var(--pm-primary-600);
+    }
+
+    .content-collection__filter-button-mobile-bottom.content-collection__filter-button {
+        border: none;
+        padding: 8px 12px;
+        text-align: center;
+        text-transform: uppercase;
+        font-style: normal;
+        flex: 0 0 auto;
+        white-space: nowrap;
+        color: #FFF;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: 2px;
+    }
+
+
+
+    @media (min-width: 991px){
+        .content-collection__filter-button-mobile-bottom{ display:none !important; }
+    }
 </style>
 
 
@@ -683,6 +694,8 @@ if ($pill_mode === 'taxonomy') {
         let pillsScroller = ui.querySelector('.content-collection__pills');
         let cards = section.querySelectorAll('.content-collection__card[data-filter][data-search]');
         let loadMoreBtn = section.querySelector('[data-collection-load-more]');
+
+
 
         // Multi-select
         let selected = {}; // {slug: true}
@@ -758,6 +771,69 @@ if ($pill_mode === 'taxonomy') {
             }
         }
 
+        function syncExternalPillsUI() {
+            let externalWrap = document.querySelector('[data-collection-filters-external-pills]');
+            if (!externalWrap) return;
+
+            let anySelected = getSelectedSlugs().length > 0;
+            let buttons = externalWrap.querySelectorAll('[data-collection-external-pill]');
+
+            for (let i = 0; i < buttons.length; i++) {
+                let slug = normalize(buttons[i].getAttribute('data-filter-slug') || '');
+
+                if (slug === '') {
+                    if (!anySelected) buttons[i].classList.add('is-active');
+                    else buttons[i].classList.remove('is-active');
+                } else {
+                    if (selected[slug]) buttons[i].classList.add('is-active');
+                    else buttons[i].classList.remove('is-active');
+                }
+            }
+        }
+
+        function mountExternalPillsFromScroller() {
+            let externalWrap = document.querySelector('[data-collection-filters-external-pills]');
+            if (!externalWrap) return;
+            if (!pillsScroller) return;
+
+            // Evita duplicar si ya se montó
+            if (externalWrap.getAttribute('data-mounted') === '1') return;
+
+            let wrap = document.createElement('div');
+            wrap.className = 'content-collection__pills-wrap';
+
+            let row = document.createElement('div');
+            row.className = 'content-collection__pills';
+
+            let sourceButtons = pillsScroller.querySelectorAll('[data-collection-pill]');
+            for (let i = 0; i < sourceButtons.length; i++) {
+                let src = sourceButtons[i];
+
+                // clonamos texto y slug
+                let slug = src.getAttribute('data-filter-slug') || '';
+                let label = src.textContent || '';
+
+                let btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'content-collection__pill';
+                btn.setAttribute('data-collection-external-pill', '');
+                btn.setAttribute('data-filter-slug', slug);
+                btn.textContent = label;
+
+                row.appendChild(btn);
+            }
+
+            wrap.appendChild(row);
+            externalWrap.innerHTML = '';
+            externalWrap.appendChild(wrap);
+
+            externalWrap.setAttribute('data-mounted', '1');
+
+            // sincroniza estado visual inicial
+            syncExternalPillsUI();
+        }
+
+
         function scrollPillIntoView(btn) {
             if (!btn) return;
             let scroller = btn.closest('.content-collection__pills');
@@ -801,33 +877,43 @@ if ($pill_mode === 'taxonomy') {
             apply();
         }
 
+        function toggleSlug(slugRaw) {
+            let slug = normalize(slugRaw || '');
+
+            if (slug === '') {
+                selected = {};
+            } else {
+                if (selected[slug]) delete selected[slug];
+                else selected[slug] = true;
+            }
+
+            syncPillsUI();
+            syncExternalPillsUI();
+            resetAndApply();
+        }
+
         // =========================
         // Pills click (event delegation)
         // =========================
+        // Pills click (internos)
         if (pillsScroller) {
             pillsScroller.addEventListener('click', function (e) {
                 let btn = e.target.closest('[data-collection-pill]');
                 if (!btn || !pillsScroller.contains(btn)) return;
 
-                let slug = normalize(btn.getAttribute('data-filter-slug') || '');
-
-                // "All" => limpia selección
-                if (slug === '') {
-                    selected = {};
-                    syncPillsUI();
-                    resetAndApply();
-                    return;
-                }
-
-                // Toggle multi
-                if (selected[slug]) delete selected[slug];
-                else selected[slug] = true;
-
-                syncPillsUI();
-                scrollPillIntoView(btn);
-                resetAndApply();
+                let slug = btn.getAttribute('data-filter-slug') || '';
+                toggleSlug(slug);
             });
         }
+
+        // Pills click (externos: menú filters)
+        document.addEventListener('click', function (e) {
+            let btn = e.target.closest('[data-collection-external-pill]');
+            if (!btn) return;
+
+            let slug = btn.getAttribute('data-filter-slug') || '';
+            toggleSlug(slug);
+        });
 
         // Search combinado con pills
         if (input) {
@@ -905,6 +991,7 @@ if ($pill_mode === 'taxonomy') {
         // init
         syncPillsUI();
         apply();
+        mountExternalPillsFromScroller();
 
         // =========================
         // Bottom mobile button visibility:
@@ -912,41 +999,62 @@ if ($pill_mode === 'taxonomy') {
         // `.content-collection__wrapper-content-collection`
         // (no depende de `.content-collection__filters-mobile`)
         // =========================
-        var bottomWrap = section.querySelector('.content-collection__filter-button-mobile-bottom');
+        let bottomWrap = section.querySelector('.content-collection__filter-button-mobile-bottom');
         if (!bottomWrap) return;
 
-        var wrapper = section.querySelector('.content-collection__wrapper-content-collection');
+        let wrapper = section.querySelector('.content-collection__wrapper-content-collection');
         if (!wrapper) return;
 
-        var mm = window.matchMedia ? window.matchMedia('(max-width: 990px)') : null;
+        let mm = window.matchMedia ? window.matchMedia('(max-width: 990px)') : null;
 
         function shouldRun() {
             return !mm || mm.matches;
         }
 
-        function setBottomVisible(visible) {
-            if (visible) bottomWrap.classList.add('is-visible');
-            else bottomWrap.classList.remove('is-visible');
-            bottomWrap.setAttribute('aria-hidden', visible ? 'false' : 'true');
+        if (window.gsap) {
+            window.gsap.set(bottomWrap, { autoAlpha: 0 });
         }
 
-        // Estado inicial
-        setBottomVisible(false);
+        function animateBottomVisible(visible) {
+            // Mantén la clase para pointer-events + estado lógico
+            if (visible) bottomWrap.classList.add('is-visible');
+            else bottomWrap.classList.remove('is-visible');
+
+            bottomWrap.setAttribute('aria-hidden', visible ? 'false' : 'true');
+
+            // Si GSAP no está cargado por alguna razón, fallback a CSS inmediato
+            if (!window.gsap) {
+                bottomWrap.style.opacity = visible ? '1' : '0';
+                bottomWrap.style.visibility = visible ? 'visible' : 'hidden';
+                return;
+            }
+
+            // Evita animaciones duplicadas
+            window.gsap.killTweensOf(bottomWrap);
+
+            // Fade (autoAlpha anima opacity + maneja visibility)
+            window.gsap.to(bottomWrap, {
+                autoAlpha: visible ? 1 : 0,
+                duration: 0.20,
+                ease: 'power1.out'
+            });
+        }
+
+
+
+        animateBottomVisible(false);
 
         function wrapperIsInView() {
             var rect = wrapper.getBoundingClientRect();
             var vh = window.innerHeight || document.documentElement.clientHeight || 0;
-
-            // Visible si cualquier parte del wrapper está en viewport
             return rect.bottom > 0 && rect.top < vh;
         }
 
-        // Preferimos IntersectionObserver (sentinel-like, sin scroll handlers)
         if ('IntersectionObserver' in window) {
             var obs = new IntersectionObserver(function (entries) {
-                if (!shouldRun()) { setBottomVisible(false); return; }
+                if (!shouldRun()) { animateBottomVisible(false); return; }
                 var entry = entries && entries[0] ? entries[0] : null;
-                setBottomVisible(!!(entry && entry.isIntersecting));
+                animateBottomVisible(!!(entry && entry.isIntersecting));
             }, {
                 root: null,
                 threshold: 0.01
@@ -954,10 +1062,9 @@ if ($pill_mode === 'taxonomy') {
 
             obs.observe(wrapper);
         } else {
-            // Fallback para navegadores antiguos
             function onScrollOrResize() {
-                if (!shouldRun()) { setBottomVisible(false); return; }
-                setBottomVisible(wrapperIsInView());
+                if (!shouldRun()) { animateBottomVisible(false); return; }
+                animateBottomVisible(wrapperIsInView());
             }
             window.addEventListener('scroll', onScrollOrResize, { passive: true });
             window.addEventListener('resize', onScrollOrResize);
@@ -965,53 +1072,10 @@ if ($pill_mode === 'taxonomy') {
         }
 
         function onMqChange() {
-            if (!shouldRun()) setBottomVisible(false);
+            if (!shouldRun()) animateBottomVisible(false);
         }
         if (mm && mm.addEventListener) mm.addEventListener('change', onMqChange);
         else if (mm && mm.addListener) mm.addListener(onMqChange);
-        // ... existing code ...
+
     })();
 </script>
-<style>
-    .content-collection__filter-button-mobile-bottom{
-        position: fixed;
-        left: 50%;
-        bottom: 1.5rem;
-        width: 80%;
-        display: flex;
-        flex-direction: column;
-        padding-left: 3rem;
-        padding-right: 3rem;
-        transform: translateX(-50%);
-        z-index: 10;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity 200ms ease, visibility 200ms ease;
-        will-change: transform, opacity;
-    }
-
-    .content-collection__filter-button-mobile-bottom.is-visible{
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        animation: contentCollectionBounceIn 450ms cubic-bezier(.2,.9,.25,1.2);
-    }
-
-    @keyframes contentCollectionBounceIn{
-        0%   { transform: translateX(-50%) translateY(18px) scale(0.98); }
-        60%  { transform: translateX(-50%) translateY(-6px) scale(1.02); }
-        100% { transform: translateX(-50%) translateY(0) scale(1); }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-        .content-collection__filter-button-mobile-bottom.is-visible{
-            animation: none;
-        }
-    }
-
-    /* opcional: no mostrar en desktop */
-    @media (min-width: 991px){
-        .content-collection__filter-button-mobile-bottom{ display:none !important; }
-    }
-</style>

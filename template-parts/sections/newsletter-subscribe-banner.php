@@ -111,9 +111,7 @@ if (is_string($form_position)) {
    =============================== */
 
     /* SECTION spacing */
-    .newsletter-subscribe-banner {
-        padding: 3rem 0;
-    }
+
 
     /* background */
     .newsletter-subscribe-banner__background {
@@ -194,9 +192,7 @@ if (is_string($form_position)) {
 
     @media (min-width: 768px) {
 
-        .newsletter-subscribe-banner {
-            padding: 4rem 0;
-        }
+
 
         .newsletter-subscribe-banner__background {
             min-height: 520px;

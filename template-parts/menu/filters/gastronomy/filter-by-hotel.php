@@ -1,4 +1,6 @@
 <div class="pm-collection-filters-menu" aria-hidden="true">
+    <div class="pm-collection-filters-menu__overlay" data-collection-filters-mobile-close></div>
+
     <div class="pm-collection-filters-menu__panel">
         <div class="pm-collection-filters-menu__header">
             <div class="container d-flex align-items-center justify-content-between">
@@ -21,7 +23,13 @@
             </div>
         </div>
 
-        <!-- aquí adentro va tu contenido (pills, etc.) -->
+        <div class="pm-collection-filters-menu__body">
+            <div class="container">
+                <div class="pm-collection-filters-menu__pills" data-collection-filters-external-pills>
+                    <!-- JS inyecta aquí los pills clonados desde dynamic-collection -->
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -94,13 +94,77 @@ function pm_enqueue_assets() {
             ['pm-light-box2-js', 'jquery']);
     }
 
-    // WordPress core icons (Dashicons) en frontend
-    wp_enqueue_style('dashicons');
+    /* ---------------------------------
+     *  OPTIONAL: Dashicons (solo cuando hace falta)
+     * --------------------------------- */
+    if ( is_user_logged_in() ) {
+        wp_enqueue_style( 'dashicons' );
+    }
 
-    wp_enqueue_style('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css', [], null);
-    wp_enqueue_script('swiper', 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js', [], null, true);
+    /* ---------------------------------
+         *  Swiper (registrar y cargar)
+         * --------------------------------- */
+    wp_register_style(
+        'pm-swiper',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+        array(),
+        '11.0.0',
+        'all'
+    );
+    wp_register_script(
+        'pm-swiper',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
+        array(),
+        '11.0.0',
+        true
+    );
 
-    wp_enqueue_script('recaptcha', 'https://www.google.com/recaptcha/api.js?render=6LeGNlgsAAAAAHc_b3oI50c6z0qJf5WNrNOrpY3_', [], null, true);
+    // Mejor: que el JS no bloquee el parseo (WP soporta strategy en versiones modernas).
+    if ( function_exists('wp_script_add_data') ) {
+        wp_script_add_data('pm-swiper', 'strategy', 'defer');
+    }
+
+    /**
+     * Por defecto: TRUE (porque indicas que Swiper se usa en todas las páginas).
+     * Más adelante puedes cambiarlo a detección real por ACF o por template.
+     */
+    $load_swiper = true;
+    $load_swiper = apply_filters('pm_essence_should_load_swiper', $load_swiper);
+
+    if ( $load_swiper ) {
+        wp_enqueue_style('pm-swiper');
+        wp_enqueue_script('pm-swiper');
+        wp_enqueue_script('pm-gsap');
+        wp_enqueue_script('pm-gsap-st');
+    }
+
+    // GSAP
+    wp_register_script(
+        'pm-gsap',
+        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js',
+        array(),
+        '3.14.1',
+        true
+    );
+    wp_register_script(
+        'pm-gsap-st',
+        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js',
+        array('pm-gsap'),
+        '3.14.1',
+        true
+    );
+
+    // reCAPTCHA (NO lo cargues globalmente; solo en páginas con formularios)
+    $recaptcha_site_key = (string) get_theme_mod('pm_recaptcha_site_key', '');
+    if ( $recaptcha_site_key !== '' ) {
+        wp_register_script(
+            'pm-recaptcha',
+            'https://www.google.com/recaptcha/api.js?render=' . rawurlencode($recaptcha_site_key),
+            array(),
+            null,
+            true
+        );
+    }
 
     /* ---------------------------------
      *  SPLIDE
@@ -123,6 +187,7 @@ function pm_enqueue_assets() {
     );
     */
 }
+
 
 add_action( 'wp_enqueue_scripts', 'pm_enqueue_assets', 20 );
 
