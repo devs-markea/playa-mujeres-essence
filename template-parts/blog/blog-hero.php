@@ -6,44 +6,41 @@ $args = wp_parse_args($args ?? array(), array(
 
 $blog_settings = is_array($args['blog_settings']) ? $args['blog_settings'] : array();
 
-$heading_hero          = isset($blog_settings['heading_hero']) ? $blog_settings['heading_hero'] : '';
-$heading_level_hero    = isset($blog_settings['heading_level_hero']) ? $blog_settings['heading_level_hero'] : 'h1';
-$subheading_hero       = isset($blog_settings['subheading_hero']) ? $blog_settings['subheading_hero'] : '';
-$subheading_level_hero = isset($blog_settings['subheading_level_hero']) ? $blog_settings['subheading_level_hero'] : 'h2';
-$description_hero      = isset($blog_settings['description_hero']) ? $blog_settings['description_hero'] : '';
+$heading_hero          = isset($blog_settings['page_heading']) ? $blog_settings['page_heading'] : '';
+$heading_level_hero    = isset($blog_settings['page_heading_level']) ? $blog_settings['page_heading_level'] : 'h1';
+
+$description_hero      = isset($blog_settings['page_description']) ? $blog_settings['page_description'] : '';
 
 $allowed_tags = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
 if (! in_array($heading_level_hero, $allowed_tags, true)) {
     $heading_level_hero = 'h1';
 }
-if (! in_array($subheading_level_hero, $allowed_tags, true)) {
-    $subheading_level_hero = 'h2';
-}
+
 
 $hero_query = new WP_Query(array(
     'post_type'           => 'post',
     'post_status'         => 'publish',
-    'posts_per_page'      => 4,
+    'posts_per_page'      => 8,
     'ignore_sticky_posts' => true,
 ));
 
-if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $description_hero) {
+if (! $hero_query->have_posts() && ! $heading_hero &&  ! $description_hero) {
     return;
 }
 ?>
 
-<section class="blog-hero" data-force-header-theme="menu">
+<section class="blog-hero">
     <div class="container">
 
-        <?php if ($subheading_hero || $heading_hero || $description_hero) : ?>
+        <?php if ( $heading_hero || $description_hero) : ?>
         <div class="row mb-4 mb-lg-5">
             <div class="col-lg-8">
-
-                <?php if ($subheading_hero) : ?>
-                <<?php echo esc_attr($subheading_level_hero); ?> class="blog-hero__subheading mb-2">
-                <?php echo esc_html($subheading_hero); ?>
-            </<?php echo esc_attr($subheading_level_hero); ?>>
-            <?php endif; ?>
+                <div class="blog-hero__subheading mb-2">
+                    <div class="blog-hero__subheading--divider"></div>
+                    <span>
+                        <?php the_title(); ?>
+                    </span>
+                </div>
 
             <?php if ($heading_hero) : ?>
             <<?php echo esc_attr($heading_level_hero); ?> class="blog-hero__heading mb-0">
@@ -109,13 +106,27 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
     }
 
     .blog-hero__subheading {
-        font-family: var(--pm-font-secondary);
-        font-size: 18px;
-        font-style: italic;
-        font-weight: 500;
-        letter-spacing: 1.5px;
-        color: #323232;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
+
+    .blog-hero__subheading--divider {
+        width: 2rem;
+        height: 1px;
+        background: black;
+    }
+
+    .blog-hero__subheading span {
+        color: black;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 300;
+        line-height: normal;
+        text-transform: uppercase;
+    }
+
+
 
     .blog-hero__heading {
         font-family: var(--pm-font-secondary);
@@ -155,7 +166,7 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
 
     .blog-hero-card {
         position: relative;
-        min-height: 560px;
+        min-height: 448px;
         height: 100%;
         background: #d8d8d8;
         overflow: hidden;
@@ -173,7 +184,6 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
         height: 100%;
         display: block;
         object-fit: cover;
-        transition: transform 0.5s ease;
     }
 
     .blog-hero-card__overlay {
@@ -183,9 +193,8 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
         pointer-events: none;
         background: linear-gradient(
                 180deg,
-                rgba(0, 0, 0, 0.08) 0%,
-                rgba(0, 0, 0, 0.28) 55%,
-                rgba(0, 0, 0, 0.72) 100%
+                rgba(0, 0, 0, 0) 9.33%,
+                rgba(0, 0, 0, 0.60) 78.15%
         );
     }
 
@@ -193,13 +202,14 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 0;
+        bottom: 1.5rem;
         z-index: 2;
         padding: 20px 14px 16px;
+        opacity: 1;
+        transform: translateY(0);
         transition:
-                padding 0.35s ease,
-                transform 0.35s ease,
-                opacity 0.35s ease;
+                opacity 0.4s ease-out,
+                transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         pointer-events: none;
     }
 
@@ -210,10 +220,27 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
         line-height: 1.15;
         color: #fff;
         font-size: 18px;
+        max-width: 100%;
+        opacity: 0.9;
+        transform: translateY(6px);
         transition:
-                font-size 0.35s ease,
-                max-width 0.35s ease;
+                font-size 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                line-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.45s ease-out,
+                transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
+    .blog-hero-card__title-label {
+        display: none;
+    }
+
+    .blog-hero-card__drawer {
+        transition:
+                opacity 0.45s ease-out,
+                transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+
 
     .blog-hero-card__excerpt,
     .blog-hero-card__footer {
@@ -276,6 +303,9 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
 
     @media (min-width: 992px) {
         .blog-hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             min-height: calc(100vh - 90px);
         }
 
@@ -286,15 +316,14 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
         .blog-hero__swiper .swiper-wrapper {
             display: flex;
             align-items: stretch;
-            transform: none !important;
         }
 
         .blog-hero__slide {
             width: var(--blog-hero-compact-width) !important;
             flex: 0 0 var(--blog-hero-compact-width) !important;
             transition:
-                    width 0.45s ease,
-                    flex-basis 0.45s ease,
+                    width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                    flex-basis 0.45s cubic-bezier(0.22, 1, 0.36, 1),
                     transform 0.45s ease,
                     opacity 0.35s ease;
             overflow: hidden;
@@ -307,45 +336,104 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
 
         .blog-hero__slide:not(.is-featured) .blog-hero-card__content {
             padding: 20px 14px 16px;
+            transform: translateY(10px);
         }
 
         .blog-hero__slide.is-featured .blog-hero-card__content {
             padding: 32px 24px 24px;
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .blog-hero__slide:not(.is-featured) .blog-hero-card__title {
-            font-size: 18px;
-            max-width: 100%;
-        }
-
-        .blog-hero__slide.is-featured .blog-hero-card__title {
-            font-size: 30px;
-            max-width: 78%;
-        }
-
-        .blog-hero__slide:not(.is-featured) .blog-hero-card__excerpt,
-        .blog-hero__slide:not(.is-featured) .blog-hero-card__footer {
-            display: none;
-        }
-
-        .blog-hero__slide.is-featured .blog-hero-card__excerpt {
+        .blog-hero__slide .blog-hero-card__title-label {
             display: block;
-            max-width: 70%;
+            font-family: var(--pm-font-secondary);
+            font-style: italic;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 1.25;
+            color: #fff;
+            opacity: 1;
+            transform: translateY(0);
+            transition:
+                    opacity 0.15s ease,
+                    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .blog-hero__slide .blog-hero-card__drawer {
+            position: absolute;
+            left: 24px;
+            right: 24px;
+            bottom: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            pointer-events: none;
+            transition:
+                    opacity 0.42s ease,
+                    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                    visibility 0s linear 0.42s;
+        }
+
+        .blog-hero__slide .blog-hero-card__title {
+            font-size: 24px;
+            line-height: 1.16;
+            max-width: 100%;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .blog-hero__slide .blog-hero-card__excerpt {
+            display: block;
+            width: auto;
+            max-width: 100%;
             color: rgba(255, 255, 255, 0.88);
             font-size: 14px;
             line-height: 1.45;
-            animation: blogHeroFadeUp 0.35s ease;
         }
 
-        .blog-hero__slide.is-featured .blog-hero-card__footer {
+        .blog-hero__slide .blog-hero-card__footer {
             display: block;
             margin-top: 18px;
-            pointer-events: auto;
-            animation: blogHeroFadeUp 0.4s ease;
         }
 
-        .blog-hero__slide.is-featured .blog-hero-card__image {
-            transform: scale(1.03);
+        .blog-hero__slide.is-featured .blog-hero-card__title-label {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .blog-hero__slide.is-featured .blog-hero-card__drawer {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+            transition-delay: 0.36s;
+        }
+
+        .blog-hero__slide:not(.is-featured) .blog-hero-card__drawer {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateY(12px) !important;
+            pointer-events: none !important;
+            transition:
+                    opacity 0.16s ease !important,
+                    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important,
+                    visibility 0s linear 0.16s !important;
+        }
+
+        .blog-hero__slide:not(.is-featured) .blog-hero-card__title-label {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+
+
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .blog-hero__slide,
+        .blog-hero-card__content {
+            transition: none !important;
         }
     }
 
@@ -387,6 +475,16 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
             max-width: 100%;
         }
 
+        .blog-hero-card__title-label {
+            display: none !important;
+        }
+
+        .blog-hero-card__drawer {
+            opacity: 1 !important;
+            transform: none !important;
+            pointer-events: auto !important;
+        }
+
         .blog-hero-card__excerpt,
         .blog-hero__slide.is-featured .blog-hero-card__excerpt {
             display: block;
@@ -401,14 +499,4 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $subheading_hero && ! $d
         }
     }
 
-    @keyframes blogHeroFadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(8px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
 </style>
