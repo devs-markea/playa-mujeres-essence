@@ -1299,7 +1299,7 @@ window.App = window.App || {};
     function initRecaptchaV3() {
         if (typeof grecaptcha === 'undefined') return;
 
-        const forms = document.querySelectorAll('.newsletter-subscribe-banner__form');
+        const forms = document.querySelectorAll('.newsletter-subscribe-banner__form, .blog-listing__newsletter-form');
         if (!forms || !forms.length) return;
 
         forms.forEach(function (form) {

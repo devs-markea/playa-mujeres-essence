@@ -2,10 +2,14 @@
 $args = wp_parse_args($args ?? array(), array(
     'blog_page_id'  => 0,
     'blog_settings' => array(),
+    'current_term'  => null,
+    'listing_context' => 'blog',
 ));
 
 $blog_page_id  = (int) $args['blog_page_id'];
 $blog_settings = is_array($args['blog_settings']) ? $args['blog_settings'] : array();
+$current_term  = $args['current_term'] instanceof WP_Term ? $args['current_term'] : null;
+$listing_context = in_array($args['listing_context'], array('blog', 'category'), true) ? $args['listing_context'] : 'blog';
 
 $listing_heading       = isset($blog_settings['heading_listing']) ? $blog_settings['heading_listing'] : '';
 $listing_heading_level = isset($blog_settings['heading_level_listing']) ? $blog_settings['heading_level_listing'] : 'h2';
@@ -30,11 +34,16 @@ $listing_heading_tag    = function_exists('pm_essence_heading_tag_or_null') ? pm
 $newsletter_heading_tag = function_exists('pm_essence_heading_tag_or_null') ? pm_essence_heading_tag_or_null($newsletter_heading_level, 'h3') : 'h3';
 
 $selected_category_slug = isset($_GET['blog_category']) ? sanitize_title(wp_unslash($_GET['blog_category'])) : '';
-$selected_category      = $selected_category_slug ? get_term_by('slug', $selected_category_slug, 'category') : false;
+$selected_category      = $selected_category_slug ? get_term_by('slug', $selected_category_slug, 'category') : $current_term;
 
 if ($selected_category && is_wp_error($selected_category)) {
     $selected_category      = false;
     $selected_category_slug = '';
+}
+
+if ($current_term instanceof WP_Term) {
+    $listing_heading     = '';
+    $listing_description = '';
 }
 
 $categories = get_categories(array(
@@ -178,15 +187,12 @@ if (! $has_listing_content) {
                                 <?php foreach ($categories as $category) : ?>
                                     <?php
                                     $is_active = $selected_category instanceof WP_Term && (int) $selected_category->term_id === (int) $category->term_id;
-                                    $url       = remove_query_arg('blog_category', get_permalink($blog_page_id ?: get_the_ID()));
-                                    $url       = add_query_arg('blog_category', $category->slug, $url);
+                                    $url       = get_term_link( $category );
                                     ?>
                                     <li class="blog-listing__categories-item<?php echo $is_active ? ' is-active' : ''; ?>">
                                         <a href="<?php echo esc_url($url); ?>" class="blog-listing__categories-link">
                                             <span><?php echo esc_html($category->name); ?></span>
-                                            <?php if ($is_active) : ?>
-                                                <span class="blog-listing__categories-arrow" aria-hidden="true">&rarr;</span>
-                                            <?php endif; ?>
+                                            <span class="blog-listing__categories-arrow" aria-hidden="true">&rarr;</span>
                                         </a>
                                     </li>
                                 <?php endforeach; ?>
@@ -223,10 +229,10 @@ if (! $has_listing_content) {
                         </div>
                     <?php endif; ?>
 
-                    <form class="blog-listing__newsletter newsletter-subscribe-banner__form">
+                    <form class="blog-listing__newsletter blog-listing__newsletter-form">
                         <input
                                 type="email"
-                                class="blog-listing__newsletter-input newsletter-subscribe-banner__input"
+                                class="blog-listing__newsletter-input blog-listing__newsletter-field"
                                 placeholder="<?php echo esc_attr($newsletter_placeholder ?: 'Type your email address'); ?>"
                                 required
                         >
@@ -419,357 +425,6 @@ if (! $has_listing_content) {
     </div>
     </div>
 </section>
-
-<style>
-
-    .blog-listing__featured-row {
-        position: relative;
-        min-height: 500px;
-    }
-    .blog-listing {
-        padding: 56px 0 72px;
-    }
-
-    .blog-listing__intro {
-        margin-bottom: 36px;
-    }
-
-    .blog-listing__heading {
-        color: var(--pm-secondary-900);
-        font-size: 20px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: normal;
-        margin: 0;
-        padding: 0 12px;
-    }
-
-    .blog-listing__description {
-        margin-top: 16px;
-        color: var(--pm-secondary-900);
-        font-size: 14px;
-        line-height: 1.8;
-    }
-
-    .blog-listing__sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .blog-listing__sidebar-block {
-        padding: 16px 12px;
-    }
-
-    .blog-listing__sidebar-block--panel {
-        padding: 16px 12px;
-        background: #FBFAF7;
-    }
-
-    .blog-listing__sidebar-title {
-        margin: 0 0 18px;
-        color: black;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-    }
-
-    .blog-listing__categories,
-    .blog-listing__top-posts {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
-
-    .blog-listing__top-posts .blog-listing__top-posts-item:last-child {
-        border-bottom: 0;
-    }
-
-    .blog-listing__top-posts .blog-listing__top-posts-item:first-child {
-        border-bottom: 1px solid black;
-    }
-
-    .blog-listing__top-posts-item {
-        border-bottom: 1px solid rgba(50, 50, 50, 0.18);
-    }
-
-    .blog-listing__top-posts-link {
-        padding: 12px 0 !important;
-    }
-
-    .blog-listing__top-posts .blog-listing__top-posts-item:first-child .blog-listing__top-posts-link {
-        font-weight: 400;
-    }
-
-    .blog-listing__categories-link,
-    .blog-listing__top-posts-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 8px 0;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 300;
-        line-height: normal;
-        color: black;
-        text-decoration: none;
-        transition: opacity 0.2s ease;
-    }
-
-
-    .blog-listing__categories-item.is-active .blog-listing__categories-link {
-        font-weight: 400;
-    }
-
-    .blog-listing__categories-arrow {
-        font-size: 18px;
-        line-height: 1;
-    }
-
-    .blog-listing__newsletter-copy {
-        margin-bottom: 18px;
-        color: black;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 300;
-        line-height: normal;
-    }
-
-    .blog-listing__newsletter {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-
-    .blog-listing__newsletter-input {
-        width: 100%;
-        min-height: 52px;
-        padding: 12px 4px;
-        color: #323232;
-        background: transparent;
-        border: 0;
-        border-bottom: 1px solid rgba(50, 50, 50, 0.18);
-        border-radius: 0;
-        box-shadow: none;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 300;
-        line-height: normal;
-    }
-
-    .blog-listing__newsletter-input::placeholder {
-        color: #A5A5A5;
-    }
-
-    .blog-listing__newsletter-submit {
-        color: black;
-    }
-
-    .blog-listing__content {
-        min-width: 0;
-    }
-
-    .blog-listing__featured-swiper-block {
-        position: absolute;
-        left: 0;
-        right: calc(-50vw + 69%);
-        margin-top: 8px;
-        margin-bottom: 40px;
-        overflow: hidden;
-    }
-
-    .blog-listing__featured-swiper {
-        overflow: visible;
-    }
-
-    .blog-listing__featured-slide {
-        width: min(44vw, 440px);
-        height: auto;
-    }
-
-    .blog-listing__card {
-        height: 168px;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        align-items: stretch;
-    }
-
-    .blog-listing__card.is-hidden {
-        display: none;
-    }
-
-    [data-blog-listing-grid-item].is-hidden {
-        display: none;
-    }
-
-    .blog-listing__card-media-link {
-        display: block;
-        flex: 0 0 50%;
-        max-width: 50%;
-        overflow: hidden;
-        background: #e6e1d8;
-        height: 100%;
-        text-decoration: none;
-    }
-
-    .blog-listing__card-image,
-    .blog-listing__card-image img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .blog-listing__card-image--placeholder {
-        background: linear-gradient(135deg, #d8d0c4 0%, #f0eae0 100%);
-    }
-
-    .blog-listing__card-content {
-        width: 100%;
-        flex: 1 1 auto;
-        padding: 8px 24px;
-    }
-
-    .blog-listing__card-taxonomy {
-        font-family: var(--pm-font-secondary);
-        color: var(--pm-secondary-900);
-        font-size: 14px;
-        font-style: italic;
-        font-weight: 500;
-        line-height: 28px; /* 200% */
-        letter-spacing: 1px;
-    }
-
-    .blog-listing__card-title {
-        color: var(--pm-secondary-900);
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 20px;
-    }
-
-    .blog-listing__card-title a {
-        color: inherit;
-        text-decoration: none;
-    }
-
-    .blog-listing__card-link {
-        display: inline-block;
-        color: #323232;
-        font-size: 16px;
-        text-decoration: none;
-        border-bottom: 1px solid currentColor;
-        align-self: flex-start;
-    }
-
-    .blog-listing__actions {
-        margin-top: 32px;
-        text-align: center;
-    }
-
-    .blog-listing__load-more {
-        min-width: 180px;
-        padding: 14px 28px;
-        color: #fff;
-        background: #323232;
-        border: 0;
-        border-radius: 999px;
-        transition: opacity 0.2s ease;
-    }
-
-    .blog-listing__load-more:hover {
-        opacity: 0.85;
-    }
-
-    .blog-listing__empty {
-        padding: 24px;
-        background: rgba(255, 255, 255, 0.45);
-        color: #323232;
-    }
-
-    .newsletter-subscribe-banner--blog {
-        padding-bottom: 72px;
-        background: #f7f4ef;
-    }
-
-    @media (min-width: 992px) {
-        .blog-listing {
-            padding-top: 72px;
-        }
-
-        .blog-listing__sidebar--sticky {
-            position: sticky;
-            top: 32px;
-        }
-    }
-
-    @media (max-width: 991.98px) {
-        .blog-listing__heading {
-            font-size: 26px;
-        }
-
-        .blog-listing__sidebar-title {
-            font-size: 20px;
-        }
-
-        .blog-listing__card-title {
-            font-size: 24px;
-        }
-
-        .blog-listing__card-content {
-            padding: 20px 0 0;
-        }
-
-        .blog-listing__card-taxonomy {
-            margin-bottom: 14px;
-            font-size: 16px;
-        }
-
-        .blog-listing__card-title {
-            margin-bottom: 18px;
-        }
-
-        .blog-listing__featured-slide {
-            width: min(72vw, 440px);
-        }
-    }
-
-    @media (max-width: 767.98px) {
-        .blog-listing__card {
-            flex-direction: column;
-        }
-
-        .blog-listing__card-media-link {
-            flex-basis: auto;
-            max-width: 100%;
-        }
-
-        .blog-listing__featured-slide {
-            width: 84%;
-        }
-
-    }
-
-    .blog-listing__swiper {
-        position: relative;
-        height: 450px;
-    }
-    .blog-listing__swiper-media{
-        height: 100%;
-    }
-    .blog-listing__swiper-content.card-body{
-        position: absolute;
-        padding: 1rem;
-        width: 90%;
-        z-index: 20;
-        bottom: 0;
-        background: white;
-    }
-</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

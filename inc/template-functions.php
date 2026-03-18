@@ -554,6 +554,52 @@ if ( ! function_exists( 'pm_essence_heading_tag_or_null' ) ) {
     }
 }
 
+if ( ! function_exists( 'pm_essence_get_blog_settings' ) ) {
+    /**
+     * Resolve blog settings by context using the shared option group.
+     *
+     * Supported contexts:
+     * - blog:     base blog_page_settings values
+     * - category: base blog_page_settings values with category_page_* overrides
+     *
+     * @param string $context
+     * @return array
+     */
+    function pm_essence_get_blog_settings( $context = 'blog' ) {
+        if ( ! function_exists( 'get_field' ) ) {
+            return array();
+        }
+
+        $context  = sanitize_key( (string) $context );
+        $settings = get_field( 'blog_page_settings', 'option' );
+
+        if ( ! is_array( $settings ) ) {
+            return array();
+        }
+
+        if ( 'category' !== $context ) {
+            return $settings;
+        }
+
+        $category_overrides = array(
+            'display_categories_filter' => 'category_page_display_categories_filter',
+            'display_featured_posts'    => 'category_page_display_featured_posts',
+            'display_newsletter_form'   => 'category_page_display_newsletter_form',
+            'posts_per_page'            => 'category_page_posts_per_page',
+            'enable_load_more'          => 'category_page_enable_load_more',
+            'button_text'               => 'category_page_button_text',
+        );
+
+        foreach ( $category_overrides as $base_key => $override_key ) {
+            if ( array_key_exists( $override_key, $settings ) ) {
+                $settings[ $base_key ] = $settings[ $override_key ];
+            }
+        }
+
+        return $settings;
+    }
+}
+
 if (!function_exists('pm_get_hotel_primary_showcase_logo_dark')) {
     /**
      * Devuelve el logo preferido del primary_showcase_hero:

@@ -13,6 +13,8 @@ if ( have_posts() ) :
 
         $blog_page_id = (int) get_option( 'page_for_posts' );
 
+        $current_site_id = get_current_blog_id();
+
         if ( ! $blog_page_id ) {
             $blog_pages = get_pages(
                 array(
@@ -152,6 +154,67 @@ if ( have_posts() ) :
             );
         }
 
+        $related_posts      = array();
+        $related_post_ids   = array();
+        $related_posts_limit = 4;
+
+        $append_related_posts = static function ( $query_args ) use ( &$related_posts, &$related_post_ids, $related_posts_limit ) {
+            if ( count( $related_post_ids ) >= $related_posts_limit ) {
+                return;
+            }
+
+            $query_args['posts_per_page'] = $related_posts_limit - count( $related_post_ids );
+            $query                        = new WP_Query( $query_args );
+
+            if ( $query->have_posts() ) {
+                foreach ( $query->posts as $related_post ) {
+                    $related_post_id = (int) $related_post->ID;
+
+                    if ( in_array( $related_post_id, $related_post_ids, true ) ) {
+                        continue;
+                    }
+
+                    $related_post_ids[] = $related_post_id;
+                    $related_posts[]    = $related_post;
+                }
+            }
+
+            wp_reset_postdata();
+        };
+
+        if ( $selected_category instanceof WP_Term ) {
+            $append_related_posts(
+                array(
+                    'post_type'           => 'post',
+                    'post_status'         => 'publish',
+                    'post__not_in'        => array( $current_post_id ),
+                    'ignore_sticky_posts' => true,
+                    'orderby'             => 'date',
+                    'order'               => 'DESC',
+                    'tax_query'           => array(
+                        array(
+                            'taxonomy' => 'category',
+                            'field'    => 'term_id',
+                            'terms'    => $selected_category->term_id,
+                        ),
+                    ),
+                )
+            );
+        }
+
+        if ( count( $related_post_ids ) < $related_posts_limit ) {
+            $append_related_posts(
+                array(
+                    'post_type'           => 'post',
+                    'post_status'         => 'publish',
+                    'post__not_in'        => array_merge( array( $current_post_id ), $related_post_ids ),
+                    'ignore_sticky_posts' => true,
+                    'orderby'             => 'date',
+                    'order'               => 'DESC',
+                )
+            );
+        }
+
         $has_categories_sidebar = $display_categories_filter && ! empty( $categories );
         $has_top_posts_sidebar  = $display_featured_posts && ! empty( $sidebar_featured_posts );
         $has_newsletter_sidebar = $display_newsletter_form && ( $newsletter_heading || $newsletter_description || $newsletter_submit_text );
@@ -203,7 +266,10 @@ if ( have_posts() ) :
             _n( '%s Minute', '%s Minutes', $read_time_minutes, 'playa-mujeres-essence' ),
             number_format_i18n( $read_time_minutes )
         );
+        $related_posts_label = ( 2 === (int) $current_site_id ) ? 'Artículos relacionados' : 'Related Posts';
+        $read_more_label     = ( 2 === (int) $current_site_id ) ? 'Leer más' : 'Read more';
         ?>
+        <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=63ea7f8a4825b500129efd91&product=inline-share-buttons&source=platform" async="async"></script>
 
         <main id="primary" class="site-main site-main--single-blog" data-force-header-theme="menu">
 
@@ -238,23 +304,35 @@ if ( have_posts() ) :
 
                 <div class="row g-5">
                     <div class="col-12 col-md-8">
-                        <?php
-                        if ( have_rows( 'blog_sections' ) ) :
+                        <div class="single-blog-content">
+                            <?php
+                            if ( have_rows( 'blog_sections' ) ) :
 
-                            while ( have_rows( 'blog_sections' ) ) :
-                                the_row();
+                                while ( have_rows( 'blog_sections' ) ) :
+                                    the_row();
 
-                                $layout = get_row_layout();
-                                $template = str_replace( '_', '-', $layout );
+                                    $layout = get_row_layout();
+                                    $template = str_replace( '_', '-', $layout );
 
-                                get_template_part( 'template-parts/blog/sections/' . $template );
+                                    get_template_part( 'template-parts/blog/sections/' . $template );
 
-                            endwhile;
+                                endwhile;
 
-                        endif;
-                        ?>
+                            endif;
+                            ?>
+                        </div>
+                        <div class="single-post-share-this-container">
+                            <div class="row g-0">
+                                <div class="col-12 col-md-10 offset-md-2">
+                                    <div class="single-post-share-this">
+                                        <label><?php echo ($current_site_id == 2) ? 'Compartir artículo' : 'Share this post'; ?></label>
+                                        <div class="sharethis-inline-share-buttons"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12 col-md-3">
                         <aside class="blog-listing__sidebar<?php echo $sticky_sidebar_target ? ' blog-listing__sidebar--sticky blog-listing__sidebar--sticky-' . esc_attr($sticky_sidebar_target) : ''; ?>">
                             <?php if ($has_categories_sidebar) : ?>
                                 <div class="blog-listing__sidebar-block blog-listing__sidebar-block--categories">
@@ -269,9 +347,7 @@ if ( have_posts() ) :
                                             <li class="blog-listing__categories-item<?php echo $is_active ? ' is-active' : ''; ?>">
                                                 <a href="<?php echo esc_url($url); ?>" class="blog-listing__categories-link">
                                                     <span><?php echo esc_html($category->name); ?></span>
-                                                    <?php if ($is_active) : ?>
-                                                        <span class="blog-listing__categories-arrow" aria-hidden="true">&rarr;</span>
-                                                    <?php endif; ?>
+                                                    <span class="blog-listing__categories-arrow" aria-hidden="true">&rarr;</span>
                                                 </a>
                                             </li>
                                         <?php endforeach; ?>
@@ -308,10 +384,10 @@ if ( have_posts() ) :
                                 </div>
                             <?php endif; ?>
 
-                            <form class="blog-listing__newsletter newsletter-subscribe-banner__form">
+                            <form class="blog-listing__newsletter blog-listing__newsletter-form">
                                 <input
                                         type="email"
-                                        class="blog-listing__newsletter-input newsletter-subscribe-banner__input"
+                                        class="blog-listing__newsletter-input blog-listing__newsletter-field"
                                         placeholder="<?php echo esc_attr($newsletter_placeholder ?: 'Type your email address'); ?>"
                                         required
                                 >
@@ -339,7 +415,68 @@ if ( have_posts() ) :
                     </aside>
                     </div>
                 </div>
+                <?php if ( ! empty( $related_posts ) ) : ?>
+                    <section class="single-blog-related">
+                        <div class="row g-0">
+                            <div class="col-12 col-md-10 mx-auto">
+                                <h2 class="single-blog-related__title"><?php echo esc_html( $related_posts_label ); ?></h2>
+                                <div class="row g-0 single-blog-related__grid">
+                                    <?php foreach ( $related_posts as $related_post ) : ?>
+                                        <?php
+                                        $related_post_id        = (int) $related_post->ID;
+                                        $related_post_title     = get_the_title( $related_post_id );
+                                        $related_post_permalink = get_permalink( $related_post_id );
+                                        $related_post_terms     = get_the_terms( $related_post_id, 'category' );
+                                        $related_post_term_name = ( ! is_wp_error( $related_post_terms ) && ! empty( $related_post_terms ) ) ? $related_post_terms[0]->name : '';
+                                        ?>
+                                        <div class="col-12 col-lg-6 single-blog-related__item">
+                                            <article class="blog-listing__card single-blog-related__card card flex-row">
+                                                <a href="<?php echo esc_url( $related_post_permalink ); ?>" class="blog-listing__card-media-link single-blog-related__media-link" aria-label="<?php echo esc_attr( $related_post_title ); ?>">
+                                                    <?php if ( has_post_thumbnail( $related_post_id ) ) : ?>
+                                                        <?php echo get_the_post_thumbnail( $related_post_id, 'large', array( 'class' => 'blog-listing__card-image single-blog-related__image card-img-left example-card-img-responsive' ) ); ?>
+                                                    <?php else : ?>
+                                                        <span class="blog-listing__card-image blog-listing__card-image--placeholder single-blog-related__image card-img-left example-card-img-responsive"></span>
+                                                    <?php endif; ?>
+                                                </a>
+
+                                                <div class="blog-listing__card-content single-blog-related__content card-body d-flex flex-column justify-content-center">
+                                                    <?php if ( $related_post_term_name ) : ?>
+                                                        <p class="blog-listing__card-taxonomy single-blog-related__taxonomy card-text"><?php echo esc_html( $related_post_term_name ); ?></p>
+                                                    <?php endif; ?>
+
+                                                    <h3 class="blog-listing__card-title single-blog-related__card-title card-title h5 h4-sm">
+                                                        <a href="<?php echo esc_url( $related_post_permalink ); ?>">
+                                                            <?php echo esc_html( $related_post_title ); ?>
+                                                        </a>
+                                                    </h3>
+
+                                                    <a href="<?php echo esc_url( $related_post_permalink ); ?>" class="blog-listing__card-link single-blog-related__card-link card-text">
+                                                        <?php echo esc_html( $read_more_label ); ?>
+                                                    </a>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                <?php endif; ?>
+                <div class="instagram-feed">
+                    <div class="row g-0">
+                        <div class="col-md-10 mx-auto">
+                            <?php
+                            $feed_id = ($current_site_id == 2) ? 777 : 1043;
+                            echo do_shortcode( '[instagram feed="'.$feed_id.'"]' );
+                            ?>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <?php get_template_part('template-parts/blog/newsletter-subscribe-banner', null, array(
+                    'blog_page_id'  => $blog_page_id,
+                    'blog_settings' => $blog_settings,)); ?>
 
         </main>
 
@@ -349,106 +486,124 @@ endif;
 
 get_footer();
 ?>
+
 <style>
-    .site-main--single-blog {
-        padding-top: 128px;
-        padding-bottom: 96px;
-    }
+    /* ===============================
+   Newsletter Subscribe Banner
+   First Mobile
+   =============================== */
 
-    .single-blog-hero {
-        margin-bottom: 72px;
-    }
+    /* SECTION spacing */
 
-    .single-blog-hero__subheading {
+
+    /* background */
+    .newsletter-subscribe-banner__background {
+        position: relative;
+        min-height: 420px;
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 24px;
+        background-size: cover;
+        background-position: center;
     }
 
-    .single-blog-hero__subheading-line {
-        width: 32px;
-        height: 1px;
-        background: #323232;
-        flex: 0 0 auto;
+    /* overlay */
+    .newsletter-subscribe-banner__overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 1;
     }
 
-    .single-blog-hero__subheading-label {
-        color: #323232;
-        font-size: 16px;
-        font-weight: 400;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-
-    .single-blog-hero__title {
-        max-width: 820px;
-        margin: 0 0 24px;
-        color: #323232;
-        font-family: var(--pm-font-secondary);
-        font-size: 32px;
-        font-style: italic;
-        font-weight: 500;
-        line-height: normal;
-        letter-spacing: 2px;
-    }
-
-    .single-blog-hero__meta {
-        display: flex;
-        align-items: center;
-        gap: 32px;
-        margin-bottom: 48px;
-        color: #323232;
-        font-size: 16px;
-        font-weight: 400;
-    }
-
-    .single-blog-hero__media {
-        overflow: hidden;
-    }
-
-    .single-blog-hero__image {
-        display: block;
+    /* content layer */
+    .newsletter-subscribe-banner__content {
+        position: relative;
+        z-index: 2;
         width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 7;
-        object-fit: cover;
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 0;
     }
 
-    .site-main--single-blog h2,
-    .site-main--single-blog h3,
-    .site-main--single-blog h4,
-    .site-main--single-blog h5,
-    .site-main--single-blog h6{
-        color: #323232;
-        font-size: 20px;
+    .newsletter-subscribe-banner__inner {
+        padding: 40px 0;
+        max-width: 100%;
+    }
+
+    /* typography */
+    .newsletter-subscribe-banner__title {
+        color: #fff;
+        font-family: var(--pm-font-secondary);
+        font-size: 24px;
         font-weight: 500;
+        font-style: italic;
+        letter-spacing: 2px;
+        margin-bottom: 0.75rem;
+    }
+
+    .newsletter-subscribe-banner__description {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 300;
         margin-bottom: 1.5rem;
     }
-    .site-main--single-blog p {
-        color: #323232;
+
+    /* form */
+    .newsletter-subscribe-banner__form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-width: 100%;
+    }
+
+    .newsletter-subscribe-banner__input {
+        width: 100%;
+        height: 48px;
+        padding: 0 1rem;
+        background: white;
         font-size: 16px;
-        font-weight: 400;
+        font-weight: 300;
+        color: var(--pm-secondary-800);
+        border: none;
     }
 
-    @media (max-width: 991.98px) {
-        .site-main--single-blog {
-            padding-top: 112px;
-            padding-bottom: 72px;
+    .newsletter-subscribe-banner__submit {
+        height: 48px;
+        background: transparent;
+        color: #fff;
+        border: 0;
+    }
+
+    @media (min-width: 768px) {
+
+
+
+        .newsletter-subscribe-banner__background {
+            min-height: 520px;
         }
 
-        .single-blog-hero {
-            margin-bottom: 56px;
+        .newsletter-subscribe-banner__inner {
+            padding: 3.5rem 0;
+            max-width: 620px;
         }
 
-        .single-blog-hero__meta {
-            gap: 20px;
-            margin-bottom: 32px;
+        .newsletter-subscribe-banner__content {
+            padding: 16px 0;
+        }
+
+        .newsletter-subscribe-banner__title {
+            font-size: 40px;
+            letter-spacing: 2px;
+        }
+
+        .newsletter-subscribe-banner__form {
+            flex-direction: row;
             flex-wrap: wrap;
+            max-width: 75%;
         }
 
-        .single-blog-hero__image {
-            aspect-ratio: 16 / 10;
+        .newsletter-subscribe-banner__input {
+            flex: 1 1 260px;
         }
     }
+
 </style>
