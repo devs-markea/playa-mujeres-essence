@@ -1,13 +1,3 @@
-let ytPlayer = null;
-let ytReady  = false;
-
-// Callback de la API de YouTube
-function onYouTubeIframeAPIReady() {
-    if (window.App && typeof window.App.initYouTubePlayer === 'function') {
-        window.App.initYouTubePlayer();
-    }
-}
-
 window.App = window.App || {};
 
 (function (App) {
@@ -439,8 +429,6 @@ window.App = window.App || {};
 
         let isPlaying = false;
 
-        const isYouTubeIframe = (heroVideo.tagName && heroVideo.tagName.toLowerCase() === 'iframe');
-
         playButton.addEventListener('click', function (e) {
             e.preventDefault();
             isPlaying = !isPlaying;
@@ -451,32 +439,25 @@ window.App = window.App || {};
                 header.classList.toggle('pm-header--hidden', isPlaying);
             }
 
+            const vbgInst = window.VIDEO_BACKGROUNDS && window.VIDEO_BACKGROUNDS.get(heroVideo);
+
             if (isPlaying) {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
 
                 setTimeout(() => {
                     if (body) body.classList.add('body-overflow-hidden');
                 }, 600);
 
-                // ✅ Unmute
-                if (isYouTubeIframe) {
-                    if (ytPlayer && ytReady && typeof ytPlayer.unMute === 'function') {
-                        ytPlayer.unMute();
-                        if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
-                    }
-                } else {
+                if (vbgInst) {
+                    vbgInst.unmute();
+                    vbgInst.play();
+                } else if (typeof heroVideo.play === 'function') {
                     heroVideo.muted = false;
-                    if (typeof heroVideo.play === 'function') heroVideo.play();
+                    heroVideo.play();
                 }
             } else {
-                // ✅ Mute
-                if (isYouTubeIframe) {
-                    if (ytPlayer && ytReady && typeof ytPlayer.mute === 'function') {
-                        ytPlayer.mute();
-                    }
+                if (vbgInst) {
+                    vbgInst.mute();
                 } else {
                     heroVideo.muted = true;
                 }
@@ -484,17 +465,9 @@ window.App = window.App || {};
                 if (body) body.classList.remove('body-overflow-hidden');
             }
 
-            if (info) {
-                info.classList.toggle('is-hidden', isPlaying);
-            }
-
-            if (divider) {
-                divider.classList.toggle('is-hidden', isPlaying);
-            }
-
-            if (overlayVideo) {
-                overlayVideo.classList.toggle('is-hidden', isPlaying);
-            }
+            if (info) info.classList.toggle('is-hidden', isPlaying);
+            if (divider) divider.classList.toggle('is-hidden', isPlaying);
+            if (overlayVideo) overlayVideo.classList.toggle('is-hidden', isPlaying);
         });
     }
 
@@ -1389,32 +1362,25 @@ window.App = window.App || {};
         });
     }
 
-    // API YouTube
-    App.initYouTubePlayer = function () {
-        const heroIframe = document.querySelector('.video-hero__video');
-
-        if (heroIframe && heroIframe.tagName.toLowerCase() === 'iframe' && window.YT && YT.Player) {
-            ytPlayer = new YT.Player(heroIframe, {
-                events: {
-                    onReady: function () {
-                        ytReady = true;
-
-                        // Fuerza modo "background"
-                        try {
-                            ytPlayer.mute();
-                            ytPlayer.playVideo();
-                        } catch (e) {}
-                    }
-                }
-            });
-        }
-    };
-
     // Init global
     App.init = function () {
         cacheElements();
         initPrimaryShowcaseHeroDropdown();
         initRecaptchaV3();
+
+        // Inicializar youtube-background si hay elementos data-vbg en la página
+        const vbgEl = document.querySelector('[data-vbg]');
+        if (window.VideoBackgrounds && vbgEl) {
+            window.VIDEO_BACKGROUNDS = new VideoBackgrounds('[data-vbg]');
+
+            const heroPoster = document.querySelector('.video-hero__poster');
+            if (heroPoster) {
+                vbgEl.addEventListener('video-background-play', function () {
+                    heroPoster.classList.add('is-hidden');
+                }, { once: true });
+            }
+        }
+
         if (!header) return;
         initToTopButton();
         initLangSwitcher();

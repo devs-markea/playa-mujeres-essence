@@ -154,6 +154,15 @@ function pm_enqueue_assets() {
         true
     );
 
+    // youtube-background (solo se encola cuando hay un video hero de YouTube)
+    wp_register_script(
+        'pm-youtube-background',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/libs/youtube-background/jquery.youtube-background.min.js',
+        array(),
+        '1.1.8',
+        true
+    );
+
     // reCAPTCHA (NO lo cargues globalmente; solo en páginas con formularios)
     $recaptcha_site_key = (string) get_theme_mod('pm_recaptcha_site_key', '');
     if ( $recaptcha_site_key !== '' ) {

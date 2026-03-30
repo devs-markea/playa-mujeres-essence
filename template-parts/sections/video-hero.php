@@ -22,14 +22,27 @@ $video = pm_parse_video($video_url);
 
     <div class="video-hero__media">
         <div class="video-hero__overlay"></div>
-        <?php if ($video['type'] === 'youtube'): ?>
-            <iframe
-                    class="video-hero__video"
-                    src="<?php echo esc_url($video['embed_url']); ?>"
-                    allow="autoplay; encrypted-media"
-                    frameborder="0"
-                    playsinline>
-            </iframe>
+        <?php if ($video['type'] === 'youtube'):
+            $poster_url = $poster ? esc_url($poster['url']) : esc_url($video['thumbnail']);
+            wp_enqueue_script('pm-youtube-background');
+        ?>
+            <div
+                class="video-hero__video"
+                data-vbg="<?php echo esc_url($video['original_url']); ?>"
+                data-vbg-autoplay="true"
+                data-vbg-muted="true"
+                data-vbg-loop="true"
+                data-vbg-no-cookie="true"
+                aria-hidden="true"
+            ></div>
+            <?php if ($poster_url): ?>
+                <img
+                    class="video-hero__poster"
+                    src="<?php echo $poster_url; ?>"
+                    alt=""
+                    aria-hidden="true"
+                >
+            <?php endif; ?>
         <?php endif; ?>
         <?php if ($video['type'] === 'mp4'): ?>
             <video
