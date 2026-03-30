@@ -895,9 +895,10 @@ window.App = window.App || {};
             }
 
             var swiper = new Swiper(el, {
-                slidesPerView: 1,
+                slidesPerView: 1.2,
                 spaceBetween: 8,
                 speed: 650,
+                allowTouchMove: true,
                 watchOverflow: true,
                 grabCursor: true,
                 centeredSlides: false,
@@ -908,11 +909,6 @@ window.App = window.App || {};
                         applyFeaturedSlide(this, 0);
                     },
                     slideChangeTransitionEnd: function () {
-                        if (!isDesktopViewport() && typeof this.activeIndex === 'number') {
-                            applyFeaturedSlide(this, this.activeIndex, { slideToGroup: false });
-                        }
-                    },
-                    touchEnd: function () {
                         if (!isDesktopViewport() && typeof this.activeIndex === 'number') {
                             applyFeaturedSlide(this, this.activeIndex, { slideToGroup: false });
                         }

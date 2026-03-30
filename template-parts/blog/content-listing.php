@@ -178,7 +178,7 @@ if (! $has_listing_content) {
         <?php endif; ?>
 
         <div class="blog-listing__layout row g-5">
-            <div class="col-md-3">
+            <div class="col-md-3 order-2 order-md-1">
                 <aside class="blog-listing__sidebar<?php echo $sticky_sidebar_target ? ' blog-listing__sidebar--sticky blog-listing__sidebar--sticky-' . esc_attr($sticky_sidebar_target) : ''; ?>">
                     <?php if ($has_categories_sidebar) : ?>
                         <div class="blog-listing__sidebar-block blog-listing__sidebar-block--categories">
@@ -259,7 +259,7 @@ if (! $has_listing_content) {
             <?php endif; ?>
                 </aside>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-9 order-1 order-md-2">
             <div class="blog-listing__content" data-blog-listing-content>
                 <?php if (! empty($listing_posts)) : ?>
                     <?php if (! empty($first_listing_posts)) : ?>
@@ -439,16 +439,14 @@ if (! $has_listing_content) {
                 el.dataset.swiperInitialized = '1';
 
                 new window.Swiper(el, {
-                    slidesPerView: '2.5',
-                    spaceBetween: 40,
+                    slidesPerView: '1.2',
+                    spaceBetween: 24,
                     speed: 650,
                     grabCursor: true,
                     watchOverflow: true,
                     breakpoints: {
-                        0: {
-                            spaceBetween: 18
-                        },
                         992: {
+                            slidesPerView: '2.5',
                             spaceBetween: 24
                         }
                     }

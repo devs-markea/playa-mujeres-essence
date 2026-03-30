@@ -44,25 +44,27 @@ $image = get_the_post_thumbnail(
             <?php echo esc_html($title); ?>
         </<?php echo tag_escape($heading_tag); ?>>
 
-        <?php if ($excerpt) : ?>
-            <div class="blog-hero-card__excerpt mb-3">
-                <?php echo esc_html($excerpt); ?>
+        <div class="row g-0 blog-hero-card__footer">
+            <div class="col-12 col-md-9">
+                <?php if ($excerpt) : ?>
+                    <div class="blog-hero-card__excerpt mb-3">
+                        <?php echo esc_html($excerpt); ?>
+                    </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
-
-        <div class="blog-hero-card__footer">
-            <a
-                href="<?php echo esc_url($permalink); ?>"
-                class="blog-hero-card__cta-link"
-                aria-label="<?php echo esc_attr($title); ?>"
-            >
-                <span class="blog-hero-card__cta-label">Read More</span>
-                <span class="blog-hero-card__cta-icon" aria-hidden="true">
+            <div class="col-12 col-md-3">
+                <a
+                        href="<?php echo esc_url($permalink); ?>"
+                        class="blog-hero-card__cta-link"
+                        aria-label="<?php echo esc_attr($title); ?>">
+                    <span class="blog-hero-card__cta-label">Read More</span>
+                    <span class="blog-hero-card__cta-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
                             <path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                         </svg>
                     </span>
-            </a>
+                </a>
+            </div>
         </div>
         </div>
     </div>
