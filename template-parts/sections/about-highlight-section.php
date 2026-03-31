@@ -76,9 +76,12 @@ if (empty($title_tag)) {
                     <?php endif; ?>>
                     <div class="about-highlight__icon mb-2">
                         <img
-                                src="<?php echo esc_url( $icon['url'] ); ?>"
+                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+                                data-src="<?php echo esc_url( $icon['url'] ); ?>"
                                 alt="<?php echo esc_attr( ! empty( $icon['alt'] ) ? $icon['alt'] : $label ); ?>"
-                                class="img-fluid">
+                                class="img-fluid"
+                                width="<?php echo isset( $icon['width'] ) ? (int) $icon['width'] : 48; ?>"
+                                height="<?php echo isset( $icon['height'] ) ? (int) $icon['height'] : 48; ?>">
                     </div>
 
                     <?php if ( ! empty( $label ) ) : ?>

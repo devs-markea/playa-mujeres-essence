@@ -19,7 +19,7 @@ function pm_add_svg_to_items_with_children( $title, $item, $args, $depth ) {
 }
 add_filter( 'nav_menu_item_title', 'pm_add_svg_to_items_with_children', 10, 4 );
 
-add_filter('show_admin_bar', '__return_false');
+//add_filter('show_admin_bar', '__return_false');
 
 
 if (!function_exists('pm_parse_video')) {
@@ -80,6 +80,11 @@ if (!function_exists('pm_parse_video')) {
                     'id' => $id,
                     'embed_url' => "https://www.youtube.com/embed/$id?$params",
                     'thumbnail' => "https://img.youtube.com/vi/$id/maxresdefault.jpg",
+                    'thumbnails' => [
+                        'hq'  => "https://img.youtube.com/vi/$id/hqdefault.jpg",   // 480x360
+                        'sd'  => "https://img.youtube.com/vi/$id/sddefault.jpg",   // 640x480
+                        'max' => "https://img.youtube.com/vi/$id/maxresdefault.jpg", // 1280x720
+                    ],
                     'original_url' => $url,
                 ];
             }

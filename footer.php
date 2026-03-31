@@ -13,9 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <footer class="site-footer">
     <?php get_template_part( 'template-parts/footer/footer', 'default' ); ?>
 </footer>
-    </div><!-- #smooth-content -->
-</div><!-- #smooth-wrapper -->
-
 <?php get_template_part('inc/components/ui/to-top'); ?>
 
 <?php wp_footer(); ?>

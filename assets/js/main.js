@@ -1452,45 +1452,52 @@ window.App = window.App || {};
         });
     }
 
-    // ScrollSmoother — debe inicializarse antes que todo lo demás
-    function initScrollSmoother() {
-        if (typeof gsap === 'undefined' || typeof ScrollSmoother === 'undefined') return;
+    // Lenis — smooth scroll nativo, compatible con fixed/sticky
+    function initLenis() {
+        if (typeof Lenis === 'undefined') return;
 
-        gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-
-        window.smoother = ScrollSmoother.create({
-            wrapper:     '#smooth-wrapper',
-            content:     '#smooth-content',
-            smooth:      1.1,
-            effects:     true,
-            smoothTouch: 0,
+        window.lenis = new Lenis({
+            duration:    0.8,
+            smoothTouch: false,
         });
+
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            window.lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add(function (time) {
+                window.lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+        } else {
+            function lenisRaf(time) {
+                window.lenis.raf(time);
+                requestAnimationFrame(lenisRaf);
+            }
+            requestAnimationFrame(lenisRaf);
+        }
     }
 
-    function initSidebarSticky() {
-        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    // Lazy loading con IntersectionObserver
+    function lazyLoadImages(selector, options = { threshold: 0.5 }) {
+        const images = document.querySelectorAll(`${selector}[data-src]`);
 
-        const sidebar = document.querySelector('.blog-listing__sidebar--sticky');
-        if (!sidebar) return;
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    observer.unobserve(img);
+                }
+            });
+        }, options);
 
-        const layout = sidebar.closest('.blog-listing__layout');
-        if (!layout) return;
-
-        const headerEl = document.querySelector('#masthead, .site-header, header');
-        const headerOffset = headerEl ? headerEl.offsetHeight : 80;
-
-        ScrollTrigger.create({
-            trigger:    layout,
-            start:      'top top+=' + headerOffset,
-            end:        'bottom bottom',
-            pin:        sidebar,
-            pinSpacing: false,
+        images.forEach(image => {
+            observer.observe(image);
         });
     }
 
     // Init global
     App.init = function () {
-        initScrollSmoother();
+        initLenis();
         cacheElements();
         initPrimaryShowcaseHeroDropdown();
         initRecaptchaV3();
@@ -1499,13 +1506,12 @@ window.App = window.App || {};
         const vbgEl = document.querySelector('[data-vbg]');
         if (window.VideoBackgrounds && vbgEl) {
             window.VIDEO_BACKGROUNDS = new VideoBackgrounds('[data-vbg]');
-
-            const heroPoster = document.querySelector('.video-hero__poster');
-            if (heroPoster) {
-                vbgEl.addEventListener('video-background-play', function () {
-                    heroPoster.classList.add('is-hidden');
-                }, { once: true });
-            }
+        }
+        const heroPoster = document.querySelector('.video-hero__poster');
+        if (heroPoster) {
+            vbgEl.addEventListener('video-background-play', function () {
+                heroPoster.classList.add('is-hidden');
+            }, { once: true });
         }
 
         if (!header) return;
@@ -1523,7 +1529,7 @@ window.App = window.App || {};
         initImagesCarouselGallerySwipers();
         initContentCarouselClassicSwiper();
         initBlogHeroSwiper();
-        initSidebarSticky();
+        lazyLoadImages('.img-fluid');
     };
 
 })(window.App);

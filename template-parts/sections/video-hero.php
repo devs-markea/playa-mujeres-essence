@@ -23,7 +23,16 @@ $video = pm_parse_video($video_url);
     <div class="video-hero__media">
         <div class="video-hero__overlay"></div>
         <?php if ($video['type'] === 'youtube'):
+            $thumbs     = $video['thumbnails'] ?? [];
             $poster_url = $poster ? esc_url($poster['url']) : esc_url($video['thumbnail']);
+            $srcset     = '';
+            if ( empty($poster) && ! empty($thumbs) ) {
+                $srcset = esc_attr(
+                    $thumbs['hq']  . ' 480w, ' .
+                    $thumbs['sd']  . ' 640w, ' .
+                    $thumbs['max'] . ' 1280w'
+                );
+            }
             wp_enqueue_script('pm-youtube-background');
         ?>
             <div
@@ -37,10 +46,17 @@ $video = pm_parse_video($video_url);
             ></div>
             <?php if ($poster_url): ?>
                 <img
-                    class="video-hero__poster"
+                    class="video-hero__poster skip-lazy"
                     src="<?php echo $poster_url; ?>"
+                    <?php if ($srcset): ?>
+                    srcset="<?php echo $srcset; ?>"
+                    sizes="100vw"
+                    <?php endif; ?>
                     alt=""
                     aria-hidden="true"
+                    fetchpriority="high"
+                    loading="eager"
+                    data-no-lazy="1"
                 >
             <?php endif; ?>
         <?php endif; ?>

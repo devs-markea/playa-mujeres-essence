@@ -155,13 +155,13 @@ function pm_enqueue_assets() {
     );
 
     wp_register_script(
-        'pm-scroll-smoother',
-        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollSmoother.min.js',
-        array('pm-gsap', 'pm-gsap-st'),
-        '3.14.1',
+        'pm-lenis',
+        'https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js',
+        array(),
+        '1.1.13',
         true
     );
-    wp_enqueue_script('pm-scroll-smoother');
+    wp_enqueue_script('pm-lenis');
 
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
     wp_register_script(
@@ -208,4 +208,44 @@ function pm_enqueue_assets() {
 
 
 add_action( 'wp_enqueue_scripts', 'pm_enqueue_assets', 20 );
+
+
+/**
+ * Output a <link rel="preload"> for the LCP image (video-hero poster) so the
+ * browser discovers it in the initial HTML response instead of waiting for the
+ * template to render (~2 s resource load delay).
+ */
+function pm_preload_lcp_image() {
+    $post_id = get_the_ID();
+    if ( ! $post_id ) return;
+
+    $sections = get_field( 'sections', $post_id );
+    if ( empty( $sections ) || ! is_array( $sections ) ) return;
+
+    $first = $sections[0];
+    if ( ! isset( $first['acf_fc_layout'] ) || $first['acf_fc_layout'] !== 'video_hero' ) return;
+
+    $poster_url = '';
+
+    if ( ! empty( $first['poster']['url'] ) ) {
+        $poster_url = $first['poster']['url'];
+    } elseif ( ! empty( $first['video_url'] ) ) {
+        $video      = pm_parse_video( $first['video_url'] );
+        $poster_url = $video['thumbnail'] ?? '';
+    }
+
+    if ( $poster_url ) {
+        echo '<link rel="preload" as="image" href="' . esc_url( $poster_url ) . '" fetchpriority="high">' . "\n";
+    }
+}
+add_action( 'wp_head', 'pm_preload_lcp_image', 1 );
+
+/**
+ * Preconnect a dominios externos usados en above-the-fold.
+ */
+function pm_preconnect_hints() {
+
+}
+add_action( 'wp_head', 'pm_preconnect_hints', 1 );
+
 
