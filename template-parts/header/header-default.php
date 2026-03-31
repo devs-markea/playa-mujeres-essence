@@ -14,7 +14,13 @@
                     <?php echo pm_get_logo( 'logo-desktop'); ?>
                 </a>
             </div>
-            <div class="pm-header__menu">
+            <?php
+            $more_label = 'Plan your trip';
+            if ( function_exists( 'pll_current_language' ) && pll_current_language() === 'es' ) {
+                $more_label = 'Planea tu viaje';
+            }
+            ?>
+            <div class="pm-header__menu" data-more-label="<?php echo esc_attr( $more_label ); ?>">
                 <?php pm_essence_nav_menu(); ?>
             </div>
 

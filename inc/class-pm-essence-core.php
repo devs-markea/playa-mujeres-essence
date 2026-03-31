@@ -29,6 +29,7 @@ if ( ! class_exists( 'PM_Essence_Core' ) ) :
             add_action( 'enqueue_block_assets', array( $this, 'block_assets' ) );
             add_filter( 'body_class', array( $this, 'body_classes' ) );
             add_filter( 'wp_page_menu_args', array( $this, 'page_menu_args' ) );
+            add_filter( 'wp_resource_hints', array( $this, 'resource_hints' ), 10, 2 );
 
         }
 
@@ -256,6 +257,23 @@ if ( ! class_exists( 'PM_Essence_Core' ) ) :
 
             //wp_enqueue_script( 'blockui-js', get_template_directory_uri() . '/assets/libs/blockui/jquery.blockUI.min.js', array('jquery'), $pm_essence_version, false );
             wp_enqueue_script( 'main-js', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), $pm_essence_version, false );
+
+
+        }
+
+        /**
+         * Preconnect hints for external font loading.
+         */
+        public function resource_hints( $urls, $relation_type ) {
+            if ( 'preconnect' === $relation_type ) {
+                $urls[] = 'https://use.typekit.net';
+                $urls[] = array(
+                    'href' => 'https://p.typekit.net',
+                    'crossorigin' => 'anonymous',
+                );
+            }
+
+            return $urls;
         }
 
         /**

@@ -23,6 +23,7 @@ window.App = window.App || {};
         menuExpTrigger,
         langSwitcher,
         navDesktop,
+        navGroups,
         logoPicture,
         logoImg,
         logoSource,
@@ -52,6 +53,7 @@ window.App = window.App || {};
 
         langSwitcher          = document.querySelector('.pm-lang-switcher__current');
         navDesktop            = document.querySelectorAll('.pm-header__menu .pm-navbar .menu-item > a');
+        navGroups             = document.querySelector('.pm-navbar__more-btn');
 
         logoPicture           = document.querySelector('.site-logo.logo-desktop');
         logoImg               = null;
@@ -80,23 +82,23 @@ window.App = window.App || {};
 
 
     // Decide tema según scroll y estado
-    function updateHeaderTheme() {
-        const SCROLL_THRESHOLD = 150;
-
-        // ✅ Forzado (solo cuando exista la marca, o sea Essence)
-        if (forceHeaderThemeEl) {
-            setHeaderTheme(true);
-            return;
-        }
-
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const pastHero  = scrollTop >= SCROLL_THRESHOLD;
-
-        const anyPanelOpen = state.isWhereOpen || state.isExperiencesOpen;
-
-        const useMenuTheme = pastHero || anyPanelOpen;
-        setHeaderTheme(useMenuTheme);
-    }
+    // function updateHeaderTheme() {
+    //     const SCROLL_THRESHOLD = 150;
+    //
+    //     // ✅ Forzado (solo cuando exista la marca, o sea Essence)
+    //     if (forceHeaderThemeEl) {
+    //         setHeaderTheme(true);
+    //         return;
+    //     }
+    //
+    //     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    //     const pastHero  = scrollTop >= SCROLL_THRESHOLD;
+    //
+    //     const anyPanelOpen = state.isWhereOpen || state.isExperiencesOpen;
+    //
+    //     const useMenuTheme = pastHero || anyPanelOpen;
+    //     setHeaderTheme(useMenuTheme);
+    // }
 
     // Actualiza límite inferior del video-hero
     function updateVideoHeroBottom() {
@@ -114,6 +116,8 @@ window.App = window.App || {};
         const lightUrl = (logoPicture.dataset && logoPicture.dataset.logoLight) || (logoImg.dataset && logoImg.dataset.logoLight);
         const darkUrl  = (logoPicture.dataset && logoPicture.dataset.logoDark)  || (logoImg.dataset && logoImg.dataset.logoDark);
 
+        const moreBtn = navGroups || document.querySelector('.pm-navbar__more-btn');
+
         if (isMenuTheme) {
             if (darkUrl) {
                 logoImg.src = darkUrl;
@@ -126,6 +130,9 @@ window.App = window.App || {};
             }
 
             navDesktop.forEach(item => item.classList.add('nav-item-dark'));
+            if (moreBtn) {
+                moreBtn.classList.add('nav-item-dark');
+            }
 
             if (langSwitcher) {
                 langSwitcher.style.color = '#323232';
@@ -138,6 +145,9 @@ window.App = window.App || {};
             header.classList.add('menu-open');
         } else {
             navDesktop.forEach(item => item.classList.remove('nav-item-dark'));
+            if (moreBtn) {
+                moreBtn.classList.remove('nav-item-dark');
+            }
 
             if (lightUrl) {
                 logoImg.src = lightUrl;
@@ -421,6 +431,86 @@ window.App = window.App || {};
                 closeAllPanels();
             }
         });
+    }
+
+    // Priority Nav — agrupa items .group en "Plan your trip" por debajo de 1400px
+    function initPriorityNav() {
+        var BREAKPOINT = 1400;
+
+        var nav = document.querySelector('.pm-navbar-desktop');
+        if (!nav) return;
+
+        var wrapper = nav.closest('.pm-header__menu');
+        if (!wrapper) return;
+
+        var groupItems = Array.from(nav.querySelectorAll(':scope > .menu-item.group'));
+        if (!groupItems.length) return;
+
+        // Guardar el siguiente hermano de cada item ANTES de mover nada
+        // para poder restaurarlos en su posición original exacta
+        var groupAnchors = groupItems.map(function (item) {
+            return item.nextElementSibling; // null si era el último
+        });
+
+        var moreLabel = wrapper.dataset.moreLabel || 'Plan your trip';
+
+        // Crear el item "Plan your trip"
+        var moreLi = document.createElement('li');
+        moreLi.className = 'menu-item pm-navbar__more';
+        moreLi.style.display = 'none';
+        moreLi.innerHTML =
+            '<button class="pm-navbar__more-btn" aria-expanded="false" aria-haspopup="true">' +
+                '<span>' + moreLabel + '</span>' +
+                '<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                    '<path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                '</svg>' +
+            '</button>' +
+            '<ul class="pm-navbar__more-dropdown" role="menu"></ul>';
+        nav.appendChild(moreLi);
+
+        var moreBtn      = moreLi.querySelector('.pm-navbar__more-btn');
+        var moreDropdown = moreLi.querySelector('.pm-navbar__more-dropdown');
+
+        // Toggle dropdown
+        moreBtn.addEventListener('click', function () {
+            var expanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', String(!expanded));
+            moreLi.classList.toggle('is-open', !expanded);
+        });
+
+        // Cerrar al hacer click fuera
+        document.addEventListener('click', function (e) {
+            if (!moreLi.contains(e.target)) {
+                moreBtn.setAttribute('aria-expanded', 'false');
+                moreLi.classList.remove('is-open');
+            }
+        });
+
+        function update() {
+            if (window.innerWidth <= BREAKPOINT) {
+                // Mover items .group al dropdown (en orden, con appendChild)
+                moreLi.style.display = '';
+                groupItems.forEach(function (item) { moreDropdown.appendChild(item); });
+            } else {
+                // Restaurar en orden inverso usando el anchor original de cada item
+                for (var i = groupItems.length - 1; i >= 0; i--) {
+                    var anchor = groupAnchors[i];
+                    var ref = (anchor && anchor.parentNode === nav) ? anchor : moreLi;
+                    nav.insertBefore(groupItems[i], ref);
+                }
+                moreLi.style.display = 'none';
+                moreBtn.setAttribute('aria-expanded', 'false');
+                moreLi.classList.remove('is-open');
+            }
+        }
+
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(update, 60);
+        });
+
+        update();
     }
 
     // Video hero: botón y scroll top
@@ -1384,6 +1474,7 @@ window.App = window.App || {};
         if (!header) return;
         initToTopButton();
         initLangSwitcher();
+        initPriorityNav();
         initMobileMenu();
         initMobilePanels();
         initMegaPanels();

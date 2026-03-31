@@ -128,7 +128,7 @@
 }
 
 .pm-header__menu .pm-navbar .menu-item {
-    margin-right: 20px;
+    margin-right: 32px;
 }
 
 .pm-header__menu .pm-navbar .menu-item:last-child {
@@ -281,6 +281,86 @@
         display: none;
     }
 
+}
+
+/* 1.5 Priority Nav — "Plan your trip" dropdown (≤ 1400px)
+   -------------------------------------------------------------------------- */
+.pm-navbar__more {
+    position: relative;
+    white-space: nowrap;
+}
+
+.pm-navbar__more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.875rem;
+    font-weight: 300;
+    font-family: inherit;
+    color: #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.2s ease;
+}
+
+.pm-navbar__more-btn:hover {
+    color: var(--pm-primary-900);
+}
+
+.pm-navbar__more-btn svg {
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.pm-navbar__more.is-open .pm-navbar__more-btn svg {
+    transform: rotate(180deg);
+}
+
+.pm-navbar__more-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 20px);
+    right: 0;
+    background: #fff;
+    min-width: 200px;
+    padding: 8px 0;
+    list-style: none;
+    margin: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    z-index: 9999;
+}
+
+.pm-navbar__more.is-open .pm-navbar__more-dropdown {
+    display: block;
+}
+
+.pm-navbar__more-dropdown .menu-item {
+    margin: 0 !important;
+}
+
+.pm-navbar__more-dropdown .menu-item > a {
+    display: block !important;
+    padding: 10px 24px !important;
+    color: var(--pm-secondary-900) !important;
+    font-size: 0.8125rem !important;
+    font-weight: 300 !important;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.pm-navbar__more-dropdown .menu-item > a:hover {
+    color: var(--pm-primary-900) !important;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.pm-navbar__more-dropdown .menu-item.current_page_item > a {
+    font-weight: 500 !important;
 }
 
 /* ==========================================================================
@@ -563,8 +643,11 @@
 }
 
 .mega-panel__inner {
-    margin-top: 114px;
-    padding: 32px 5vw 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 90px;
+    padding: 32px 40px;
 }
 
 .mega-panel__inner .mega-panel__headline {
@@ -574,7 +657,7 @@
     font-weight: 300;
     line-height: normal;
     letter-spacing: 1px;
-    margin-bottom: 30px;
+    margin: 0;
 }
 
 
