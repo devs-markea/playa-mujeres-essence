@@ -1452,8 +1452,45 @@ window.App = window.App || {};
         });
     }
 
+    // ScrollSmoother — debe inicializarse antes que todo lo demás
+    function initScrollSmoother() {
+        if (typeof gsap === 'undefined' || typeof ScrollSmoother === 'undefined') return;
+
+        gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+        window.smoother = ScrollSmoother.create({
+            wrapper:     '#smooth-wrapper',
+            content:     '#smooth-content',
+            smooth:      1.1,
+            effects:     true,
+            smoothTouch: 0,
+        });
+    }
+
+    function initSidebarSticky() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+        const sidebar = document.querySelector('.blog-listing__sidebar--sticky');
+        if (!sidebar) return;
+
+        const layout = sidebar.closest('.blog-listing__layout');
+        if (!layout) return;
+
+        const headerEl = document.querySelector('#masthead, .site-header, header');
+        const headerOffset = headerEl ? headerEl.offsetHeight : 80;
+
+        ScrollTrigger.create({
+            trigger:    layout,
+            start:      'top top+=' + headerOffset,
+            end:        'bottom bottom',
+            pin:        sidebar,
+            pinSpacing: false,
+        });
+    }
+
     // Init global
     App.init = function () {
+        initScrollSmoother();
         cacheElements();
         initPrimaryShowcaseHeroDropdown();
         initRecaptchaV3();
@@ -1486,6 +1523,7 @@ window.App = window.App || {};
         initImagesCarouselGallerySwipers();
         initContentCarouselClassicSwiper();
         initBlogHeroSwiper();
+        initSidebarSticky();
     };
 
 })(window.App);

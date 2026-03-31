@@ -154,6 +154,15 @@ function pm_enqueue_assets() {
         true
     );
 
+    wp_register_script(
+        'pm-scroll-smoother',
+        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollSmoother.min.js',
+        array('pm-gsap', 'pm-gsap-st'),
+        '3.14.1',
+        true
+    );
+    wp_enqueue_script('pm-scroll-smoother');
+
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
     wp_register_script(
         'pm-youtube-background',

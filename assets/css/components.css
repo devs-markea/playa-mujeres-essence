@@ -674,7 +674,46 @@
     z-index: 10;
 }
 
-/* 2.5 Menu Experience Desktop
+/* 2.5 Experience Card — zoom hover
+   -------------------------------------------------------------------------- */
+.cover-cc-bg {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.experience-card__image-wrapper {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* El pseudo-elemento hereda el background del inline style y es el único que escala */
+.experience-card__image-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: inherit;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: inherit;
+    transform: scale(1);
+    transition: transform 0.4s ease;
+    will-change: transform;
+    z-index: 0;
+}
+
+.experience-card__image-wrapper:hover::before {
+    transform: scale(1.06);
+}
+
+/* El texto queda encima del pseudo-elemento */
+.experience-card__image-wrapper > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* 2.6 Menu Experience Desktop
    -------------------------------------------------------------------------- */
 body.is-experiences-open {
     overflow: hidden;
@@ -2307,10 +2346,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
         padding-top: 72px;
     }
 
-    .blog-listing__sidebar--sticky {
-        position: sticky;
-        top: -242px;
-    }
+
 }
 
 @media (min-width: 991.98px) {

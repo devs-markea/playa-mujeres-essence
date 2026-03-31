@@ -1,5 +1,5 @@
 <div class="mega-panel mega-panel__where-to-stay">
-    <div class="mega-panel__inner">
+    <div class="container mega-panel__inner">
         <p class="mega-panel__headline">
             Because paradise feels different for everyone.
         </p>

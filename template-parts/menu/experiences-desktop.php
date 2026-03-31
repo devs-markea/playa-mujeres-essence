@@ -1,5 +1,5 @@
 <div class="mega-panel mega-panel__experiences">
-    <div class="mega-panel__inner">
+    <div class="container mega-panel__inner">
         <p class="mega-panel__headline">
             Discover a collection of world-class resorts in Playa Mujeres
         </p>
