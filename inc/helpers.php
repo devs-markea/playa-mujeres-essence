@@ -19,7 +19,7 @@ function pm_add_svg_to_items_with_children( $title, $item, $args, $depth ) {
 }
 add_filter( 'nav_menu_item_title', 'pm_add_svg_to_items_with_children', 10, 4 );
 
-//add_filter('show_admin_bar', '__return_false');
+add_filter('show_admin_bar', '__return_false');
 
 
 if (!function_exists('pm_parse_video')) {
@@ -121,6 +121,69 @@ if (!function_exists('pm_parse_video')) {
             'thumbnail' => null,
             'original_url' => $url,
         ];
+    }
+}
+
+if ( ! function_exists( 'pm_get_cached_yt_thumbnail' ) ) {
+
+    /**
+     * Descarga el thumbnail de YouTube y lo guarda en uploads para servirlo
+     * desde nuestro dominio con cache headers largos (en lugar de los 2h de YouTube).
+     *
+     * @param string $video_id  ID del video de YouTube.
+     * @param string $quality   'hq' (480w), 'sd' (640w), 'max' (1280w).
+     * @return string           URL local o URL de YouTube como fallback.
+     */
+    function pm_get_cached_yt_thumbnail( $video_id, $quality = 'max' ) {
+        $quality_map = [
+            'hq'  => 'hqdefault',
+            'sd'  => 'sddefault',
+            'max' => 'maxresdefault',
+        ];
+
+        $yt_file    = ( $quality_map[ $quality ] ?? 'maxresdefault' ) . '.jpg';
+        $remote_url = "https://img.youtube.com/vi/{$video_id}/{$yt_file}";
+
+        $transient_key = 'pm_yt_thumb_' . $video_id . '_' . $quality;
+        $cached        = get_transient( $transient_key );
+        if ( $cached ) {
+            return $cached;
+        }
+
+        $upload     = wp_upload_dir();
+        $dir_path   = $upload['basedir'] . '/yt-thumbnails/';
+        $local_file = $dir_path . "yt-{$video_id}-{$yt_file}";
+        $local_url  = $upload['baseurl'] . "/yt-thumbnails/yt-{$video_id}-{$yt_file}";
+
+        if ( ! file_exists( $local_file ) ) {
+            wp_mkdir_p( $dir_path );
+
+            // Crear .htaccess con cache de 1 año si no existe
+            $htaccess = $dir_path . '.htaccess';
+            if ( ! file_exists( $htaccess ) ) {
+                file_put_contents( $htaccess,
+                    "<IfModule mod_expires.c>\n" .
+                    "  ExpiresActive On\n" .
+                    "  ExpiresByType image/jpeg \"access plus 1 year\"\n" .
+                    "</IfModule>\n" .
+                    "<IfModule mod_headers.c>\n" .
+                    "  Header set Cache-Control \"max-age=31536000, public, immutable\"\n" .
+                    "</IfModule>\n"
+                );
+            }
+
+            $response = wp_remote_get( $remote_url, [ 'timeout' => 10 ] );
+
+            if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+                return $remote_url; // fallback a YouTube
+            }
+
+            file_put_contents( $local_file, wp_remote_retrieve_body( $response ) );
+        }
+
+        set_transient( $transient_key, $local_url, MONTH_IN_SECONDS );
+
+        return $local_url;
     }
 }
 

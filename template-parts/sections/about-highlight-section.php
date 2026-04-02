@@ -14,7 +14,7 @@ if (empty($title_tag)) {
 }
 ?>
 
-<section class="about-highlights">
+<section data-anim="slide-up delay-2" class="about-highlights">
     <div class="container">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">

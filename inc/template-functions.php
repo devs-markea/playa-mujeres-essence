@@ -359,6 +359,36 @@ if ( ! function_exists( 'pm_essence_nav_menu' ) ) {
     }
 }
 
+/**
+ * Inyecta el botón "Plan your trip" al final del menú de escritorio.
+ * Al estar en el HTML inicial, el browser lo pinta sin JS → elimina el CLS
+ * que antes causaba la inserción dinámica en initPriorityNav().
+ * El JS solo gestiona la funcionalidad (mover items, toggle), no el DOM inicial.
+ */
+add_filter( 'wp_nav_menu_items', function ( $items, $args ) {
+    // Solo para el menú de escritorio
+    if ( empty( $args->menu_class ) || strpos( $args->menu_class, 'pm-navbar-desktop' ) === false ) {
+        return $items;
+    }
+
+    $label = 'Plan your trip';
+    if ( function_exists( 'pll_current_language' ) && pll_current_language() === 'es' ) {
+        $label = 'Planea tu viaje';
+    }
+
+    $items .= '<li class="menu-item pm-navbar__more">'
+        . '<button class="pm-navbar__more-btn" aria-expanded="false" aria-haspopup="true">'
+            . '<span>' . esc_html( $label ) . '</span>'
+            . '<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+                . '<path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            . '</svg>'
+        . '</button>'
+        . '<ul class="pm-navbar__more-dropdown" role="menu"></ul>'
+    . '</li>';
+
+    return $items;
+}, 10, 2 );
+
 if ( ! function_exists( 'pm_essence_homepage_section_hero' ) ) {
     /**
      * Display Section Hero

@@ -47,7 +47,7 @@ function pm_render_icon_picker($icon) {
 }
 
 ?>
-<section class="content-carousel content-carousel--classic" data-content-carousel
+<section data-anim="slide-up delay-2" class="content-carousel content-carousel--classic" data-content-carousel
          data-content-carousel-variant="classic">
     <div class="container">
         <div class="row g-0">

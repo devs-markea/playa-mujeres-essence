@@ -78,7 +78,7 @@ if ($has_decor_image && $variant === 'stacked'){
 }
 ?>
 
-<section class="pm-text-block pm-text-block--<?= esc_attr(sanitize_title($variant)); ?>">
+<section data-anim="slide-up delay-2" class="pm-text-block pm-text-block--<?= esc_attr(sanitize_title($variant)); ?>">
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">

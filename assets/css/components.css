@@ -285,9 +285,29 @@
 
 /* 1.5 Priority Nav — "Plan your trip" dropdown (≤ 1400px)
    -------------------------------------------------------------------------- */
+
+/*
+ * El botón está pre-renderizado en el HTML (via filtro wp_nav_menu_items).
+ * CSS controla la visibilidad inicial → elimina el CLS que causaba la
+ * inserción dinámica de initPriorityNav(). El JS solo gestiona el toggle
+ * y el movimiento de items (ya ocultos via CSS → sin layout shift).
+ */
 .pm-navbar__more {
     position: relative;
     white-space: nowrap;
+    display: none; /* Oculto por defecto (> 1400px todos los items caben) */
+}
+
+@media (max-width: 1399px) {
+    /* Mostrar el botón "Plan your trip" */
+    .pm-navbar__more {
+        display: list-item;
+    }
+
+    /* Ocultar los items .group del nav (JS los mueve al dropdown sin shift visual) */
+    .pm-navbar-desktop > .menu-item.group {
+        display: none;
+    }
 }
 
 .pm-navbar__more-btn {
@@ -593,22 +613,47 @@
 }
 
 .hotel-card__image-wrapper {
-    cursor:pointer;
+    cursor: pointer;
     height: 200px;
     border-radius: 0.5rem;
     border: 1px solid #E5E5E5;
     overflow: hidden;
-    background-size: cover;
     position: relative;
 }
 
+/* Imagen: hereda el background-image del inline style y es el único que escala */
 .hotel-card__image-wrapper::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient( 0deg, rgba(255, 255, 255, 0) 53.7%, rgb(255, 255, 255) 92.2% );
+    background-image: inherit;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transform: scale(1);
+    transition: transform 0.4s ease;
+    will-change: transform;
+    z-index: 0;
+}
+
+.hotel-card__image-wrapper:hover::before {
+    transform: scale(1.06);
+}
+
+/* Gradiente blanco superior (movido a ::after para no interferir con el zoom) */
+.hotel-card__image-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0) 53.7%, rgb(255, 255, 255) 92.2%);
     pointer-events: none;
-    z-index: 1;
+    /*z-index: 1;*/
+}
+
+/* Logo encima de ambos pseudo-elementos */
+.hotel-card__image-wrapper > * {
+    position: relative;
+    z-index: 2;
 }
 
 .hotel-card__logo {
@@ -824,6 +869,9 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     object-fit: cover;
     z-index: 2;
     pointer-events: none;
+}
+
+.video-hero__poster.is-fading {
     transition: opacity 0.8s ease;
 }
 

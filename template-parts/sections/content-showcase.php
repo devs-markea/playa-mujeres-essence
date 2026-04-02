@@ -13,7 +13,7 @@ if (!$items) return;
 
 ?>
 
-<section class="experiences-tabs">
+<section data-anim="slide-up delay-2" class="experiences-tabs">
     <div class="px-4 px-md-0">
         <div class="row g-0 align-items-center">
 

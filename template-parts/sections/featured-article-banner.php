@@ -26,7 +26,7 @@ $bg_mobile_url  = $bg_mobile['url']  ?? ($post_id ? get_the_post_thumbnail_url($
 ?>
 
 <?php if ( $post_id && $post_link ) : ?>
-    <section class="featured-article-banner featured-article-banner--<?php echo esc_attr($layout_width); ?>">
+    <section data-anim="slide-up delay-2" class="featured-article-banner featured-article-banner--<?php echo esc_attr($layout_width); ?>">
         <a class="featured-article-banner__link" href="<?php echo esc_url($post_link); ?>">
             <picture class="featured-article-banner__media">
                 <?php if ( $bg_mobile_url ) : ?>

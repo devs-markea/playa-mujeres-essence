@@ -1,7 +1,7 @@
 <?php
 // Campos ACF
 $video_url = get_sub_field('video_url');
-$poster = get_sub_field('poster');
+$poster = get_sub_field('poster_image');
 $title = get_sub_field('title');
 $description = get_sub_field('description');
 $button_text = get_sub_field('button_label');
@@ -23,17 +23,35 @@ $video = pm_parse_video($video_url);
     <div class="video-hero__media">
         <div class="video-hero__overlay"></div>
         <?php if ($video['type'] === 'youtube'):
-            $thumbs     = $video['thumbnails'] ?? [];
-            $poster_url = $poster ? esc_url($poster['url']) : esc_url($video['thumbnail']);
-            $srcset     = '';
-            if ( empty($poster) && ! empty($thumbs) ) {
-                $srcset = esc_attr(
-                    $thumbs['hq']  . ' 480w, ' .
-                    $thumbs['sd']  . ' 640w, ' .
-                    $thumbs['max'] . ' 1280w'
-                );
-            }
             wp_enqueue_script('pm-youtube-background');
+
+            $poster_attrs = [
+                'class'         => 'video-hero__poster skip-lazy',
+                'alt'           => '',
+                'aria-hidden'   => 'true',
+                'fetchpriority' => 'high',
+                'loading'       => 'eager',
+                'data-no-lazy'  => '1',
+                'decoding'      => 'sync',
+                'sizes'         => '100vw',
+            ];
+
+            if ( $poster && ! empty( $poster['ID'] ) ) {
+                // ACF image array → usa tamaño 2048 como base (no el original full)
+                $poster_img = wp_get_attachment_image( $poster['ID'], '2048x2048', false, $poster_attrs );
+            } else {
+                // Fallback: thumbnail de YouTube
+                $vid_id     = $video['id'];
+                $poster_url = esc_url( pm_get_cached_yt_thumbnail( $vid_id, 'max' ) );
+                $srcset     = esc_attr(
+                    pm_get_cached_yt_thumbnail( $vid_id, 'hq' )  . ' 480w, ' .
+                    pm_get_cached_yt_thumbnail( $vid_id, 'sd' )  . ' 640w, ' .
+                    pm_get_cached_yt_thumbnail( $vid_id, 'max' ) . ' 1280w'
+                );
+                $poster_img = $poster_url
+                    ? '<img class="video-hero__poster skip-lazy" src="' . $poster_url . '" srcset="' . $srcset . '" sizes="100vw" alt="" aria-hidden="true" fetchpriority="high" loading="eager" data-no-lazy="1" decoding="sync">'
+                    : '';
+            }
         ?>
             <div
                 class="video-hero__video"
@@ -44,21 +62,7 @@ $video = pm_parse_video($video_url);
                 data-vbg-no-cookie="true"
                 aria-hidden="true"
             ></div>
-            <?php if ($poster_url): ?>
-                <img
-                    class="video-hero__poster skip-lazy"
-                    src="<?php echo $poster_url; ?>"
-                    <?php if ($srcset): ?>
-                    srcset="<?php echo $srcset; ?>"
-                    sizes="100vw"
-                    <?php endif; ?>
-                    alt=""
-                    aria-hidden="true"
-                    fetchpriority="high"
-                    loading="eager"
-                    data-no-lazy="1"
-                >
-            <?php endif; ?>
+            <?php echo $poster_img; ?>
         <?php endif; ?>
         <?php if ($video['type'] === 'mp4'): ?>
             <video

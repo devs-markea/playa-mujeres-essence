@@ -199,7 +199,7 @@ if ($pill_mode === 'taxonomy') {
 }
 ?>
 
-<section class="content-collection content-collection--dynamic-collection">
+<section data-anim="slide-up delay-2" class="content-collection content-collection--dynamic-collection">
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-lg-10 mx-auto">

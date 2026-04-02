@@ -34,7 +34,7 @@ if (is_array($decorative_image) && !empty($decorative_image['alt'])) {
     $decor_image_alt = $decorative_image['alt'];
 }
 ?>
-<section class="content-two-image-section">
+<section data-anim="slide-up delay-2" class="content-two-image-section">
     <div class="container p-0 px-md-3">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">

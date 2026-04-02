@@ -18,7 +18,7 @@ $image_alt = (is_array($image) && !empty($image['alt'])) ? $image['alt'] : ($tit
 
 ?>
 
-<section class="things-events <?php echo esc_attr($height_modifier_class); ?>">
+<section data-anim="slide-up delay-2" class="things-events <?php echo esc_attr($height_modifier_class); ?>">
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-md-8 mx-auto">

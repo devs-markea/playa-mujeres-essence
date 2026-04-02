@@ -81,25 +81,6 @@ window.App = window.App || {};
     }
 
 
-    // Decide tema según scroll y estado
-    // function updateHeaderTheme() {
-    //     const SCROLL_THRESHOLD = 150;
-    //
-    //     // ✅ Forzado (solo cuando exista la marca, o sea Essence)
-    //     if (forceHeaderThemeEl) {
-    //         setHeaderTheme(true);
-    //         return;
-    //     }
-    //
-    //     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    //     const pastHero  = scrollTop >= SCROLL_THRESHOLD;
-    //
-    //     const anyPanelOpen = state.isWhereOpen || state.isExperiencesOpen;
-    //
-    //     const useMenuTheme = pastHero || anyPanelOpen;
-    //     setHeaderTheme(useMenuTheme);
-    // }
-
     // Actualiza límite inferior del video-hero
     function updateVideoHeroBottom() {
         if (!videoHero) return;
@@ -433,15 +414,19 @@ window.App = window.App || {};
         });
     }
 
-    // Priority Nav — agrupa items .group en "Plan your trip" por debajo de 1400px
+    // Priority Nav — agrupa items .group en "Plan your trip" por debajo de 1400px.
+    // El botón .pm-navbar__more está pre-renderizado en el HTML (via filtro PHP)
+    // y su visibilidad la controla CSS puro → sin CLS en carga inicial.
+    // Este función solo gestiona: mover items al dropdown y el toggle del menú.
     function initPriorityNav() {
         var BREAKPOINT = 1400;
 
         var nav = document.querySelector('.pm-navbar-desktop');
         if (!nav) return;
 
-        var wrapper = nav.closest('.pm-header__menu');
-        if (!wrapper) return;
+        // El botón ya existe en el DOM (pre-renderizado por PHP)
+        var moreLi = nav.querySelector('.pm-navbar__more');
+        if (!moreLi) return;
 
         var groupItems = Array.from(nav.querySelectorAll(':scope > .menu-item.group'));
         if (!groupItems.length) return;
@@ -449,24 +434,8 @@ window.App = window.App || {};
         // Guardar el siguiente hermano de cada item ANTES de mover nada
         // para poder restaurarlos en su posición original exacta
         var groupAnchors = groupItems.map(function (item) {
-            return item.nextElementSibling; // null si era el último
+            return item.nextElementSibling;
         });
-
-        var moreLabel = wrapper.dataset.moreLabel || 'Plan your trip';
-
-        // Crear el item "Plan your trip"
-        var moreLi = document.createElement('li');
-        moreLi.className = 'menu-item pm-navbar__more';
-        moreLi.style.display = 'none';
-        moreLi.innerHTML =
-            '<button class="pm-navbar__more-btn" aria-expanded="false" aria-haspopup="true">' +
-                '<span>' + moreLabel + '</span>' +
-                '<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-                    '<path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-                '</svg>' +
-            '</button>' +
-            '<ul class="pm-navbar__more-dropdown" role="menu"></ul>';
-        nav.appendChild(moreLi);
 
         var moreBtn      = moreLi.querySelector('.pm-navbar__more-btn');
         var moreDropdown = moreLi.querySelector('.pm-navbar__more-dropdown');
@@ -488,8 +457,7 @@ window.App = window.App || {};
 
         function update() {
             if (window.innerWidth <= BREAKPOINT) {
-                // Mover items .group al dropdown (en orden, con appendChild)
-                moreLi.style.display = '';
+                // Mover items .group al dropdown (CSS ya los oculta → sin layout shift)
                 groupItems.forEach(function (item) { moreDropdown.appendChild(item); });
             } else {
                 // Restaurar en orden inverso usando el anchor original de cada item
@@ -498,7 +466,6 @@ window.App = window.App || {};
                     var ref = (anchor && anchor.parentNode === nav) ? anchor : moreLi;
                     nav.insertBefore(groupItems[i], ref);
                 }
-                moreLi.style.display = 'none';
                 moreBtn.setAttribute('aria-expanded', 'false');
                 moreLi.classList.remove('is-open');
             }
@@ -1452,12 +1419,88 @@ window.App = window.App || {};
         });
     }
 
+    // Fade-in animations — [data-animate] > .fade-in-{n}
+    // Uso: <div data-animate> <h1 class="fade-in-1">...</h1> <p class="fade-in-2">...</p> </div>
+    // Cada número define el orden de aparición (delay escalonado de 0.15s).
+    function initFadeAnimations() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Parsea el valor del atributo: "slide-up delay-3" → { type: 'slide-up', delay: 0.3 }
+        function parseAnim(value) {
+            var parts  = (value || '').trim().split(/\s+/);
+            var type   = 'fade';
+            var delay  = 0;
+            parts.forEach(function (part) {
+                if (part.indexOf('delay-') === 0) {
+                    delay = parseInt(part.replace('delay-', ''), 10) * 0.1;
+                } else if (part) {
+                    type = part;
+                }
+            });
+            return { type: type, delay: delay };
+        }
+
+        // Propiedades iniciales según el tipo de animación
+        function getFromProps(type) {
+            var base = { opacity: 0, duration: 0.7, ease: 'power2.out' };
+            switch (type) {
+                case 'slide-up':    return Object.assign({}, base, { y: 32 });
+                case 'slide-down':  return Object.assign({}, base, { y: -32 });
+                case 'slide-left':  return Object.assign({}, base, { x: 32 });
+                case 'slide-right': return Object.assign({}, base, { x: -32 });
+                case 'fade':        return base;
+                default:            return Object.assign({}, base, { y: 32 });
+            }
+        }
+
+        // ── Elemento individual: data-anim="slide-up delay-2" ──
+        document.querySelectorAll('[data-anim]').forEach(function (el) {
+            var parsed    = parseAnim(el.getAttribute('data-anim'));
+            var fromProps = Object.assign({}, getFromProps(parsed.type), {
+                delay: parsed.delay,
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                }
+            });
+            gsap.from(el, fromProps);
+        });
+
+        // ── Grupo: data-anim-wrap > data-anim-child="slide-up delay-1" ──
+        document.querySelectorAll('[data-anim-wrap]').forEach(function (wrap) {
+            var children = wrap.querySelectorAll('[data-anim-child]');
+            if (!children.length) return;
+
+            var tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: wrap,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                }
+            });
+
+            children.forEach(function (child) {
+                var parsed = parseAnim(child.getAttribute('data-anim-child'));
+                tl.from(child, getFromProps(parsed.type), parsed.delay);
+            });
+        });
+
+        // Recalcular posiciones tras carga completa (imágenes, layout final)
+        window.addEventListener('load', function () {
+            ScrollTrigger.refresh();
+        });
+    }
+
     // Lenis — smooth scroll nativo, compatible con fixed/sticky
     function initLenis() {
         if (typeof Lenis === 'undefined') return;
 
         window.lenis = new Lenis({
-            duration:    0.8,
+            duration:    1.0,
+            easing:      function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
             smoothTouch: false,
         });
 
@@ -1502,16 +1545,29 @@ window.App = window.App || {};
         initPrimaryShowcaseHeroDropdown();
         initRecaptchaV3();
 
-        // Inicializar youtube-background si hay elementos data-vbg en la página
+        // Inicializar youtube-background diferido: espera a que el browser esté idle
+        // para no competir con el LCP durante la carga inicial (~778 KiB de scripts YT).
         const vbgEl = document.querySelector('[data-vbg]');
-        if (window.VideoBackgrounds && vbgEl) {
-            window.VIDEO_BACKGROUNDS = new VideoBackgrounds('[data-vbg]');
-        }
-        const heroPoster = document.querySelector('.video-hero__poster');
-        if (heroPoster) {
-            vbgEl.addEventListener('video-background-play', function () {
-                heroPoster.classList.add('is-hidden');
-            }, { once: true });
+        if (vbgEl) {
+            const heroPoster = document.querySelector('.video-hero__poster');
+
+            const initVbg = () => {
+                if (window.VideoBackgrounds && !window.VIDEO_BACKGROUNDS) {
+                    window.VIDEO_BACKGROUNDS = new VideoBackgrounds('[data-vbg]');
+                    if (heroPoster) {
+                        vbgEl.addEventListener('video-background-play', function () {
+                            heroPoster.classList.add('is-fading');
+                            heroPoster.classList.add('is-hidden');
+                        }, { once: true });
+                    }
+                }
+            };
+
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(initVbg, { timeout: 3000 });
+            } else {
+                setTimeout(initVbg, 3000);
+            }
         }
 
         if (!header) return;
@@ -1529,6 +1585,7 @@ window.App = window.App || {};
         initImagesCarouselGallerySwipers();
         initContentCarouselClassicSwiper();
         initBlogHeroSwiper();
+        initFadeAnimations();
         lazyLoadImages('.img-fluid');
     };
 

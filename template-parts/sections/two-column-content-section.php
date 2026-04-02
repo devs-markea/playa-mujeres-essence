@@ -42,7 +42,7 @@ if ( is_array( $image_media ) && ! empty( $image_media['alt'] ) ) {
     $image_media_alt = $title;
 }
 ?>
-<section class="two-column-layout g-0 <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right' ?>">
+<section data-anim="slide-up delay-2" class="two-column-layout g-0 <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right' ?>">
 
     <div class="col-12 col-lg-6 col-content">
         <div class="row g-0">

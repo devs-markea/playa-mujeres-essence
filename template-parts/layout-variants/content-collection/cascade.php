@@ -1,7 +1,7 @@
 <?php
 
 ?>
-<section class="content-collection">
+<section data-anim="slide-up delay-2" class="content-collection">
     <div class="container">
 
         <div class="row g-0">

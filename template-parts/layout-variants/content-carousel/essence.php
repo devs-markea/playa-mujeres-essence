@@ -84,7 +84,7 @@ if (!function_exists('pm_render_icon_picker')) {
 }
 
 ?>
-<section class="content-carousel content-carousel--essence" data-content-carousel
+<section data-anim="slide-up delay-2" class="content-carousel content-carousel--essence" data-content-carousel
          data-content-carousel-variant="essence">
     <div class="container">
         <div class="row g-0">
