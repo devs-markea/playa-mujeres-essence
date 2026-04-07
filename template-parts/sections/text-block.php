@@ -56,7 +56,7 @@ if ($has_decor_image) {
 $row_direction_class = ($variant === 'stacked') ? ' flex-column' : '';
 $row_align_class     = ($variant === 'stacked') ? ' text-center' : ' text-center text-lg-start';
 
-$left_col_class  = 'col-12 col-lg-5 text-start text-md-center pm-text-block__inner';
+$left_col_class  = 'col-12 col-lg-6 text-start text-md-center pm-text-block__inner';
 $right_col_class = 'col';
 
 $right_inner_class = 'pm-text-block__right';

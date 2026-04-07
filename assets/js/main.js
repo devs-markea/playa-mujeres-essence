@@ -1462,7 +1462,7 @@ window.App = window.App || {};
                 delay: parsed.delay,
                 scrollTrigger: {
                     trigger: el,
-                    start: 'top 90%',
+                    start: 'top 70%',
                     toggleActions: 'play none none none',
                 }
             });
@@ -1477,7 +1477,7 @@ window.App = window.App || {};
             var tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: wrap,
-                    start: 'top 90%',
+                    start: 'top 70%',
                     toggleActions: 'play none none none',
                 }
             });

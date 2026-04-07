@@ -1,32 +1,46 @@
 <?php
-$image_media       = get_sub_field( 'media' );
-$title = get_sub_field('title');
-$title_level = get_sub_field('title_level');
-$description = get_sub_field('description');
-$button_settings = get_sub_field('button_settings');
-$button_title  = '';
-$button_url    = '';
-$button_target = '_self';
+// template-parts/sections/two-column-content-section.php (solo loader de variantes)
+
+// Variante ACF: classic | essence
+$layout_variant = get_sub_field('if_layout_variant');
+$layout_variant = is_string($layout_variant) ? trim($layout_variant) : '';
+if ($layout_variant === '') {
+    $layout_variant = 'classic';
+}
+
+$allowed_variants = array('classic', 'essence');
+if (! in_array($layout_variant, $allowed_variants, true)) {
+    $layout_variant = 'classic';
+}
+
+// Campos comunes (disponibles para las variantes)
+$image_media      = get_sub_field('media');
+$title            = get_sub_field('title');
+$title_level      = get_sub_field('title_level');
+$description      = get_sub_field('description');
+$button_settings  = get_sub_field('button_settings');
 $layout_direction = get_sub_field('desktop_layout_direction') ?: 'right';
-$variant = get_sub_field('mobile_content_style');
+$variant          = get_sub_field('mobile_content_style');
 
 $variant = is_string($variant) ? trim($variant) : '';
 if ($variant === '') {
     $variant = 'card';
 }
 
-
 $title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
 if (empty($title_tag)) {
     $title_tag = 'h2';
 }
 
+$show_button   = false;
+$button_title  = '';
+$button_url    = '';
+$button_target = '_self';
 
-if ( $button_settings ) {
+if ($button_settings) {
+    $show_button = ! empty($button_settings['show_button']);
 
-    $show_button = ! empty( $button_settings['show_button'] );
-
-    if ( $show_button && ! empty( $button_settings['button_link'] ) ) {
+    if ($show_button && ! empty($button_settings['button_link'])) {
         $button_link   = $button_settings['button_link'];
         $button_title  = $button_link['title']  ?? '';
         $button_url    = $button_link['url']    ?? '';
@@ -34,70 +48,18 @@ if ( $button_settings ) {
     }
 }
 
-$image_media_id  = ( is_array( $image_media ) && ! empty( $image_media['ID'] ) ) ? (int) $image_media['ID'] : 0;
+$image_media_id  = (is_array($image_media) && ! empty($image_media['ID'])) ? (int) $image_media['ID'] : 0;
 $image_media_alt = '';
-if ( is_array( $image_media ) && ! empty( $image_media['alt'] ) ) {
+if (is_array($image_media) && ! empty($image_media['alt'])) {
     $image_media_alt = $image_media['alt'];
-} elseif ( is_string( $title ) && trim( $title ) !== '' ) {
+} elseif (is_string($title) && trim($title) !== '') {
     $image_media_alt = $title;
 }
-?>
-<section data-anim="slide-up delay-2" class="two-column-layout g-0 <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right' ?>">
 
-    <div class="col-12 col-lg-6 col-content">
-        <div class="row g-0">
-            <div class="col-12 col-lg-8 mx-auto">
-                <div class="two-column-layout__content two-column-layout__content-variant-<?php echo esc_attr($variant); ?>">
-                    <?php if ( $title ) : ?>
-                    <<?php echo esc_html($title_tag); ?> class="mb-3 two-column-layout__heading">
-                    <?php echo esc_html( $title ); ?>
-                </<?php echo esc_html($title_tag); ?>>
-                <?php endif; ?>
+$variant_template_path = dirname(__DIR__) . '/layout-variants/two-column-content-section/' . $layout_variant . '.php';
 
-                <?php if ( $description ) : ?>
-                        <div class="two-column-layout__content-description mb-3">
-                            <?php echo wp_kses_post( $description ); ?>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $show_button && $button_url && $button_title ) : ?>
-                        <a
-                            href="<?php echo esc_url( $button_url ); ?>"
-                            target="<?php echo esc_attr( $button_target ); ?>"
-                            class="btn btn-primary btn-border-bottom-black">
-
-                            <?php echo esc_html( $button_title ); ?>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-lg-6 col-image">
-        <div class="two-column-layout__content-image">
-            <?php if ( $image_media_id ) : ?>
-                <?php
-                echo wp_get_attachment_image(
-                    $image_media_id,
-                    'full',
-                    false,
-                    array(
-                        'class'    => 'img-fluid',
-                        'alt'      => $image_media_alt,
-                        'loading'  => 'lazy',
-                        'decoding' => 'async',
-                    )
-                );
-                ?>
-            <?php elseif ( is_array( $image_media ) && ! empty( $image_media['url'] ) ) : ?>
-                <img src="<?php echo esc_url( $image_media['url'] ); ?>"
-                     alt="<?php echo esc_attr( $image_media_alt ); ?>"
-                     class="img-fluid"
-                     loading="lazy"
-                     decoding="async">
-            <?php endif; ?>
-        </div>
-    </div>
-
-</section>
-
+if (file_exists($variant_template_path)) {
+    require $variant_template_path;
+} else {
+    require dirname(__DIR__) . '/layout-variants/two-column-content-section/classic.php';
+}

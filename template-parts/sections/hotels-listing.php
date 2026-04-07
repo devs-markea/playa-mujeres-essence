@@ -23,7 +23,7 @@ if (empty($title_tag)) {
 }
 ?>
 
-<section data-anim="slide-up delay-2" class="hotels-parallax" id="hotels-parallax">
+<section class="hotels-parallax" id="hotels-parallax">
     <div class="hotel-extraordinary-heading container">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">

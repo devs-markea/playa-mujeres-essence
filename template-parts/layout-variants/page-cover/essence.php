@@ -23,7 +23,7 @@ $classes = array(
 <section data-anim="slide-up delay-2" class="<?php echo esc_attr(implode(' ', $classes)); ?>" data-force-header-theme="menu">
     <div class="page-cover__essence">
         <div class="container px-0 px-md-4">
-            <div class="page-cover__essence-grid row g-0 g-md-4">
+            <div class="page-cover__essence-grid row g-0 gx-md-4">
 
                 <div class="page-cover__essence-inner-left">
                     <div class="page-cover__essence-heading">
@@ -147,8 +147,9 @@ $classes = array(
         height: 304px;
     }
 
-    .page-cover__essence-description p {
-        margin: 0;
+
+    .page-cover__essence-description strong {
+        font-weight: 500;
     }
 
     .page-cover__essence-description {
@@ -191,7 +192,7 @@ $classes = array(
 
         /* Grid */
         .page-cover__essence-grid {
-            display: flex;
+            align-items: start;
         }
 
         /* Restaurar columnas como flex reales */
@@ -209,14 +210,20 @@ $classes = array(
             flex-direction: column;
             align-items: start;
             flex: 1;
-            gap: 28px;
+            /*gap: 28px;*/
             height: 100%;
         }
 
         /* Resetear order */
-        .page-cover__essence-heading    { order: unset; width: 80%; margin: 4rem auto; }
+        .page-cover__essence-heading    {
+            order: unset;
+            width: 80%;
+            margin: 4rem auto; }
         .page-cover__essence-media-a    { order: unset; width: 100%; height: 420px; }
-        .page-cover__essence-description{ order: unset; width: 80%; margin: 4rem auto; }
+        .page-cover__essence-description{ order: unset;
+            width: 80%;
+            margin: 4rem auto 0;
+        }
         .page-cover__essence-media-b    { order: unset; width: 100%; height: 326px; margin: 0; }
     }
 </style>
