@@ -24,6 +24,9 @@ $classes = array(
 );
 ?>
 
+<?php /* Script bloqueante: oculta el body antes de que se pinte nada */ ?>
+<script>document.body.style.opacity='0';window.__pageCoverReady=false;</script>
+
 <section class="<?php echo esc_attr(implode(' ', $classes)); ?>">
     <div class="page-cover__media" aria-hidden="true">
         <?php if ($bg_desktop_id || $bg_mobile_id) : ?>
@@ -43,9 +46,11 @@ $classes = array(
                     'full',
                     false,
                     array(
-                        'class'   => 'page-cover__image',
-                        'alt'     => esc_attr($hero_alt),
-                        'loading' => 'lazy',
+                        'class'         => 'page-cover__image',
+                        'alt'           => esc_attr($hero_alt),
+                        'loading'       => 'eager',
+                        'fetchpriority' => 'high',
+                        'decoding'      => 'async',
                     )
                 );
                 ?>
@@ -89,7 +94,6 @@ $classes = array(
         z-index: 0;
         overflow: hidden;
     }
-
     .page-cover--variant-classic .page-cover__media .page-cover__overlay{
         position: absolute;
         inset: 0;
@@ -103,6 +107,7 @@ $classes = array(
         object-fit: cover;
         z-index: 0;
         object-position: top;
+        will-change: transform;
     }
     .page-cover--variant-classic .page-cover__content{
         position: relative;
@@ -136,3 +141,23 @@ $classes = array(
         }
     }
 </style>
+<script>
+(function () {
+    var img = document.querySelector('.page-cover--variant-classic .page-cover__image');
+    if (!img) {
+        window.__pageCoverReady = true;
+        if (typeof window.__revealPage === 'function') window.__revealPage();
+        return;
+    }
+    function onImageReady() {
+        window.__pageCoverReady = true;
+        if (typeof window.__revealPage === 'function') window.__revealPage();
+    }
+    if (img.complete && img.naturalWidth > 0) {
+        onImageReady();
+    } else {
+        img.addEventListener('load',  onImageReady, { once: true });
+        img.addEventListener('error', onImageReady, { once: true });
+    }
+})();
+</script>

@@ -19,6 +19,7 @@ $classes = array(
     'page-cover--height-' . $layout_height,
 );
 ?>
+<script>document.body.style.opacity='0';window.__pageCoverReady=false;</script>
 
 <section data-anim="slide-up delay-2" class="<?php echo esc_attr(implode(' ', $classes)); ?>" data-force-header-theme="menu">
     <div class="page-cover__essence">
@@ -42,9 +43,9 @@ $classes = array(
                         <?php echo wp_get_attachment_image($secondary_image_id, 'large', false, [
                                 'class'         => 'page-cover__image page-cover__image--secondary',
                                 'alt'           => esc_attr($hero_alt),
-                                'loading'       => 'lazy',
+                                'loading'       => 'eager',
                                 'decoding'      => 'async',
-                                'fetchpriority' => 'low',
+                                'fetchpriority' => 'high',
                                 'sizes'         => '(min-width: 992px) 40vw, 70vw',
                         ]); ?>
                     <?php endif; ?>
@@ -225,5 +226,27 @@ $classes = array(
             margin: 4rem auto 0;
         }
         .page-cover__essence-media-b    { order: unset; width: 100%; height: 326px; margin: 0; }
+
     }
 </style>
+<script>
+(function () {
+    // Solo la imagen primary dispara el revealPage — la secondary se ignora
+    var img = document.querySelector('.page-cover--variant-essence .page-cover__image--primary');
+    if (!img) {
+        window.__pageCoverReady = true;
+        if (typeof window.__revealPage === 'function') window.__revealPage();
+        return;
+    }
+    function onImageReady() {
+        window.__pageCoverReady = true;
+        if (typeof window.__revealPage === 'function') window.__revealPage();
+    }
+    if (img.complete && img.naturalWidth > 0) {
+        onImageReady();
+    } else {
+        img.addEventListener('load',  onImageReady, { once: true });
+        img.addEventListener('error', onImageReady, { once: true });
+    }
+})();
+</script>

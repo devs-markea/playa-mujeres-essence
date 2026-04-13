@@ -227,14 +227,14 @@ if ( ! class_exists( 'PM_Essence_Core' ) ) :
             wp_enqueue_style(
                 'essence-style',
                 PM_ESSENCE_TEMPLATE_URI . '/style.css',
-                array('pm-bootstrap-css'), // depende de bootstrap
+                array('pm-bootstrap-css'),
                 $pm_essence_version
             );
 
             wp_enqueue_style(
                 'essence-mainstyles',
                 PM_ESSENCE_TEMPLATE_URI . '/assets/css/main.css',
-                array('pm-bootstrap-css', 'essence-style'), // depende de ambos
+                array('pm-bootstrap-css'), // sin dependencia de essence-style — se descargan en paralelo
                 $pm_essence_version
             );
 

@@ -1419,6 +1419,37 @@ window.App = window.App || {};
         });
     }
 
+    // Hero reveal — fade-in del body + zoom de imagen con GSAP
+    // Aplica a: page-cover--variant-classic, page-cover--variant-essence (solo primary) y primary-showcase-hero
+    function initPageCoverReveal() {
+        if (typeof gsap === 'undefined') return;
+
+        var essencePrimary = document.querySelector('.page-cover--variant-essence .page-cover__image--primary');
+        var img = essencePrimary
+               || document.querySelector('.page-cover--variant-classic .page-cover__image')
+               || document.querySelector('.primary-showcase-hero .hotel-hero__bg');
+
+        window.__revealPage = function () {
+            gsap.to(document.body, {
+                opacity:  1,
+                duration: 0.5,
+                ease:     'power2.out',
+            });
+            // La primary image del essence no lleva zoom, solo el fade del body
+            if (img && !essencePrimary) {
+                gsap.fromTo(img,
+                    { scale: 1 },
+                    { scale: 1.01, duration: 0.5, ease: 'none' }
+                );
+            }
+        };
+
+        // Si la imagen ya había cargado antes de que GSAP estuviera disponible
+        if (window.__pageCoverReady) {
+            window.__revealPage();
+        }
+    }
+
     // Fade-in animations — [data-animate] > .fade-in-{n}
     // Uso: <div data-animate> <h1 class="fade-in-1">...</h1> <p class="fade-in-2">...</p> </div>
     // Cada número define el orden de aparición (delay escalonado de 0.15s).
@@ -1585,6 +1616,7 @@ window.App = window.App || {};
         initImagesCarouselGallerySwipers();
         initContentCarouselClassicSwiper();
         initBlogHeroSwiper();
+        initPageCoverReveal();
         initFadeAnimations();
         lazyLoadImages('.img-fluid');
     };

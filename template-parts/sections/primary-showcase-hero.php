@@ -80,6 +80,9 @@ if ($enable_overlay) {
 ?>
 
 
+<?php /* Script bloqueante: oculta el body antes de que se pinte nada */ ?>
+<script>document.body.style.opacity='0';window.__pageCoverReady=false;</script>
+
 <section class="hotel-hero primary-showcase-hero">
     <div class="hotel-hero__media">
         <?php if ( $bg_desktop_id ) : ?>
@@ -376,3 +379,23 @@ if ($enable_overlay) {
     </div>
     </div>
 </section>
+<script>
+(function () {
+    var img = document.querySelector('.primary-showcase-hero .hotel-hero__bg');
+    if (!img) {
+        window.__pageCoverReady = true;
+        if (typeof window.__revealPage === 'function') window.__revealPage();
+        return;
+    }
+    function onImageReady() {
+        window.__pageCoverReady = true;
+        if (typeof window.__revealPage === 'function') window.__revealPage();
+    }
+    if (img.complete && img.naturalWidth > 0) {
+        onImageReady();
+    } else {
+        img.addEventListener('load',  onImageReady, { once: true });
+        img.addEventListener('error', onImageReady, { once: true });
+    }
+})();
+</script>

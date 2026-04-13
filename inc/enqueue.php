@@ -50,7 +50,7 @@ function pm_enqueue_assets() {
     wp_enqueue_style(
         'essence-components',
         PM_ESSENCE_TEMPLATE_URI . '/assets/css/components.css',
-        array( 'essence-mainstyles' ),
+        array( 'pm-bootstrap-css' ), // sin dependencia de essence-mainstyles — descarga en paralelo
         $pm_essence_version,
         'all'
     );

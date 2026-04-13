@@ -352,35 +352,44 @@ if (!$items) return;
     /* ---------- Mobile bullets (capsules) ---------- */
     /* Styles Swiper*/
 
-    .experiences-content__pagination{display: block}
+    .experiences-content__pagination {
+        position: static;
+        left: auto;
+        bottom: auto;
+        -webkit-transform: none;
+        transform: none;
+        margin-top: 12px;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-justify-content: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
 
     .experiences-content__pagination .swiper-pagination-bullet {
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
         width: 16px;
         height: 8px;
         background: #A9AAAA;
         opacity: 0.6;
         border-radius: 12px;
         margin: 0 !important;
-        transition: all 0.25s ease;
+        -webkit-transition: width 0.25s cubic-bezier(0.77, 0, 0.175, 1),
+                            background-color 0.25s cubic-bezier(0.77, 0, 0.175, 1),
+                            opacity 0.25s cubic-bezier(0.77, 0, 0.175, 1);
+        transition: width 0.25s cubic-bezier(0.77, 0, 0.175, 1),
+                    background-color 0.25s cubic-bezier(0.77, 0, 0.175, 1),
+                    opacity 0.25s cubic-bezier(0.77, 0, 0.175, 1);
+        touch-action: manipulation;
+        cursor: pointer;
     }
+
     .experiences-content__pagination .swiper-pagination-bullet-active {
         width: 32px;
-        height: 8px;
         background: #CFAB76;
         opacity: 1;
-        border-radius: 12px;
-        transition: all 0.25s ease;
-    }
-    .experiences-content__pagination .swiper-pagination-bullet,
-    .experiences-content__pagination .swiper-pagination-bullet-active {
-        transition: all 0.25s cubic-bezier(0.77, 0, 0.175, 1);
-    }
-    .experiences-content__pagination {
-        position: static;
-        margin-top: 12px;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
     }
 
 
