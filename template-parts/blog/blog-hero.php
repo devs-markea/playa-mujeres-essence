@@ -127,7 +127,7 @@ if (! $hero_query->have_posts() && ! $heading_hero &&  ! $description_hero) {
         color: black;
         font-size: 16px;
         font-style: normal;
-        font-weight: 300;
+        font-weight: var(--fw-light);
         line-height: normal;
         text-transform: uppercase;
     }
@@ -136,7 +136,7 @@ if (! $hero_query->have_posts() && ! $heading_hero &&  ! $description_hero) {
         font-family: var(--pm-font-secondary);
         font-size: 26px;
         font-style: italic;
-        font-weight: 500;
+        font-weight: var(--fw-medium);
         letter-spacing: 2px;
         color: #323232;
     }
@@ -223,7 +223,7 @@ if (! $hero_query->have_posts() && ! $heading_hero &&  ! $description_hero) {
     .blog-hero-card__title {
         font-family: var(--pm-font-secondary);
         font-style: italic;
-        font-weight: 500;
+        font-weight: var(--fw-medium);
         line-height: 1.15;
         color: #fff;
         font-size: 24px;
@@ -364,7 +364,7 @@ if (! $hero_query->have_posts() && ! $heading_hero &&  ! $description_hero) {
             display: block;
             font-family: var(--pm-font-secondary);
             font-style: italic;
-            font-weight: 500;
+            font-weight: var(--fw-medium);
             font-size: 16px;
             line-height: 1.25;
             color: #fff;

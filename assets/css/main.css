@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'Meridien LT Std';
     src: url('../fonts/meridien/MeridienLTStd-Medium.woff2') format('woff2');
-    font-weight: 500;
+    font-weight: var(--fw-medium);
     font-style: normal;
     font-display: swap;
 }
@@ -25,7 +25,7 @@
 @font-face {
     font-family: 'Meridien LT Std';
     src: url('../fonts/meridien/MeridienLTStd-MediumItalic.woff2') format('woff2');
-    font-weight: 500;
+    font-weight: var(--fw-medium);
     font-style: italic;
     font-display: swap;
 }
@@ -61,6 +61,43 @@
     --pm-font-primary: "Agenda", sans-serif;
     --pm-font-secondary: "Meridien LT Std", sans-serif;
 
+    /* FONT WEIGHT SCALE
+       Base: Windows / Android / navegadores no-WebKit
+       Los pesos se ajustan por plataforma debajo ↓              */
+    --fw-thin:     200;
+    --fw-light:    300;
+    --fw-regular:  400;
+    --fw-medium:   500;
+    --fw-semibold: 600;
+    --fw-bold:     700;
+}
+
+/* ─── Safari macOS + iOS ────────────────────────────────────────
+   @supports (background: -webkit-named-image(i)) es reconocido
+   SOLO por Safari (macOS e iOS). Chrome y Firefox lo ignoran,
+   aunque también corran en macOS.
+   → Un paso más ligero en toda la escala para compensar el
+     rendering más pesado del motor de texto de Apple.
+──────────────────────────────────────────────────────────────── */
+@supports (background: -webkit-named-image(i)) {
+    :root {
+        --fw-thin:     100;
+        --fw-light:    200;
+        --fw-regular:  300;
+        --fw-medium:   400;
+        --fw-semibold: 500;
+        --fw-bold:     600;
+    }
+}
+
+/* ─── Chrome / Edge en macOS ────────────────────────────────────
+   Mismo rendering pesado de Apple pero no es Safari.
+   Se detecta vía JS añadiendo .is-mac al <html> (ver main.js).
+   Ajuste más conservador: solo --fw-light y --fw-regular.
+──────────────────────────────────────────────────────────────── */
+html.is-mac:not(.is-safari) {
+    --fw-light:   300;
+    --fw-regular: 400;
 }
 
 html { scrollbar-gutter: stable; }
@@ -89,13 +126,13 @@ a {
 
 /* TITULOS */
 h1, h2, h3, h4 {
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
     margin: 0 0 0.75rem;
 }
 
 /* Buttons */
 .btn {
-    font-weight: 300;
+    font-weight: var(--fw-light);
 }
 
 .btn-primary {

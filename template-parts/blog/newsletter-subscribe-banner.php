@@ -193,7 +193,7 @@ if (is_string($form_position)) {
         color: #fff;
         font-family: var(--pm-font-secondary);
         font-size: 24px;
-        font-weight: 500;
+        font-weight: var(--fw-medium);
         font-style: italic;
         letter-spacing: 2px;
         margin-bottom: 0.75rem;
@@ -202,7 +202,7 @@ if (is_string($form_position)) {
     .newsletter-subscribe-banner__description {
         color: #fff;
         font-size: 16px;
-        font-weight: 300;
+        font-weight: var(--fw-light);
         margin-bottom: 1.5rem;
     }
 
@@ -220,7 +220,7 @@ if (is_string($form_position)) {
         padding: 0 1rem;
         background: white;
         font-size: 16px;
-        font-weight: 300;
+        font-weight: var(--fw-light);
         color: var(--pm-secondary-800);
         border: none;
     }

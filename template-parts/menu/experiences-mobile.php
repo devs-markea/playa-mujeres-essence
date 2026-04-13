@@ -66,7 +66,7 @@
         z-index: 2;
         font-size: 18px;
         font-style: normal;
-        font-weight: 400;
+        font-weight: var(--fw-regular);
         line-height: normal;
         letter-spacing: 1px;
     }

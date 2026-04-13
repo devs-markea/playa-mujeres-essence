@@ -78,7 +78,7 @@ if ( empty( $section_text ) ) {
         margin: 0 0 28px;
         color: #323232;
         font-size: 20px;
-        font-weight: 500;
+        font-weight: var(--fw-medium);
         line-height: 1.35;
     }
 
@@ -86,7 +86,7 @@ if ( empty( $section_text ) ) {
     .blog-content-image-text-block__text p {
         color: #323232;
         font-size: 16px;
-        font-weight: 400;
+        font-weight: var(--fw-regular);
         line-height: 1.5;
     }
 

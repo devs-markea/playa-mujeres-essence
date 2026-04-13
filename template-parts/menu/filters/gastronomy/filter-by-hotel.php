@@ -101,7 +101,7 @@
         font-family: var(--pm-font-secondary);
         font-size: 16px;
         font-style: italic;
-        font-weight: 500;
+        font-weight: var(--fw-medium);
         letter-spacing: 1px;
         color: #323232;
     }

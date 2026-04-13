@@ -11,7 +11,7 @@ if ($variant === '') {
 }
 
 // Whitelist de variantes permitidas
-$allowed_variants = array('classic', 'essence');
+$allowed_variants = array('classic', 'essence', 'signature');
 if (! in_array($variant, $allowed_variants, true)) {
     $variant = 'classic';
 }
@@ -25,8 +25,9 @@ if ($layout_height === '' || ! in_array($layout_height, $allowed_heights, true))
 }
 
 // Groups ACF (disponibles para las variantes)
-$classic_group = get_sub_field('classic'); // array
-$essence_group = get_sub_field('essence'); // array
+$classic_group   = get_sub_field('classic');   // array
+$essence_group   = get_sub_field('essence');   // array
+$signature_group = get_sub_field('signature'); // array
 
 // Heading tag (none => null)
 $heading               = get_sub_field('heading');

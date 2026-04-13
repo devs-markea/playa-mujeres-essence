@@ -61,7 +61,7 @@
         color: var(--pm-secondary-900);
         font-size: 20px;
         font-style: normal;
-        font-weight: 400;
+        font-weight: var(--fw-regular);
         line-height: normal;
         letter-spacing: 2px;
         text-transform: uppercase;
@@ -71,7 +71,7 @@
         color: var(--pm-secondary-900);
         font-size: 16px;
         font-style: normal;
-        font-weight: 300;
+        font-weight: var(--fw-light);
         line-height: normal;
         letter-spacing: 1px;
     }

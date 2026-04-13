@@ -1,3 +1,17 @@
+// ─── Detección de plataforma (corre antes del DOMContentLoaded) ──────────────
+// Añade clases al <html> para que CSS pueda ajustar font-weight por OS.
+// .is-mac   → macOS (cualquier navegador)
+// .is-safari → Safari (macOS o iOS)
+(function () {
+    var ua  = navigator.userAgent;
+    var isMac    = /Macintosh|MacIntel|MacPPC/.test(ua);
+    var isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+
+    if (isMac)    document.documentElement.classList.add('is-mac');
+    if (isSafari) document.documentElement.classList.add('is-safari');
+})();
+// ─────────────────────────────────────────────────────────────────────────────
+
 window.App = window.App || {};
 
 (function (App) {
@@ -1425,6 +1439,7 @@ window.App = window.App || {};
         if (typeof gsap === 'undefined') return;
 
         var essencePrimary = document.querySelector('.page-cover--variant-essence .page-cover__image--primary');
+        var signaturePrimary = document.querySelector('.page-cover--variant-signature .page-cover-signature__img');
         var img = essencePrimary
                || document.querySelector('.page-cover--variant-classic .page-cover__image')
                || document.querySelector('.primary-showcase-hero .hotel-hero__bg');
@@ -1436,7 +1451,7 @@ window.App = window.App || {};
                 ease:     'power2.out',
             });
             // La primary image del essence no lleva zoom, solo el fade del body
-            if (img && !essencePrimary) {
+            if (img && !essencePrimary && !signaturePrimary) {
                 gsap.fromTo(img,
                     { scale: 1 },
                     { scale: 1.01, duration: 0.5, ease: 'none' }

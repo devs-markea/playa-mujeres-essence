@@ -553,7 +553,7 @@ hr {
     border-radius: 18px;
     border: none;
     font-family: "Raleway";
-    font-weight: 400;
+    font-weight: var(--fw-regular);
 }
 
 .amenities-filter .panel .filter button.active {
@@ -594,7 +594,7 @@ hr {
 .checkbox-label {
     display: flex;
     position: relative;
-    font-weight: 400;
+    font-weight: var(--fw-regular);
     align-items: center;
     justify-content: flex-start;
     line-height: 1;
@@ -755,7 +755,7 @@ body.show-ff .pm-filter-form {
 }
 
 p.as-link {
-    font-weight: 500 !important; 
+    font-weight: var(--fw-medium) !important; 
 }
 
 .gallery-not-found{
@@ -764,14 +764,14 @@ p.as-link {
 
     .title{
         font-size: 20px; 
-        font-weight: 600; 
+        font-weight: var(--fw-semibold); 
         line-height: 21px; 
         font-family: Playfair Display;
     }
 }
 
 .fw-semibold{
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
 }
 
 @media(max-width: 767px) {}
