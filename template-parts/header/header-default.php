@@ -52,21 +52,4 @@ if (is_string($pm_filter_path) && file_exists($pm_filter_path)) {
     require $pm_filter_path;
 }
 ?>
-<style>
-    .pm-header__menu-mobile {
-        color: #FFF;
-    }
-
-    .pm-header__menu-mobile:hover {
-        color: #000;
-    }
-
-    .icon--hamburger {
-        width: 32px;
-        height: 16px;
-    }
-
-</style>
-
-
 

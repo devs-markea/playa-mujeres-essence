@@ -187,3 +187,39 @@ if ( ! function_exists( 'pm_get_cached_yt_thumbnail' ) ) {
     }
 }
 
+if ( ! function_exists( 'pm_page_cover_image_id_from_group' ) ) {
+    /**
+     * Extrae el ID de un attachment desde un grupo ACF.
+     *
+     * @param array  $group Grupo ACF (array de campos).
+     * @param string $key   Clave del campo imagen dentro del grupo.
+     * @return int          Attachment ID o 0 si no existe.
+     */
+    function pm_page_cover_image_id_from_group( $group, $key ) {
+        if ( ! is_array( $group ) || empty( $group[ $key ] ) || ! is_array( $group[ $key ] ) || empty( $group[ $key ]['ID'] ) ) {
+            return 0;
+        }
+        return (int) $group[ $key ]['ID'];
+    }
+}
+
+if ( ! function_exists( 'pm_page_cover_overlay_alpha' ) ) {
+    /**
+     * Calcula el valor alpha del overlay (0.00–0.75) a partir de los campos ACF.
+     *
+     * @param bool       $enable_overlay  Si el overlay está habilitado.
+     * @param int|float  $overlay_opacity Opacidad en rango 0–75.
+     * @return float                      Valor alpha CSS (0.00–0.75).
+     */
+    function pm_page_cover_overlay_alpha( $enable_overlay, $overlay_opacity ) {
+        if ( ! $enable_overlay ) {
+            return 0.0;
+        }
+
+        $overlay_opacity = is_numeric( $overlay_opacity ) ? (float) $overlay_opacity : 0.0;
+        $overlay_opacity = max( 0, min( 75, $overlay_opacity ) );
+
+        return $overlay_opacity / 100.0;
+    }
+}
+

@@ -149,13 +149,13 @@ h1, h2, h3, h4 {
     width: 100%;
     height: 1px;
     background-color: var(--pm-secondary-900);
-    transform: scaleX(0);
+    transform: scaleX(1);
     transform-origin: left;
     transition: transform 0.3s ease;
 }
 
 .btn-border-bottom-black:hover::after {
-    transform: scaleX(1);
+    transform: scaleX(0);
 }
 
 

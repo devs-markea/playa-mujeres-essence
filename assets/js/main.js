@@ -1530,8 +1530,8 @@ window.App = window.App || {};
         if (typeof Lenis === 'undefined') return;
 
         window.lenis = new Lenis({
-            duration:    1.0,
-            easing:      function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+            duration:    0.3,
+            easing:      function (t) { return 1 - Math.pow(1 - t, 4); },
             smoothTouch: false,
         });
 
@@ -1567,6 +1567,258 @@ window.App = window.App || {};
         images.forEach(image => {
             observer.observe(image);
         });
+    }
+
+    // Dynamic Collection — filter, search, load-more, drag-to-scroll
+    function initDynamicCollectionFilter() {
+        var ui = document.querySelector('[data-collection-filter-ui]');
+        if (!ui) return;
+
+        var input = ui.querySelector('[data-collection-filter-input]');
+        var section = ui.closest('section') || document;
+        var pillsScroller = ui.querySelector('.content-collection__pills');
+        var cards = section.querySelectorAll('.content-collection__card[data-filter][data-search]');
+        var loadMoreBtn = section.querySelector('[data-collection-load-more]');
+
+        var selected = {};
+        var STEP = 10;
+        var visibleLimit = STEP;
+
+        function normalize(s) {
+            s = (s || '').toString().toLowerCase();
+            if (s.normalize) s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return s.replace(/\s+/g, ' ').trim();
+        }
+
+        function getQuery() { return input ? normalize(input.value) : ''; }
+
+        function getSelectedSlugs() {
+            var out = [];
+            for (var k in selected) {
+                if (selected.hasOwnProperty(k) && selected[k]) out.push(k);
+            }
+            return out;
+        }
+
+        function cardHasAnySelectedFilter(card, selectedSlugs) {
+            if (!selectedSlugs || selectedSlugs.length === 0) return true;
+            var raw = normalize(card.getAttribute('data-filter') || '');
+            if (!raw) return false;
+            var parts = raw.split('|');
+            var lookup = {};
+            for (var i = 0; i < parts.length; i++) {
+                var s = normalize(parts[i]);
+                if (s) lookup[s] = true;
+            }
+            for (var j = 0; j < selectedSlugs.length; j++) {
+                var sel = normalize(selectedSlugs[j]);
+                if (sel && lookup[sel]) return true;
+            }
+            return false;
+        }
+
+        function matches(card, query, selectedSlugs) {
+            var haystack = normalize(card.getAttribute('data-search') || '');
+            return (!query || haystack.indexOf(query) !== -1) && cardHasAnySelectedFilter(card, selectedSlugs);
+        }
+
+        function syncPillsUI() {
+            if (!pillsScroller) return;
+            var anySelected = getSelectedSlugs().length > 0;
+            var pills = pillsScroller.querySelectorAll('[data-collection-pill]');
+            for (var i = 0; i < pills.length; i++) {
+                var slug = normalize(pills[i].getAttribute('data-filter-slug') || '');
+                if (slug === '') {
+                    pills[i].classList[anySelected ? 'remove' : 'add']('is-active');
+                } else {
+                    pills[i].classList[selected[slug] ? 'add' : 'remove']('is-active');
+                }
+            }
+        }
+
+        function syncExternalPillsUI() {
+            var externalWrap = document.querySelector('[data-collection-filters-external-pills]');
+            if (!externalWrap) return;
+            var anySelected = getSelectedSlugs().length > 0;
+            var buttons = externalWrap.querySelectorAll('[data-collection-external-pill]');
+            for (var i = 0; i < buttons.length; i++) {
+                var slug = normalize(buttons[i].getAttribute('data-filter-slug') || '');
+                if (slug === '') {
+                    buttons[i].classList[anySelected ? 'remove' : 'add']('is-active');
+                } else {
+                    buttons[i].classList[selected[slug] ? 'add' : 'remove']('is-active');
+                }
+            }
+        }
+
+        function mountExternalPillsFromScroller() {
+            var externalWrap = document.querySelector('[data-collection-filters-external-pills]');
+            if (!externalWrap || !pillsScroller) return;
+            if (externalWrap.getAttribute('data-mounted') === '1') return;
+
+            var wrap = document.createElement('div');
+            wrap.className = 'content-collection__pills-wrap';
+            var row = document.createElement('div');
+            row.className = 'content-collection__pills';
+
+            var sourceButtons = pillsScroller.querySelectorAll('[data-collection-pill]');
+            for (var i = 0; i < sourceButtons.length; i++) {
+                var src = sourceButtons[i];
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'content-collection__pill';
+                btn.setAttribute('data-collection-external-pill', '');
+                btn.setAttribute('data-filter-slug', src.getAttribute('data-filter-slug') || '');
+                btn.textContent = src.textContent || '';
+                row.appendChild(btn);
+            }
+
+            wrap.appendChild(row);
+            externalWrap.innerHTML = '';
+            externalWrap.appendChild(wrap);
+            externalWrap.setAttribute('data-mounted', '1');
+            syncExternalPillsUI();
+        }
+
+        function apply() {
+            var query = getQuery();
+            var selectedSlugs = getSelectedSlugs();
+            var filtered = [];
+
+            for (var i = 0; i < cards.length; i++) {
+                if (matches(cards[i], query, selectedSlugs)) filtered.push(cards[i]);
+            }
+            for (var j = 0; j < cards.length; j++) {
+                var colAll = cards[j].closest('.content-collection__col') || cards[j];
+                colAll.style.display = 'none';
+            }
+            for (var k = 0; k < filtered.length; k++) {
+                var col = filtered[k].closest('.content-collection__col') || filtered[k];
+                if (k < visibleLimit) col.style.display = '';
+            }
+            if (loadMoreBtn) {
+                loadMoreBtn.style.display = filtered.length > visibleLimit ? '' : 'none';
+            }
+        }
+
+        function resetAndApply() { visibleLimit = STEP; apply(); }
+
+        function toggleSlug(slugRaw) {
+            var slug = normalize(slugRaw || '');
+            if (slug === '') { selected = {}; }
+            else if (selected[slug]) { delete selected[slug]; }
+            else { selected[slug] = true; }
+            syncPillsUI();
+            syncExternalPillsUI();
+            resetAndApply();
+        }
+
+        if (pillsScroller) {
+            pillsScroller.addEventListener('click', function (e) {
+                var btn = e.target.closest('[data-collection-pill]');
+                if (!btn || !pillsScroller.contains(btn)) return;
+                toggleSlug(btn.getAttribute('data-filter-slug') || '');
+            });
+        }
+
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-collection-external-pill]');
+            if (!btn) return;
+            toggleSlug(btn.getAttribute('data-filter-slug') || '');
+        });
+
+        if (input) input.addEventListener('input', resetAndApply);
+        if (loadMoreBtn) loadMoreBtn.addEventListener('click', function () { visibleLimit += STEP; apply(); });
+
+        // Drag-to-scroll (mouse only)
+        if (pillsScroller) {
+            var isDown = false, startX = 0, scrollLeftStart = 0, didDrag = false;
+            var DRAG_THRESHOLD = 8;
+
+            pillsScroller.addEventListener('pointerdown', function (e) {
+                if (e.pointerType !== 'mouse' || e.button !== 0) return;
+                isDown = true; didDrag = false;
+                startX = e.clientX; scrollLeftStart = pillsScroller.scrollLeft;
+            });
+
+            pillsScroller.addEventListener('pointermove', function (e) {
+                if (!isDown) return;
+                var dx = e.clientX - startX;
+                if (!didDrag && Math.abs(dx) >= DRAG_THRESHOLD) {
+                    didDrag = true;
+                    pillsScroller.classList.add('is-dragging');
+                    try { pillsScroller.setPointerCapture(e.pointerId); } catch (err) {}
+                }
+                if (didDrag) pillsScroller.scrollLeft = scrollLeftStart - dx;
+            });
+
+            function endDrag() {
+                if (!isDown) return;
+                isDown = false;
+                if (didDrag) {
+                    pillsScroller.classList.remove('is-dragging');
+                    var cancelClickOnce = function (ev) {
+                        ev.preventDefault(); ev.stopPropagation();
+                        pillsScroller.removeEventListener('click', cancelClickOnce, true);
+                    };
+                    pillsScroller.addEventListener('click', cancelClickOnce, true);
+                }
+            }
+
+            pillsScroller.addEventListener('pointerup', endDrag);
+            pillsScroller.addEventListener('pointercancel', endDrag);
+            pillsScroller.addEventListener('pointerleave', endDrag);
+        }
+
+        // Bottom mobile button visibility
+        var bottomWrap = section.querySelector('.content-collection__filter-button-mobile-bottom');
+        var wrapper = section.querySelector('.content-collection__wrapper-content-collection');
+        if (bottomWrap && wrapper) {
+            var mm = window.matchMedia ? window.matchMedia('(max-width: 990px)') : null;
+            function shouldRun() { return !mm || mm.matches; }
+
+            if (window.gsap) window.gsap.set(bottomWrap, { autoAlpha: 0 });
+
+            function animateBottomVisible(visible) {
+                bottomWrap.classList[visible ? 'add' : 'remove']('is-visible');
+                bottomWrap.setAttribute('aria-hidden', visible ? 'false' : 'true');
+                if (!window.gsap) {
+                    bottomWrap.style.opacity = visible ? '1' : '0';
+                    bottomWrap.style.visibility = visible ? 'visible' : 'hidden';
+                    return;
+                }
+                window.gsap.killTweensOf(bottomWrap);
+                window.gsap.to(bottomWrap, { autoAlpha: visible ? 1 : 0, duration: 0.20, ease: 'power1.out' });
+            }
+
+            animateBottomVisible(false);
+
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver(function (entries) {
+                    if (!shouldRun()) { animateBottomVisible(false); return; }
+                    var entry = entries && entries[0] ? entries[0] : null;
+                    animateBottomVisible(!!(entry && entry.isIntersecting));
+                }, { root: null, threshold: 0.01 }).observe(wrapper);
+            } else {
+                function onScrollOrResize() {
+                    if (!shouldRun()) { animateBottomVisible(false); return; }
+                    var rect = wrapper.getBoundingClientRect();
+                    var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+                    animateBottomVisible(rect.bottom > 0 && rect.top < vh);
+                }
+                window.addEventListener('scroll', onScrollOrResize, { passive: true });
+                window.addEventListener('resize', onScrollOrResize);
+                onScrollOrResize();
+            }
+
+            function onMqChange() { if (!shouldRun()) animateBottomVisible(false); }
+            if (mm && mm.addEventListener) mm.addEventListener('change', onMqChange);
+            else if (mm && mm.addListener) mm.addListener(onMqChange);
+        }
+
+        syncPillsUI();
+        apply();
+        mountExternalPillsFromScroller();
     }
 
     // Init global
@@ -1618,6 +1870,7 @@ window.App = window.App || {};
         initBlogHeroSwiper();
         initPageCoverReveal();
         initFadeAnimations();
+        initDynamicCollectionFilter();
         lazyLoadImages('.img-fluid');
     };
 

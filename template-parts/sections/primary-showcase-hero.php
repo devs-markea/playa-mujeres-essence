@@ -48,9 +48,6 @@ $contact_options        = get_sub_field('contact_options'); // repeater
 $heading_tag = pm_essence_heading_tag_or_null($heading_level, 'h1');
 
 
-$heading_tag = pm_essence_heading_tag_or_null($heading_level, 'h1');
-
-
 $logo_desktop_id = (is_array($logo) && ! empty($logo['ID'])) ? (int) $logo['ID'] : 0;
 $logo_mobile_id  = (is_array($logo_dark) && ! empty($logo_dark['ID'])) ? (int) $logo_dark['ID'] : 0;
 
@@ -70,13 +67,7 @@ $cta_url    = is_array($primary_cta) && !empty($primary_cta['url']) ? $primary_c
 $cta_title  = is_array($primary_cta) && !empty($primary_cta['title']) ? $primary_cta['title'] : '';
 $cta_target = is_array($primary_cta) && !empty($primary_cta['target']) ? $primary_cta['target'] : '';
 
-$overlay_alpha = 0.0;
-if ($enable_overlay) {
-    $overlay_opacity = is_numeric($overlay_opacity) ? (float) $overlay_opacity : 0.0; // 0..75
-    if ($overlay_opacity < 0) { $overlay_opacity = 0; }
-    if ($overlay_opacity > 75) { $overlay_opacity = 75; }
-    $overlay_alpha = $overlay_opacity / 100.0; // 0.00 .. 0.75
-}
+$overlay_alpha = pm_page_cover_overlay_alpha($enable_overlay, $overlay_opacity);
 ?>
 
 

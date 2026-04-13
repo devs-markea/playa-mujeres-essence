@@ -80,67 +80,7 @@ $classes = array(
     <?php endif; ?>
     </div>
 </section>
-<style>
-    .page-cover--variant-classic{
-        position: relative;
-        overflow: visible;
-        display: flex;
-        align-items: stretch;
-        min-height: 50vh;
-    }
-    .page-cover--variant-classic .page-cover__media{
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-    }
-    .page-cover--variant-classic .page-cover__media .page-cover__overlay{
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-    }
-    .page-cover--variant-classic .page-cover__media .page-cover__image{
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 0;
-        object-position: top;
-        will-change: transform;
-    }
-    .page-cover--variant-classic .page-cover__content{
-        position: relative;
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
-        margin-bottom: 32px;
-        z-index: 3;
-        color: #fff;
-    }
-    .page-cover--variant-classic .page-cover__heading{
-        font-family: var(--pm-font-secondary);
-        font-size: 24px;
-        font-style: italic;
-        font-weight: 500;
-        line-height: normal;
-        letter-spacing: 2px;
-        margin-bottom: 0.5rem;
-    }
 
-    @media (min-width: 992px){
-        .page-cover--variant-classic{
-            min-height: 75vh;
-        }
-        .page-cover--variant-classic .page-cover__media .page-cover__image{
-            object-position: 36%;
-        }
-        .page-cover--variant-classic .page-cover__heading {
-            font-size: 40px;
-            margin-bottom: 1rem;
-        }
-    }
-</style>
 <script>
 (function () {
     var img = document.querySelector('.page-cover--variant-classic .page-cover__image');
