@@ -2,6 +2,7 @@
 // template-parts/sections/two-column-content-section.php (solo loader de variantes)
 
 // Variante ACF: classic | essence
+// heading_font_style ACF: primary | secondary
 $layout_variant = get_sub_field('if_layout_variant');
 $layout_variant = is_string($layout_variant) ? trim($layout_variant) : '';
 if ($layout_variant === '') {
@@ -19,8 +20,10 @@ $title            = get_sub_field('title');
 $title_level      = get_sub_field('title_level');
 $description      = get_sub_field('description');
 $button_settings  = get_sub_field('button_settings');
-$layout_direction = get_sub_field('desktop_layout_direction') ?: 'right';
-$variant          = get_sub_field('mobile_content_style');
+$layout_direction    = get_sub_field('desktop_layout_direction') ?: 'right';
+$variant             = get_sub_field('mobile_content_style');
+$heading_font_style  = get_sub_field('heading_font_style'); // solo essence: primary | secondary
+$heading_font_style  = in_array($heading_font_style, ['primary', 'secondary'], true) ? $heading_font_style : 'secondary';
 
 $variant = is_string($variant) ? trim($variant) : '';
 if ($variant === '') {

@@ -115,7 +115,6 @@ $classes = array(
         font-weight: var(--fw-light);
         line-height: 1.6;
         color: var(--pm-secondary-900);
-        max-width: 680px;
         margin: 0;
     }
 

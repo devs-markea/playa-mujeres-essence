@@ -5,6 +5,8 @@ $heading_title          = get_sub_field('heading_title');
 $heading_level_title    = get_sub_field('heading_level_title');
 $heading_position_title = get_sub_field('heading_position_title') ?: 'center';
 $highlights_items       = get_sub_field('highlights_items');
+$show_intro_text        = (bool) get_sub_field('show_intro_text');
+$intro_text             = get_sub_field('intro_text');
 $show_description       = get_sub_field('show_description');
 $description            = get_sub_field('description');
 $show_image             = get_sub_field('show_image');
@@ -35,14 +37,20 @@ if (is_array($image) && ! empty($image['alt'])) {
             <div class="col-12 col-md-10 mx-auto">
 
                 <?php if ($heading_title) : ?>
-                <div class="content-highlights__header">
-                    <<?php echo esc_html($heading_tag); ?> class="content-highlights__title content-highlights__title--<?php echo esc_attr($position_css); ?>">
-                    <?php echo esc_html($heading_title); ?>
-                </<?php echo esc_html($heading_tag); ?>>
-            </div>
-            <?php endif; ?>
+                    <div class="content-highlights__header">
+                        <<?php echo esc_html($heading_tag); ?> class="content-highlights__title content-highlights__title--<?php echo esc_attr($position_css); ?>">
+                            <?php echo esc_html($heading_title); ?>
+                        </<?php echo esc_html($heading_tag); ?>>
+                    </div>
+                <?php endif; ?>
 
-            <?php if ($highlights_items) : ?>
+                <?php if ($show_intro_text && $intro_text) : ?>
+                    <div class="content-highlights__intro">
+                        <?php echo wp_kses_post($intro_text); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($highlights_items) : ?>
             <div class="content-highlights__items row g-3">
                 <?php foreach ($highlights_items as $item) :
                 $item_heading       = $item['heading']       ?? '';

@@ -1011,51 +1011,16 @@ window.App = window.App || {};
         });
     }
 
-    function initExperiencesTabsSwiper() {
-        if (typeof window.Swiper === 'undefined') return;
+    // Helper compartido: lógica de tabs + swiper para content-showcase
+    function _initContentShowcaseTabs(section, contentSwiper) {
+        const block        = section.querySelector('[data-showcase-block]');
+        const tabsRoot     = section.querySelector('[data-showcase-tabs-swiper]');
+        const desktopRail  = section.querySelector('.content-showcase__rail--desktop');
+        const indicator    = section.querySelector('.content-showcase__indicator');
+        const underline    = section.querySelector('.content-showcase__underline');
+        const desktopTabs  = desktopRail ? Array.from(desktopRail.querySelectorAll('.content-showcase__tab')) : [];
 
-        const block = document.querySelector('[data-experiences-block]') || document;
-        const contentRoot = document.querySelector('[data-experiences-swiper]');
-        if (!contentRoot) return;
-
-        const sectionEl = contentRoot.closest('.experiences-tabs') || document;
-
-        // Swiper contenido (imagen/copy)
-        const contentSwiper = new Swiper(contentRoot, {
-            slidesPerView: 1,
-            speed: 600,
-            allowTouchMove: true,
-            autoHeight: false,
-            observer: true,
-            observeParents: true,
-            resizeObserver: true,
-            navigation: {
-                nextEl: sectionEl.querySelector('.experiences-content__next'), // ✅ ahora sí existe
-                prevEl: sectionEl.querySelector('.experiences-content__prev'), // ✅ ahora sí existe
-            },
-            pagination: {
-                el: sectionEl.querySelector('.experiences-content__pagination'), // ✅ ahora sí existe
-                clickable: true
-            }
-        });
-
-
-        //Function ScrollLock Experiences
-        //initExperiencesDesktopScrollLock(sectionEl, contentSwiper);
-
-
-        const tabsRoot = block.querySelector('[data-experiences-tabs-swiper]');
-        const underline = block.querySelector('.experiences-tabs__underline');
-        const desktopRail = block.querySelector('.experiences-tabs__rail--desktop');
-        const desktopIndicator = block.querySelector('.experiences-tabs__rail--desktop .experiences-tabs__indicator');
-        const desktopTabs = desktopRail ? Array.from(desktopRail.querySelectorAll('.experiences-tab')) : [];
-
-
-        // Tabs: swiper horizontal (scrollable)
         let tabsSwiper = null;
-
-
-
         if (tabsRoot) {
             tabsSwiper = new Swiper(tabsRoot, {
                 slidesPerView: 3,
@@ -1067,120 +1032,54 @@ window.App = window.App || {};
             });
         }
 
-
-        const tabs = Array.from(block.querySelectorAll('.experiences-tabs__rail--mobile .experiences-tab'))
-            .concat(Array.from(block.querySelectorAll('.experiences-tabs__rail--desktop .experiences-tab')));
-
-        function getTabsBaseOffset() {
-            // Si tu tabsRoot tiene padding-left visual (ej. la línea base inicia en 18px)
-            // ajusta aquí para que el underline coincida perfecto.
-            // Si NO quieres offset, regresa 0.
-            return 0;
-        }
-
         function moveUnderlineTo(index) {
             if (!tabsSwiper || !underline) return;
-
             const slideEl = tabsSwiper.slides[index];
             if (!slideEl) return;
-
-            const btn = slideEl.querySelector('.experiences-tab') || slideEl;
-
-            const container = tabsSwiper.el; // el div .swiper (tabs)
-            const pl = parseFloat(getComputedStyle(container).paddingLeft) || 0;
-
-            // translate real del wrapper (negativo cuando avanzas)
-            const tx = (typeof tabsSwiper.translate === 'number')
-                ? tabsSwiper.translate
-                : tabsSwiper.getTranslate();
-
-            // Posición dentro del contenedor (no uses getBoundingClientRect aquí)
-            const x = pl + slideEl.offsetLeft + tx;
-
-            underline.style.transform = `translate3d(${x}px,0,0)`;
-            underline.style.width = `${btn.offsetWidth}px`;
+            const btn = slideEl.querySelector('.content-showcase__tab') || slideEl;
+            const pl  = parseFloat(getComputedStyle(tabsSwiper.el).paddingLeft) || 0;
+            const tx  = (typeof tabsSwiper.translate === 'number') ? tabsSwiper.translate : tabsSwiper.getTranslate();
+            underline.style.transform = `translate3d(${pl + slideEl.offsetLeft + tx}px,0,0)`;
+            underline.style.width     = `${btn.offsetWidth}px`;
         }
 
-        function moveDesktopIndicatorTo(index) {
-            if (!desktopRail || !desktopIndicator || !desktopTabs[index]) return;
-
-            const btn = desktopTabs[index];
-            const y = btn.offsetTop + 10;
-            desktopIndicator.style.transform = `translateY(${y}px)`;
+        function moveIndicatorTo(index) {
+            if (!indicator || !desktopTabs[index]) return;
+            indicator.style.transform = `translateY(${desktopTabs[index].offsetTop + 10}px)`;
         }
 
-
-        requestAnimationFrame(() => setActive(0, { moveUi: true }));
-
-        // Se sincroniza “estado” apenas cambie el slide (sin mover rail/underline)
-        contentSwiper.on('slideChange', () => {
-            setActive(contentSwiper.activeIndex, { moveUi: false });
-        });
-
-        // Al terminar animación, se mueve rail/underline
-        contentSwiper.on('slideChangeTransitionEnd', () => {
-            setActive(contentSwiper.activeIndex, { moveUi: true });
-        });
-
-
-
-        function setActive(index, opts) {
-            opts = opts || {};
+        function setActive(index, opts = {}) {
             const moveUi = (opts.moveUi !== false);
 
-            block.querySelectorAll('.experiences-tab').forEach((btn) => {
+            section.querySelectorAll('.content-showcase__tab').forEach((btn) => {
                 const active = Number(btn.dataset.slide) === index;
                 btn.classList.toggle('is-active', active);
                 btn.setAttribute('aria-selected', active ? 'true' : 'false');
             });
 
             if (window.innerWidth >= 768) {
-                if (moveUi) requestAnimationFrame(() => moveDesktopIndicatorTo(index));
+                if (moveUi) requestAnimationFrame(() => moveIndicatorTo(index));
                 return;
             }
 
             if (!moveUi) return;
 
-            if (tabsSwiper && window.innerWidth < 768) {
-                const total = tabsSwiper.slides ? tabsSwiper.slides.length : 0;
-                const VISIBLE = 3;
-                const lastStart = Math.max(0, total - VISIBLE);
+            if (tabsSwiper) {
+                const total      = tabsSwiper.slides ? tabsSwiper.slides.length : 0;
+                const lastStart  = Math.max(0, total - 3);
+                let desiredStart = index <= 0 ? 0 : index >= total - 1 ? lastStart : index - 1;
+                desiredStart     = Math.max(0, Math.min(desiredStart, lastStart));
 
-                let desiredStart;
-                if (index <= 0) desiredStart = 0;
-                else if (index >= total - 1) desiredStart = lastStart;
-                else desiredStart = index - 1;
-
-                desiredStart = Math.max(0, Math.min(desiredStart, lastStart));
-
-                const isAlreadyThere = (tabsSwiper.activeIndex === desiredStart);
-                if (!isAlreadyThere) {
+                if (tabsSwiper.activeIndex !== desiredStart) {
                     tabsSwiper.slideTo(desiredStart, 250);
                     tabsSwiper.once('transitionEnd', () => moveUnderlineTo(index));
                 }
-
-                requestAnimationFrame(() => moveUnderlineTo(index));
-            } else {
-                requestAnimationFrame(() => moveUnderlineTo(index));
             }
+            requestAnimationFrame(() => moveUnderlineTo(index));
         }
 
-
-
-        /* Mantener underline pegado al tab activo mientras el wrapper se mueve */
-        if (tabsSwiper) {
-            tabsSwiper.on('setTranslate', () => {
-                const activeIdx = contentSwiper.activeIndex || 0;
-                moveUnderlineTo(activeIdx);
-            });
-
-            tabsSwiper.on('transitionEnd', () => {
-                const activeIdx = contentSwiper.activeIndex || 0;
-                moveUnderlineTo(activeIdx);
-            });
-        }
-
-        block.querySelectorAll('.experiences-tab').forEach((tab) => {
+        // Click en tab → slide contenido
+        section.querySelectorAll('.content-showcase__tab').forEach((tab) => {
             tab.addEventListener('click', () => {
                 const idx = Number(tab.dataset.slide || 0);
                 contentSwiper.slideTo(idx);
@@ -1188,34 +1087,58 @@ window.App = window.App || {};
             });
         });
 
-
-        requestAnimationFrame(() => setActive(0, { moveUi: true }));
-
-        // Desktop: que el indicador arranque junto con el slide (sin “retraso”)
+        // Sync tabs cuando cambia el swiper contenido
         contentSwiper.on('slideChangeTransitionStart', () => {
-            if (window.innerWidth >= 768) {
-                setActive(contentSwiper.activeIndex, { moveUi: true });
-            } else {
-                setActive(contentSwiper.activeIndex, { moveUi: false });
-            }
+            setActive(contentSwiper.activeIndex, { moveUi: window.innerWidth >= 768 });
         });
-
-        // Mobile: mover underline/rail al final (layout estable, sin brincos)
         contentSwiper.on('slideChangeTransitionEnd', () => {
-            if (window.innerWidth < 768) {
-                setActive(contentSwiper.activeIndex, { moveUi: true });
-            }
+            if (window.innerWidth < 768) setActive(contentSwiper.activeIndex, { moveUi: true });
         });
 
+        // Mantener underline mientras el tabs swiper se mueve
+        if (tabsSwiper) {
+            tabsSwiper.on('setTranslate', () => moveUnderlineTo(contentSwiper.activeIndex || 0));
+            tabsSwiper.on('transitionEnd',  () => moveUnderlineTo(contentSwiper.activeIndex || 0));
+        }
 
-
-        // Reajuste en resize
+        // Resize
         window.addEventListener('resize', () => {
             if (tabsSwiper) tabsSwiper.update();
             contentSwiper.update();
             setActive(contentSwiper.activeIndex, { moveUi: true });
         }, { passive: true });
 
+        // Estado inicial
+        requestAnimationFrame(() => setActive(0, { moveUi: true }));
+    }
+
+    // Content Showcase — Classic (tabs + swiper imagen/card)
+    function initContentShowcaseClassic() {
+        if (typeof window.Swiper === 'undefined') return;
+
+        const section     = document.querySelector('.content-showcase--classic');
+        const contentRoot = section ? section.querySelector('[data-showcase-swiper]') : null;
+        if (!section || !contentRoot) return;
+
+        const contentSwiper = new Swiper(contentRoot, {
+            slidesPerView: 1,
+            speed: 600,
+            allowTouchMove: true,
+            autoHeight: false,
+            observer: true,
+            observeParents: true,
+            resizeObserver: true,
+            navigation: {
+                nextEl: section.querySelector('.content-showcase__next'),
+                prevEl: section.querySelector('.content-showcase__prev'),
+            },
+            pagination: {
+                el:        section.querySelector('.content-showcase__pagination'),
+                clickable: true,
+            },
+        });
+
+        _initContentShowcaseTabs(section, contentSwiper);
     }
 
     function initImagesCarouselClassicSwiper() {
@@ -1836,6 +1759,32 @@ window.App = window.App || {};
         mountExternalPillsFromScroller();
     }
 
+    // Content Showcase — Essence (rail + swiper imágenes, sin card overlay)
+    function initContentShowcaseEssence() {
+        if (typeof window.Swiper === 'undefined') return;
+
+        document.querySelectorAll('.content-showcase--essence').forEach((section) => {
+            const contentRoot = section.querySelector('[data-showcase-swiper]');
+            if (!contentRoot) return;
+
+            const contentSwiper = new Swiper(contentRoot, {
+                slidesPerView: 1,
+                speed: 600,
+                allowTouchMove: true,
+                autoHeight: false,
+                observer: true,
+                observeParents: true,
+                resizeObserver: true,
+                navigation: {
+                    nextEl: section.querySelector('.content-showcase__next'),
+                    prevEl: section.querySelector('.content-showcase__prev'),
+                },
+            });
+
+            _initContentShowcaseTabs(section, contentSwiper);
+        });
+    }
+
     // Init global
     App.init = function () {
         initLenis();
@@ -1878,7 +1827,8 @@ window.App = window.App || {};
         initVideoHeroControls();
         initScrollHandler();
         initHotelsParallax();
-        initExperiencesTabsSwiper();
+        initContentShowcaseClassic();
+        initContentShowcaseEssence();
         initImagesCarouselClassicSwiper();
         initImagesCarouselGallerySwipers();
         initContentCarouselClassicSwiper();

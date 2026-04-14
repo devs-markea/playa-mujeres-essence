@@ -14,14 +14,14 @@
 <section data-anim="slide-up delay-2" class="container px-0 px-md-4">
     <div class="row g-0">
         <div class="col-12 col-md-10 mx-auto">
-            <div class="row g-0 g-md-4 two-column-layout two-column-layout--variant-essence <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right' ?>">
+            <div class="row g-0 g-md-5 two-column-layout two-column-layout--variant-essence <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right' ?>">
 
                 <div class="col-12 col-lg-6 col-content">
                     <div class="row g-0">
-                        <div class="col-12 col-lg-9">
+                        <div class="col-12">
                             <div class="two-column-layout__content two-column-layout__content-variant-<?php echo esc_attr($variant); ?>">
                                 <?php if ( $title ) : ?>
-                                    <<?php echo esc_html($title_tag); ?> class="mb-3 two-column-layout__heading-essence">
+                                    <<?php echo esc_html($title_tag); ?> class="mb-3 two-column-layout__heading-essence two-column-layout__heading-essence--font-<?php echo esc_attr($heading_font_style); ?>">
                                         <?php echo esc_html( $title ); ?>
                                     </<?php echo esc_html($title_tag); ?>>
                                 <?php endif; ?>
