@@ -3,17 +3,31 @@
  * template-parts/layout-variants/two-column-content-section/essence.php
  *
  * Espera que el loader (two-column-content-section.php) ya tenga disponibles:
- * - $title, $title_tag
- * - $description
+ * - $section_title, $section_description  (header de sección, arriba del layout)
+ * - $title, $title_tag                    (heading dentro del two-column)
+ * - $description                          (descripción dentro del two-column)
  * - $show_button, $button_title, $button_url, $button_target
  * - $layout_direction ('left' | 'right')
  * - $variant (mobile_content_style)
  * - $image_media_id, $image_media_alt, $image_media
+ * - $heading_font_style ('primary' | 'secondary')
  */
 ?>
 <section data-anim="slide-up delay-2" class="container px-0 px-md-4">
     <div class="row g-0">
         <div class="col-12 col-md-10 mx-auto">
+
+            <?php if ($section_title || $section_description) : ?>
+                <div class="two-column-layout__section-header">
+                    <?php if ($section_title) : ?>
+                        <<?php echo esc_html($section_title_tag); ?> class="two-column-layout__section-title"><?php echo esc_html($section_title); ?></<?php echo esc_html($section_title_tag); ?>>
+                    <?php endif; ?>
+                    <?php if ($section_description) : ?>
+                        <div class="two-column-layout__section-description"><?php echo wp_kses_post($section_description); ?></div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <div class="row g-0 g-md-5 two-column-layout two-column-layout--variant-essence <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right' ?>">
 
                 <div class="col-12 col-lg-6 col-content">

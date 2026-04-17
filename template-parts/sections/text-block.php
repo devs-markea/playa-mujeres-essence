@@ -73,7 +73,7 @@ $has_right       = ($has_subheading || $has_text || $has_button);
 ?>
 
 <section data-anim="slide-up delay-2"
-         class="pm-text-block pm-text-block--<?= esc_attr($variant); ?> pm-text-block--<?= esc_attr($alignment); ?>">
+         class="pm-text-block pm-text-block--<?= esc_attr($variant); ?> pm-text-block--<?= esc_attr($alignment); ?><?= ! $has_decor_image ? ' pm-text-block--no-decor' : ''; ?>">
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">

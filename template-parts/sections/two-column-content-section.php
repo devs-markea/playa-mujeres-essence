@@ -1,8 +1,9 @@
 <?php
 // template-parts/sections/two-column-content-section.php (solo loader de variantes)
 
-// Variante ACF: classic | essence
-// heading_font_style ACF: primary | secondary
+// Variante ACF:         classic | essence
+// show_section_header:  switch — activa section_title y section_description
+// heading_font_style:   primary | secondary (solo essence)
 $layout_variant = get_sub_field('if_layout_variant');
 $layout_variant = is_string($layout_variant) ? trim($layout_variant) : '';
 if ($layout_variant === '') {
@@ -14,16 +15,29 @@ if (! in_array($layout_variant, $allowed_variants, true)) {
     $layout_variant = 'classic';
 }
 
-// Campos comunes (disponibles para las variantes)
-$image_media      = get_sub_field('media');
-$title            = get_sub_field('title');
-$title_level      = get_sub_field('title_level');
-$description      = get_sub_field('description');
-$button_settings  = get_sub_field('button_settings');
+// Campos comunes
+$image_media         = get_sub_field('media');
 $layout_direction    = get_sub_field('desktop_layout_direction') ?: 'right';
 $variant             = get_sub_field('mobile_content_style');
-$heading_font_style  = get_sub_field('heading_font_style'); // solo essence: primary | secondary
-$heading_font_style  = in_array($heading_font_style, ['primary', 'secondary'], true) ? $heading_font_style : 'secondary';
+
+// Header de sección (opcional, controlado por switch)
+$show_section_header  = (bool) get_sub_field('show_section_header');
+$section_title        = $show_section_header ? get_sub_field('section_title')        : '';
+$section_title_level  = $show_section_header ? get_sub_field('section_title_level')  : '';
+$section_description  = $show_section_header ? get_sub_field('section_description')  : '';
+$section_title_tag    = pm_essence_heading_tag_or_null($section_title_level, 'h2');
+if (empty($section_title_tag)) {
+    $section_title_tag = 'h2';
+}
+
+// Campos de contenido del two-column (planos, sin grupos)
+$title           = get_sub_field('title');
+$title_level     = get_sub_field('title_level');
+$description     = get_sub_field('description');
+$button_settings = get_sub_field('button_settings');
+
+$heading_font_style = get_sub_field('heading_font_style'); // solo essence: primary | secondary
+$heading_font_style = in_array($heading_font_style, ['primary', 'secondary'], true) ? $heading_font_style : 'secondary';
 
 $variant = is_string($variant) ? trim($variant) : '';
 if ($variant === '') {

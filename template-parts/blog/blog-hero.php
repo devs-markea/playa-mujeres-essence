@@ -105,7 +105,7 @@ if (! $hero_query->have_posts() && ! $heading_hero &&  ! $description_hero) {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        background: #f7f4ef;
+        background: var(--pm-primary-200);
         min-height: calc(90vh - 135px);
         padding: 0;
         margin-top: 135px;

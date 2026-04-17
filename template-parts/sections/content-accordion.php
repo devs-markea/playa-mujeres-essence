@@ -15,7 +15,7 @@ if (empty($heading_tag)) {
 $accordion_id = 'content-accordion-' . uniqid();
 ?>
 
-<section class="content-accordion">
+<section data-anim="slide-up delay-2" class="content-accordion">
     <div class="container">
 
         <?php if ($heading_title) : ?>

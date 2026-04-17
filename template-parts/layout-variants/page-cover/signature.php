@@ -80,12 +80,8 @@ $classes = array(
     ============================================================ */
 
     .page-cover--variant-signature {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        justify-content: start;
-        height: calc(80svh - 134px);
         margin-top: 134px;
+        padding-bottom: 60px;
     }
 
     /* ── Header (texto) ── */
@@ -121,12 +117,13 @@ $classes = array(
     /* ── Imagen principal ── */
     .page-cover-signature__media {
         width: 100%;
+        height: 260px;
         overflow: hidden;
     }
 
     .page-cover-signature__img {
         width: 100%;
-        height: 260px;
+        height: 100%;
         object-fit: cover;
         display: block;
     }
@@ -136,10 +133,8 @@ $classes = array(
     ============================================================ */
     @media (min-width: 992px) {
         .page-cover--variant-signature {
-            min-height: calc(100vh - 92px);
-            margin-top: 92px;
-            align-items: center;
-            justify-content: center;
+            margin-top: 140px;
+            padding-bottom: 80px;
         }
 
         .page-cover-signature__header {
@@ -155,8 +150,8 @@ $classes = array(
             font-size: 16px;
         }
 
-        .page-cover-signature__img {
-            height: 520px;
+        .page-cover-signature__media {
+            height: 580px;
         }
     }
 </style>
