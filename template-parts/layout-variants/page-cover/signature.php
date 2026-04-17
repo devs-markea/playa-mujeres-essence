@@ -81,7 +81,7 @@ $classes = array(
 
     .page-cover--variant-signature {
         margin-top: 134px;
-        padding-bottom: 60px;
+        /*padding-bottom: 60px;*/
     }
 
     /* ── Header (texto) ── */
@@ -134,7 +134,7 @@ $classes = array(
     @media (min-width: 992px) {
         .page-cover--variant-signature {
             margin-top: 140px;
-            padding-bottom: 80px;
+            /*padding-bottom: 80px;*/
         }
 
         .page-cover-signature__header {

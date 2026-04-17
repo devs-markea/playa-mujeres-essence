@@ -1468,9 +1468,9 @@ window.App = window.App || {};
         if (typeof Lenis === 'undefined') return;
 
         window.lenis = new Lenis({
-            duration:    0.3,
-            easing:      function (t) { return 1 - Math.pow(1 - t, 4); },
+            lerp:        0.45,
             smoothTouch: false,
+            overscroll:  false,
         });
 
         if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {

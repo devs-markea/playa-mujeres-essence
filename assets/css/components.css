@@ -3892,7 +3892,7 @@ body.is-showcase-scrolllocked { overflow: hidden; }
     font-family: var(--pm-font-secondary);
     font-style: italic;
     font-weight: var(--fw-medium);
-    font-size: 24px;
+    font-size: 20px;
     letter-spacing: 2px;
     color: var(--pm-secondary-900);
     margin-bottom: 16px;
@@ -3920,10 +3920,10 @@ body.is-showcase-scrolllocked { overflow: hidden; }
 
 @media (min-width: 992px) {
     .content-showcase--essence {
-        margin: 104px 0;
+        margin: 40px 0;
     }
 
-    .content-showcase--essence .content-showcase__title { font-size: 32px; }
+    .content-showcase--essence .content-showcase__title { font-size: 24px; }
 
     .content-showcase__media-img { height: 520px; }
 }

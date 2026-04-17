@@ -31,7 +31,7 @@
                 <?php endif; ?>
 
                 <?php if ($highlights_items) : ?>
-                    <div class="content-highlights__items row g-3">
+                    <div class="content-highlights__items row g-0 g-md-3">
                         <?php foreach ($highlights_items as $item) :
                             $item_heading       = $item['heading']       ?? '';
                             $item_heading_level = $item['heading_level'] ?? 'none';
