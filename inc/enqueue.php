@@ -57,6 +57,20 @@ function pm_enqueue_assets() {
 
 
     /* ---------------------------------
+     *  PAGE-SPECIFIC: Blog
+     * --------------------------------- */
+
+    if ( is_home() || is_category() || is_singular( 'post' ) || is_page_template( 'page-templates/template-page-blog.php' ) ) {
+        wp_enqueue_style(
+            'pm-blog',
+            PM_ESSENCE_TEMPLATE_URI . '/assets/css/pages/blog.css',
+            array( 'essence-components', 'pm-swiper' ),
+            $pm_essence_version,
+            'all'
+        );
+    }
+
+    /* ---------------------------------
      *  PAGE-SPECIFIC: Gallery
      * --------------------------------- */
 

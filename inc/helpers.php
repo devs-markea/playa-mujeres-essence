@@ -187,6 +187,115 @@ if ( ! function_exists( 'pm_get_cached_yt_thumbnail' ) ) {
     }
 }
 
+if ( ! function_exists( 'pm_collection_to_post_id' ) ) {
+    /**
+     * Normaliza un item de colección ACF a un post ID entero.
+     *
+     * @param int|object $related
+     * @return int  0 si no es válido.
+     */
+    function pm_collection_to_post_id( $related ) {
+        if ( is_numeric( $related ) ) return (int) $related;
+        if ( is_object( $related ) && ! empty( $related->ID ) ) return (int) $related->ID;
+        return 0;
+    }
+}
+
+if ( ! function_exists( 'pm_acf_rel_to_ids' ) ) {
+    /**
+     * Convierte el valor de un campo ACF Relationship a un array de post IDs únicos.
+     *
+     * @param mixed $value
+     * @return int[]
+     */
+    function pm_acf_rel_to_ids( $value ) {
+        $ids = array();
+        if ( empty( $value ) ) return $ids;
+
+        foreach ( (array) $value as $v ) {
+            if ( is_numeric( $v ) ) {
+                $ids[] = (int) $v;
+            } elseif ( is_object( $v ) && ! empty( $v->ID ) ) {
+                $ids[] = (int) $v->ID;
+            }
+        }
+
+        return array_values( array_unique( array_filter( $ids ) ) );
+    }
+}
+
+if ( ! function_exists( 'pm_safe_heading_tag' ) ) {
+    /**
+     * Valida y retorna un tag de heading permitido.
+     *
+     * @param string $tag
+     * @return string
+     */
+    function pm_safe_heading_tag( $tag ) {
+        $allowed = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'div' );
+        $tag     = strtolower( trim( (string) $tag ) );
+        return in_array( $tag, $allowed, true ) ? $tag : 'h3';
+    }
+}
+
+if ( ! function_exists( 'pm_render_icon_picker' ) ) {
+    /**
+     * Renderiza un icono proveniente de un ACF icon picker.
+     * Soporta: attachment array (con ID), URL directa, dashicons y SVG/HTML inline.
+     *
+     * @param array|string $icon
+     */
+    function pm_render_icon_picker( $icon ) {
+        $img_classes  = 'content-carousel__meta-icon';
+        $span_classes = 'content-carousel__meta-icon';
+
+        if ( is_array( $icon ) ) {
+            if ( ! empty( $icon['ID'] ) ) {
+                $html = wp_get_attachment_image( (int) $icon['ID'], 'thumbnail', false, array(
+                    'class'   => $img_classes,
+                    'alt'     => '',
+                    'loading' => 'lazy',
+                    'decoding' => 'async',
+                ) );
+                if ( $html ) { echo $html; return; }
+            }
+
+            if ( ! empty( $icon['url'] ) ) {
+                echo '<img class="' . esc_attr( $img_classes ) . '" src="' . esc_url( $icon['url'] ) . '" alt="" loading="lazy" decoding="async" />';
+                return;
+            }
+
+            if ( ! empty( $icon['value'] ) && is_string( $icon['value'] ) ) {
+                $icon = $icon['value'];
+            } else {
+                return;
+            }
+        }
+
+        if ( is_string( $icon ) ) {
+            $icon = trim( $icon );
+            if ( $icon === '' ) return;
+
+            if ( filter_var( $icon, FILTER_VALIDATE_URL ) ) {
+                echo '<img class="' . esc_attr( $img_classes ) . '" src="' . esc_url( $icon ) . '" alt="" loading="lazy" decoding="async" />';
+                return;
+            }
+
+            if ( strpos( $icon, 'dashicons-' ) === 0 ) {
+                echo '<span class="dashicons ' . esc_attr( $icon ) . ' ' . esc_attr( $span_classes ) . '" aria-hidden="true"></span>';
+                return;
+            }
+
+            if ( strpos( $icon, '<svg' ) !== false || strpos( $icon, '<span' ) !== false || strpos( $icon, '<i' ) !== false ) {
+                echo '<span class="' . esc_attr( $span_classes ) . '">' . wp_kses_post( $icon ) . '</span>';
+                return;
+            }
+
+            echo '<span class="' . esc_attr( $span_classes ) . '">' . esc_html( $icon ) . '</span>';
+        }
+    }
+}
+
 if ( ! function_exists( 'pm_page_cover_image_id_from_group' ) ) {
     /**
      * Extrae el ID de un attachment desde un grupo ACF.
@@ -200,6 +309,39 @@ if ( ! function_exists( 'pm_page_cover_image_id_from_group' ) ) {
             return 0;
         }
         return (int) $group[ $key ]['ID'];
+    }
+}
+
+if ( ! function_exists( 'pm_normalize_acf_image' ) ) {
+    /**
+     * Normaliza un campo imagen ACF (ID, array o URL string) a [id, url, alt].
+     *
+     * @param int|array|string $image
+     * @return array { int $id, string $url, string $alt }
+     */
+    function pm_normalize_acf_image( $image ) {
+        $id  = 0;
+        $url = '';
+        $alt = '';
+
+        if ( is_numeric( $image ) ) {
+            $id = (int) $image;
+        } elseif ( is_array( $image ) ) {
+            $id  = ! empty( $image['ID'] ) ? (int) $image['ID'] : 0;
+            $url = ! empty( $image['url'] ) ? (string) $image['url'] : '';
+            $alt = ! empty( $image['alt'] ) ? (string) $image['alt'] : '';
+        } elseif ( is_string( $image ) && $image !== '' ) {
+            $url = $image;
+        }
+
+        if ( $id <= 0 && $url !== '' ) {
+            $maybe_id = (int) attachment_url_to_postid( $url );
+            if ( $maybe_id > 0 ) {
+                $id = $maybe_id;
+            }
+        }
+
+        return array( $id, $url, $alt );
     }
 }
 
@@ -220,6 +362,83 @@ if ( ! function_exists( 'pm_page_cover_overlay_alpha' ) ) {
         $overlay_opacity = max( 0, min( 75, $overlay_opacity ) );
 
         return $overlay_opacity / 100.0;
+    }
+}
+
+if ( ! function_exists( 'pm_get_weather' ) ) {
+    /**
+     * Obtiene la temperatura actual de Playa Mujeres usando OpenWeatherMap.
+     * Requiere la constante KEY_API_WEATHER definida en wp-config.php.
+     * Cachea el resultado 30 minutos con un transient.
+     *
+     * @return array|null { int $celsius, int $fahrenheit } o null si falla.
+     */
+    function pm_get_weather() {
+        $api_key = defined( 'KEY_API_WEATHER' ) ? KEY_API_WEATHER : 'a70f2c1055a585f45dc780ccb8275f9a';
+        if ( $api_key === '' ) {
+            return array( 'error' => 'no_api_key' );
+        }
+
+        $transient_key = 'pm_weather_cache';
+        $cached        = get_transient( $transient_key );
+        if ( $cached !== false ) {
+            return $cached;
+        }
+
+        // Playa Mujeres, Quintana Roo, MX
+        $url = add_query_arg( array(
+            'lat'   => '21.3148',
+            'lon'   => '-86.8467',
+            'units' => 'metric',
+            'appid' => $api_key,
+        ), 'https://api.openweathermap.org/data/2.5/weather' );
+
+        $response = wp_remote_get( $url, array(
+            'timeout'   => 8,
+            'sslverify' => true,
+        ) );
+
+        if ( is_wp_error( $response ) ) {
+            return array( 'error' => 'wp_error', 'message' => $response->get_error_message() );
+        }
+
+        $code = (int) wp_remote_retrieve_response_code( $response );
+        $body = wp_remote_retrieve_body( $response );
+
+        if ( 200 !== $code ) {
+            return array( 'error' => 'http_' . $code, 'body' => $body );
+        }
+
+        $data = json_decode( $body, true );
+        if ( empty( $data['main']['temp'] ) ) {
+            return array( 'error' => 'no_temp', 'body' => $body );
+        }
+
+        $celsius    = (int) round( (float) $data['main']['temp'] );
+        $fahrenheit = (int) round( $celsius * 9 / 5 + 32 );
+
+        $result = array(
+            'celsius'    => $celsius,
+            'fahrenheit' => $fahrenheit,
+        );
+
+        set_transient( $transient_key, $result, 30 * MINUTE_IN_SECONDS );
+
+        return $result;
+    }
+}
+
+if ( ! function_exists( 'pm_weather_ajax_handler' ) ) {
+    function pm_weather_ajax_handler() {
+        $weather = pm_get_weather();
+
+        // Respuesta exitosa: tiene celsius y fahrenheit, sin clave 'error'
+        if ( ! empty( $weather['celsius'] ) ) {
+            wp_send_json_success( $weather );
+        }
+
+        // Respuesta de error: incluye diagnóstico
+        wp_send_json_error( $weather, 503 );
     }
 }
 

@@ -273,10 +273,9 @@ if (! $has_listing_content) {
                                         $post_permalink = get_permalink($post_id);
                                         $post_terms     = get_the_terms($post_id, 'category');
                                         $post_term_name = (! is_wp_error($post_terms) && ! empty($post_terms)) ? $post_terms[0]->name : '';
-                                        $is_hidden      = false;
                                         ?>
                                         <div class="col-12 col-lg-6 mb-4 mb-lg-5" data-blog-listing-grid-item>
-                                            <article class="blog-listing__card card flex-row<?php echo $is_hidden ? ' is-hidden' : ''; ?>" <?php echo $is_hidden ? 'data-blog-listing-hidden="true"' : ''; ?>>
+                                            <article class="blog-listing__card card flex-row">
                                                 <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-media-link" aria-label="<?php echo esc_attr($post_title); ?>">
                                                     <?php if (has_post_thumbnail($post_id)) : ?>
                                                         <?php echo get_the_post_thumbnail($post_id, 'large', array('class' => 'blog-listing__card-image card-img-left example-card-img-responsive')); ?>
@@ -425,84 +424,3 @@ if (! $has_listing_content) {
     </div>
     </div>
 </section>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        if (typeof window.Swiper !== 'undefined') {
-            var featuredSwipers = document.querySelectorAll('[data-blog-listing-featured-swiper]');
-
-            featuredSwipers.forEach(function (el) {
-                if (el.dataset.swiperInitialized === '1') {
-                    return;
-                }
-
-                el.dataset.swiperInitialized = '1';
-
-                new window.Swiper(el, {
-                    slidesPerView: '1.2',
-                    spaceBetween: 24,
-                    speed: 650,
-                    grabCursor: true,
-                    watchOverflow: true,
-                    breakpoints: {
-                        992: {
-                            slidesPerView: '2.5',
-                            spaceBetween: 24
-                        }
-                    }
-                });
-            });
-        }
-
-
-        var listingRoots = document.querySelectorAll('[data-blog-listing-root]');
-        if (!listingRoots.length) {
-            return;
-        }
-
-        listingRoots.forEach(function (listingRoot) {
-            var button = listingRoot.querySelector('[data-blog-listing-load-more][data-blog-listing-trigger="items"]');
-            var itemsGrid = listingRoot.querySelector('[data-blog-listing-items]');
-
-            if (!button || !itemsGrid) {
-                return;
-            }
-
-            function getHiddenCards() {
-                return itemsGrid.querySelectorAll('[data-blog-listing-grid-item][data-blog-listing-hidden="true"]');
-            }
-
-            function updateButtonVisibility() {
-                button.style.display = getHiddenCards().length ? '' : 'none';
-            }
-
-            updateButtonVisibility();
-
-            button.addEventListener('click', function () {
-                var batchSize = parseInt(button.getAttribute('data-batch-size') || '8', 10);
-                var hiddenCards = getHiddenCards();
-                var revealed = 0;
-
-                hiddenCards.forEach(function (card) {
-                    if (revealed >= batchSize) {
-                        return;
-                    }
-
-                    var article = card.querySelector('.blog-listing__card');
-
-                    card.classList.remove('is-hidden');
-                    card.removeAttribute('data-blog-listing-hidden');
-
-                    if (article) {
-                        article.classList.remove('is-hidden');
-                        article.removeAttribute('data-blog-listing-hidden');
-                    }
-
-                    revealed += 1;
-                });
-
-                updateButtonVisibility();
-            });
-        });
-    });
-</script>

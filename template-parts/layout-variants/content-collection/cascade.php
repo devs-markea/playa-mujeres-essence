@@ -54,50 +54,8 @@
                 $item_tag       = pm_essence_heading_tag_or_null($item_heading_level, 'h3');
                 $supporting_tag = pm_essence_heading_tag_or_null($item_supporting_text_level, ''); // si none => null
 
-                // Imagen principal (ACF puede devolver: ID (int), array, o URL (string))
-                $img_id  = 0;
-                $img_url = '';
-                $img_alt = '';
-
-                if (is_numeric($item_image)) {
-                    $img_id = (int) $item_image;
-                } elseif (is_array($item_image)) {
-                    $img_id  = ! empty($item_image['ID']) ? (int) $item_image['ID'] : 0;
-                    $img_url = ! empty($item_image['url']) ? (string) $item_image['url'] : '';
-                    $img_alt = ! empty($item_image['alt']) ? (string) $item_image['alt'] : '';
-                } elseif (is_string($item_image) && $item_image !== '') {
-                    $img_url = $item_image;
-                }
-
-                // Si solo tenemos URL, intentamos resolver ID (para poder usar wp_get_attachment_image)
-                if ($img_id <= 0 && $img_url !== '') {
-                    $maybe_id = (int) attachment_url_to_postid($img_url);
-                    if ($maybe_id > 0) {
-                        $img_id = $maybe_id;
-                    }
-                }
-
-                // Supporting image (ACF puede devolver: ID (int), array, o URL (string))
-                $support_id  = 0;
-                $support_url = '';
-                $support_alt = '';
-
-                if (is_numeric($item_supporting_image)) {
-                    $support_id = (int) $item_supporting_image;
-                } elseif (is_array($item_supporting_image)) {
-                    $support_id  = ! empty($item_supporting_image['ID']) ? (int) $item_supporting_image['ID'] : 0;
-                    $support_url = ! empty($item_supporting_image['url']) ? (string) $item_supporting_image['url'] : '';
-                    $support_alt = ! empty($item_supporting_image['alt']) ? (string) $item_supporting_image['alt'] : '';
-                } elseif (is_string($item_supporting_image) && $item_supporting_image !== '') {
-                    $support_url = $item_supporting_image;
-                }
-
-                if ($support_id <= 0 && $support_url !== '') {
-                    $maybe_id = (int) attachment_url_to_postid($support_url);
-                    if ($maybe_id > 0) {
-                        $support_id = $maybe_id;
-                    }
-                }
+                list( $img_id, $img_url, $img_alt )           = pm_normalize_acf_image( $item_image );
+                list( $support_id, $support_url, $support_alt ) = pm_normalize_acf_image( $item_supporting_image );
 
                 $btn_url    = '';
                 $btn_title  = '';

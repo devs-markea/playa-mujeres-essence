@@ -39,39 +39,6 @@ $section_description = isset($description) ? $description : '';
 // Helpers
 $has_acf = function_exists('get_field');
 
-$to_post_id = function ($related) {
-    if (is_numeric($related)) return (int) $related;
-    if (is_object($related) && !empty($related->ID)) return (int) $related->ID;
-    return 0;
-};
-
-$acf_rel_to_ids = function($value) {
-    $ids = array();
-    if (empty($value)) return $ids;
-
-    if (is_array($value)) {
-        foreach ($value as $v) {
-            if (is_numeric($v)) {
-                $ids[] = (int) $v;
-            } elseif (is_object($v) && !empty($v->ID)) {
-                $ids[] = (int) $v->ID;
-            }
-        }
-    } else {
-        if (is_numeric($value)) {
-            $ids[] = (int) $value;
-        } elseif (is_object($value) && !empty($value->ID)) {
-            $ids[] = (int) $value->ID;
-        }
-    }
-
-    $ids = array_values(array_unique(array_filter($ids)));
-    return $ids;
-};
-
-$post_slug = function($post_id) {
-    return (string) get_post_field('post_name', (int)$post_id);
-};
 
 // =========================
 // BUILD ITEMS + PILLS MAP
@@ -93,7 +60,7 @@ if ($pill_mode === 'taxonomy') {
 
 if (!empty($collection_items) && is_array($collection_items)) {
     foreach ($collection_items as $related) {
-        $post_id = $to_post_id($related);
+        $post_id = pm_collection_to_post_id($related);
         if ($post_id <= 0) continue;
 
         $post_type = get_post_type($post_id);
@@ -140,11 +107,11 @@ if (!empty($collection_items) && is_array($collection_items)) {
             // Culinary (and future CPTs): ACF relationship mode (default: hotel)
             if ($has_acf && $pill_acf_field) {
                 $rel = get_field($pill_acf_field, $post_id); // Relationship
-                $rel_ids = $acf_rel_to_ids($rel);
+                $rel_ids = pm_acf_rel_to_ids($rel);
 
                 $labels = array();
                 foreach ($rel_ids as $rid) {
-                    $slug = $post_slug($rid);
+                    $slug = (string) get_post_field('post_name', $rid);
                     if ($slug === '') continue;
 
                     $label = get_the_title($rid);
@@ -387,7 +354,7 @@ if ($pill_mode === 'taxonomy') {
             <?php endif; ?>
                 </div>
 
-                <div class="content-collection__load-more" style="display:flex;justify-content:center;">
+                <div class="content-collection__load-more">
                     <button type="button" class="btn btn-primary btn-border-bottom-black" data-collection-load-more style="display:none;">
                         More
                     </button>
@@ -398,7 +365,7 @@ if ($pill_mode === 'taxonomy') {
     <div class="content-collection__bottom-sentinel" aria-hidden="true"></div>
 
     <button type="button"
-            class="content-collection__filter-button content-collection__filter-button-mobile-bottom" aria-hidden="true""
+            class="content-collection__filter-button content-collection__filter-button-mobile-bottom" aria-hidden="true"
     data-collection-pill
     data-collection-filters-mobile-trigger
     data-filter-slug="">

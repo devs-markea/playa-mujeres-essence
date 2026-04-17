@@ -26,7 +26,10 @@
             </div>
             <div class="pm-menu-mobile__footer d-flex justify-content-between">
                 <?php pm_essence_show_social_links(); ?>
-                <div class="weather-now">
+                <?php if ( get_theme_mod( 'pm_mobile_show_weather_widget', 1 ) ) : ?>
+                <div class="weather-now"
+                     data-weather-widget
+                     data-weather-ajax="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
                     <h4>Weather Now</h4>
                     <div class="weather-now__content">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,9 +38,10 @@
                                 <path d="M12 2V3.5M12 20.5V22M19.0708 19.0713L18.0101 18.0106M5.98926 5.98926L4.9286 4.9286M22 12H20.5M3.5 12H2M19.0713 4.92871L18.0106 5.98937M5.98975 18.0107L4.92909 19.0714" stroke="#323232" stroke-width="1.5" stroke-linecap="round"/>
                             </g>
                         </svg>
-                        <span>25°C</span>
+                        <span class="weather-now__temp" hidden></span>
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
             <div class="decorative-sun">
                 <img src="<?php echo PM_ESSENCE_ASSETS_URI ?>/images/decorative-sun-playa-mujeres.webp" alt="Background Decorative Sun">

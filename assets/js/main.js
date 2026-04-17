@@ -1759,6 +1759,78 @@ window.App = window.App || {};
         mountExternalPillsFromScroller();
     }
 
+    // Blog Listing — Featured swiper
+    function initBlogListingFeaturedSwiper() {
+        if (typeof window.Swiper === 'undefined') return;
+
+        var featuredSwipers = document.querySelectorAll('[data-blog-listing-featured-swiper]');
+        if (!featuredSwipers.length) return;
+
+        featuredSwipers.forEach(function (el) {
+            if (el.dataset.swiperInitialized === '1') return;
+            el.dataset.swiperInitialized = '1';
+
+            new window.Swiper(el, {
+                slidesPerView: '1.2',
+                spaceBetween: 24,
+                speed: 650,
+                grabCursor: true,
+                watchOverflow: true,
+                breakpoints: {
+                    992: {
+                        slidesPerView: '2.5',
+                        spaceBetween: 24
+                    }
+                }
+            });
+        });
+    }
+
+    // Blog Listing — Load more
+    function initBlogListingLoadMore() {
+        var listingRoots = document.querySelectorAll('[data-blog-listing-root]');
+        if (!listingRoots.length) return;
+
+        listingRoots.forEach(function (listingRoot) {
+            var button   = listingRoot.querySelector('[data-blog-listing-load-more][data-blog-listing-trigger="items"]');
+            var itemsGrid = listingRoot.querySelector('[data-blog-listing-items]');
+            if (!button || !itemsGrid) return;
+
+            function getHiddenCards() {
+                return itemsGrid.querySelectorAll('[data-blog-listing-grid-item][data-blog-listing-hidden="true"]');
+            }
+
+            function updateButtonVisibility() {
+                button.style.display = getHiddenCards().length ? '' : 'none';
+            }
+
+            updateButtonVisibility();
+
+            button.addEventListener('click', function () {
+                var batchSize   = parseInt(button.getAttribute('data-batch-size') || '8', 10);
+                var hiddenCards = getHiddenCards();
+                var revealed    = 0;
+
+                hiddenCards.forEach(function (card) {
+                    if (revealed >= batchSize) return;
+
+                    var article = card.querySelector('.blog-listing__card');
+                    card.classList.remove('is-hidden');
+                    card.removeAttribute('data-blog-listing-hidden');
+
+                    if (article) {
+                        article.classList.remove('is-hidden');
+                        article.removeAttribute('data-blog-listing-hidden');
+                    }
+
+                    revealed += 1;
+                });
+
+                updateButtonVisibility();
+            });
+        });
+    }
+
     // Content Showcase — Essence (rail + swiper imágenes, sin card overlay)
     function initContentShowcaseEssence() {
         if (typeof window.Swiper === 'undefined') return;
@@ -1783,6 +1855,27 @@ window.App = window.App || {};
 
             _initContentShowcaseTabs(section, contentSwiper);
         });
+    }
+
+    // ─── Weather display (°F / °C) ─────────────────────────────────────────────
+    function initWeatherToggle() {
+        const widget = document.querySelector('[data-weather-widget]');
+        if (!widget) return;
+
+        const ajaxUrl = widget.dataset.weatherAjax;
+        if (!ajaxUrl) return;
+
+        const temp = widget.querySelector('.weather-now__temp');
+        if (!temp) return;
+
+        fetch(ajaxUrl + '?action=pm_weather')
+            .then(r => r.json())
+            .then(function (data) {
+                if (!data.success || !data.data) return;
+                temp.textContent = data.data.fahrenheit + '\u00b0F / ' + data.data.celsius + '\u00b0C';
+                temp.hidden = false;
+            })
+            .catch(function () { /* API no disponible, widget permanece oculto */ });
     }
 
     // Init global
@@ -1833,6 +1926,9 @@ window.App = window.App || {};
         initImagesCarouselGallerySwipers();
         initContentCarouselClassicSwiper();
         initBlogHeroSwiper();
+        initBlogListingFeaturedSwiper();
+        initBlogListingLoadMore();
+        initWeatherToggle();
         initPageCoverReveal();
         initFadeAnimations();
         initDynamicCollectionFilter();

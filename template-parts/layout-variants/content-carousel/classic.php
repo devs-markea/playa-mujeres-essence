@@ -21,31 +21,6 @@ if (empty($items) || !is_array($items)) {
     return;
 }
 
-function pm_safe_heading_tag($tag) {
-    $allowed = array('h1','h2','h3','h4','h5','h6','p','span','div');
-    $tag = strtolower(trim((string) $tag));
-    return in_array($tag, $allowed, true) ? $tag : 'h3';
-}
-
-function pm_render_icon_picker($icon) {
-    if (empty($icon)) return;
-
-    if (is_array($icon)) {
-        if (!empty($icon['url'])) {
-            echo '<img class="content-carousel__meta-icon" src="' . esc_url($icon['url']) . '" alt="" loading="lazy" decoding="async" />';
-            return;
-        }
-        if (!empty($icon['value'])) {
-            echo '<span class="content-carousel__meta-icon">' . $icon['value'] . '</span>';
-            return;
-        }
-    }
-
-    if (is_string($icon)) {
-        echo '<span class="content-carousel__meta-icon">' . $icon . '</span>';
-    }
-}
-
 ?>
 <section data-anim="slide-up delay-2" class="content-carousel content-carousel--classic" data-content-carousel
          data-content-carousel-variant="classic">

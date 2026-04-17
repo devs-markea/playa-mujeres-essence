@@ -522,6 +522,11 @@
     background: #E5E0D1;
 }
 
+.weather-now .weather-now__content span {
+    font-size: 16px;
+    font-weight: var(--fw-medium);
+}
+
 /* 2.2 Menu Experiences Mobile
    -------------------------------------------------------------------------- */
 .pm-menu-experiences {
@@ -913,14 +918,6 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     margin-bottom: 110px;
 }
 
-.weather-now .weather-now__content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 50px;
-    background: #E5E0D1;
-}
 
 /* ==========================================================================
    END MENU COMPONENTS
@@ -1739,7 +1736,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     }
 
     .pm-text-block--columns .pm-text-block__heading {
-        font-size: 32px;
+        font-size: 32px !important;
         letter-spacing: 2px;
     }
 
@@ -5470,3 +5467,8 @@ body.is-experiences-scrolllocked {
     }
 }
 
+
+.content-collection__load-more {
+    display: flex;
+    justify-content: center;
+}

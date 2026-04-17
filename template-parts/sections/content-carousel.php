@@ -1,5 +1,5 @@
 <?php
-// template-parts/sections/page-cover.php (solo loader de variantes)
+// template-parts/sections/content-carousel.php (solo loader de variantes)
 
 // Variante ACF: classic | essence
 $layout_variant = get_sub_field('layout_variant');
