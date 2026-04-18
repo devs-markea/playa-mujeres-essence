@@ -83,11 +83,10 @@ if ( ! class_exists( 'PM_Essence_Core' ) ) :
                 apply_filters(
                     'pm_essence_register_nav_menus',
                     array(
-                        'desktop'   => __( 'Menú (Desktop)', 'pm-essence' ),
-                        'mobile' => __( 'Menú (Mobile)', 'pm-essence' ),
-                        'footer-1'  => __( 'Footer 1', 'pm-essence' ),
-                        'footer-2'  => __( 'Footer 2', 'pm-essence' ),
-                        'footer-3'  => __( 'Footer 3', 'pm-essence' ),
+                        'desktop'  => __( 'Menú (Desktop)', 'pm-essence' ),
+                        'mobile'   => __( 'Menú (Mobile)', 'pm-essence' ),
+                        'footer-1' => __( 'Footer Hotels', 'pm-essence' ),
+                        'footer-2' => __( 'Footer Links', 'pm-essence' ),
                     )
                 )
             );
