@@ -45,3 +45,19 @@ if ( is_admin() ) {
 
 }
 
+/* System */
+/**
+ * Polylang + ACF: Keep sections fields fully independent per language.
+ * Prevents sections, blog_sections and all their sub-fields from syncing
+ * across translations — avoids corruption when a component is removed and
+ * ACF re-indexes the remaining items.
+ */
+add_filter( 'pll_copy_post_metas', function( $metas, $sync ) {
+    return array_values( array_filter( $metas, function( $key ) {
+        return ! str_starts_with( $key, 'sections' )
+            && ! str_starts_with( $key, '_sections' )
+            && ! str_starts_with( $key, 'blog_sections' )
+            && ! str_starts_with( $key, '_blog_sections' );
+    } ) );
+}, 10, 2 );
+

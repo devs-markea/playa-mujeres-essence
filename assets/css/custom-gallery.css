@@ -800,3 +800,243 @@ p.as-link {
 
 }
 
+/* ============================================================
+   HOTELS GALLERY — redesign (.hg-*)
+============================================================ */
+
+.hg-section {
+    padding: 30px 0;
+    margin-top: 134px;
+
+}
+
+/* ── Header ── */
+.hg-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.hg-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.hg-eyebrow__line {
+    flex: 0 0 44px;
+    height: 1px;
+    background-color: var(--pm-secondary-900);
+}
+
+.hg-eyebrow__text {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: var(--pm-font-primary);
+    color: var(--pm-secondary-900);
+}
+
+.hg-title {
+    font-family: var(--pm-font-secondary);
+    font-style: italic;
+    font-size: 30px;
+    font-weight: var(--fw-medium);
+    line-height: 1.2;
+    color: var(--pm-secondary-900);
+    margin: 0 0 16px;
+}
+
+.hg-description {
+    font-size: 15px;
+    font-weight: var(--fw-light);
+    line-height: 1.65;
+    color: var(--pm-secondary-900);
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+/* ── Controls ── */
+.hg-controls {
+    margin-bottom: 32px;
+}
+
+/* Hotel select */
+.hg-hotel-filter {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.hg-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    padding: 10px 44px 10px 20px;
+    background: #fff;
+    min-width: 200px;
+
+    border-bottom: 1px solid #E5E5E5;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.hg-select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background: transparent;
+    font-family: var(--pm-font-primary);
+    font-size: 15px;
+    color: var(--pm-secondary-900);
+    cursor: pointer;
+    width: 100%;
+    padding: 0;
+    outline: none;
+}
+
+.hg-chevron {
+    position: absolute;
+    right: 14px;
+    pointer-events: none;
+    color: var(--pm-secondary-900);
+    flex-shrink: 0;
+}
+
+/* Category pills */
+.hg-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.hg-cat-btn {
+    padding: 9px 22px;
+    border-radius: 100px;
+    border: 1px solid var(--pm-primary-10);
+    background: #fff;
+    font-family: var(--pm-font-primary);
+    font-size: 16px;
+    text-align: center;
+    color: var(--pm-secondary-900);
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    font-weight: var(--fw-light);
+}
+
+.hg-cat-btn:hover {
+    border-color: var(--pm-primary-900);
+}
+
+.hg-cat-btn.active {
+    background-color: var(--pm-primary-900);
+    border-color: var(--pm-primary-900);
+    color: #fff;
+}
+
+.hg-cat-close {
+    display: none;
+    flex-shrink: 0;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.hg-cat-btn.active .hg-cat-close {
+    display: inline-block;
+}
+
+/* ── Masonry grid ── */
+.hg-grid {
+    columns: 1;
+    column-gap: 12px;
+}
+
+.hg-grid-item {
+    display: block;
+    break-inside: avoid;
+    margin-bottom: 12px;
+    text-decoration: none;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.hg-img {
+    width: 100%;
+    height: 400px;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.hg-grid-item:hover .hg-img {
+    transform: scale(1.03);
+}
+
+/* ── Pagination hidden ── */
+.hg-page-hidden {
+    display: none !important;
+}
+
+/* ── Load more ── */
+.hg-load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.hg-load-more {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 36px;
+    border: 1px solid var(--pm-secondary-900);
+    background: transparent;
+    font-family: var(--pm-font-primary);
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--pm-secondary-900);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.hg-load-more:hover {
+    background-color: var(--pm-secondary-900);
+    color: #fff;
+}
+
+/* ── Per-image skeleton loader ── */
+.hg-skeleton {
+    background-color: #ede9e3;
+    border-radius: 4px;
+    animation: hg-skeleton-pulse 1.4s ease-in-out infinite;
+    min-height: 200px;
+}
+
+.hg-skeleton img {
+    visibility: hidden;
+}
+
+@keyframes hg-skeleton-pulse {
+    0%, 100% { background-color: #ede9e3; }
+    50%       { background-color: #e0dbd3; }
+}
+
+/* ── Responsive ── */
+@media (min-width: 576px) {
+    .hg-grid { columns: 2; }
+}
+
+@media (min-width: 992px) {
+    .hg-section {
+        padding: 30px 0;
+        margin-top: 92px;
+    }
+    .hg-title { font-size: 42px; }
+    .hg-header { margin-bottom: 52px; }
+    .hg-grid { columns: 3; column-gap: 16px; }
+    .hg-grid-item { margin-bottom: 16px; }
+}
+

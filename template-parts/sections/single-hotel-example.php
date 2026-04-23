@@ -140,11 +140,7 @@ function getTranslationLevel( $data , $level = [] ){
 $hotel_gallery = getResortsGalleryData();
 $translation = getTranslationLevel($args['translation'], ['gallery']);
 
-echo '<pre>';
-echo 'Ruta JSON: ' . $ruta_json . "\n";
-echo 'Existe archivo: ' . (file_exists($ruta_json) ? 'SI' : 'NO') . "\n";
-echo 'WPLANG: ' . get_option('WPLANG') . "\n";
-echo '</pre>';
+
 ?>
 
 <div class="row  mb-5">

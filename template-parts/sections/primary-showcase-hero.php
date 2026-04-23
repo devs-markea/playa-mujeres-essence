@@ -19,6 +19,14 @@
  * - contact_options (repeater -> type, label, value)
  */
 
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
+
 // Si no hay slides, no hay nada que renderizar
 if ( ! have_rows('slides') ) {
     return;
@@ -26,8 +34,6 @@ if ( ! have_rows('slides') ) {
 
 // Usamos el primer slide como hero
 the_row();
-
-
 
 $logo                  = get_sub_field('logo'); // image array (desktop)
 $logo_dark             = get_sub_field('logo_dark'); // image array (mobile)
@@ -74,7 +80,7 @@ $overlay_alpha = pm_page_cover_overlay_alpha($enable_overlay, $overlay_opacity);
 <?php /* Script bloqueante: oculta el body antes de que se pinte nada */ ?>
 <script>document.body.style.opacity='0';window.__pageCoverReady=false;</script>
 
-<section class="hotel-hero primary-showcase-hero">
+<section class="hotel-hero primary-showcase-hero<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="hotel-hero__media">
         <?php if ( $bg_desktop_id ) : ?>
             <picture>

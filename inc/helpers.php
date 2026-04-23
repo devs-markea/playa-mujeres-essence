@@ -428,6 +428,37 @@ if ( ! function_exists( 'pm_get_weather' ) ) {
     }
 }
 
+if ( ! function_exists( 'pm_essence_render_section_spacing' ) ) {
+    function pm_essence_render_section_spacing( $uid, $pt, $pb, $pt_mob, $pb_mob ) {
+        if ( ! $uid ) return;
+
+        $has_desktop = ( $pt !== '' && $pt !== false && $pt !== null ) ||
+                       ( $pb !== '' && $pb !== false && $pb !== null );
+        $has_mobile  = ( $pt_mob !== '' && $pt_mob !== false && $pt_mob !== null ) ||
+                       ( $pb_mob !== '' && $pb_mob !== false && $pb_mob !== null );
+
+        if ( ! $has_desktop && ! $has_mobile ) return;
+        ?>
+        <style>
+            <?php if ( $has_desktop ) : ?>
+            .<?php echo esc_attr( $uid ); ?> {
+                <?php if ( $pt !== '' && $pt !== false && $pt !== null ) : ?>padding-top: <?php echo (int) $pt; ?>px;<?php endif; ?>
+                <?php if ( $pb !== '' && $pb !== false && $pb !== null ) : ?>padding-bottom: <?php echo (int) $pb; ?>px;<?php endif; ?>
+            }
+            <?php endif; ?>
+            <?php if ( $has_mobile ) : ?>
+            @media (max-width: 768px) {
+                .<?php echo esc_attr( $uid ); ?> {
+                    <?php if ( $pt_mob !== '' && $pt_mob !== false && $pt_mob !== null ) : ?>padding-top: <?php echo (int) $pt_mob; ?>px;<?php endif; ?>
+                    <?php if ( $pb_mob !== '' && $pb_mob !== false && $pb_mob !== null ) : ?>padding-bottom: <?php echo (int) $pb_mob; ?>px;<?php endif; ?>
+                }
+            }
+            <?php endif; ?>
+        </style>
+        <?php
+    }
+}
+
 if ( ! function_exists( 'pm_weather_ajax_handler' ) ) {
     function pm_weather_ajax_handler() {
         $weather = pm_get_weather();
@@ -439,6 +470,149 @@ if ( ! function_exists( 'pm_weather_ajax_handler' ) ) {
 
         // Respuesta de error: incluye diagnóstico
         wp_send_json_error( $weather, 503 );
+    }
+}
+
+// ── Hotels Gallery helpers ─────────────────────────────────────────────────
+
+if ( ! function_exists( 'pm_essence_gallery_esc_filter_class' ) ) {
+    function pm_essence_gallery_esc_filter_class( $value, $use_prefix = true ) {
+        return ( $use_prefix ? 'filter-' : '' ) . strtolower( str_replace( [ ' ', '&', "'", '"' ], '-', $value ) );
+    }
+}
+
+if ( ! function_exists( 'pm_essence_gallery_implode_filter' ) ) {
+    function pm_essence_gallery_implode_filter( $data, $sep, $use_prefix = true ) {
+        if ( ! is_array( $data ) || empty( $data ) ) return '';
+        return implode( $sep, array_map( function ( $item ) use ( $use_prefix ) {
+            return pm_essence_gallery_esc_filter_class( $item, $use_prefix );
+        }, $data ) );
+    }
+}
+
+if ( ! function_exists( 'pm_essence_get_translation_json' ) ) {
+    function pm_essence_get_translation_json( $name ) {
+        $lang_path = PM_ESSENCE_TEMPLATE_DIR . "/languages/{$name}.json";
+        if ( ! file_exists( $lang_path ) ) return [];
+
+        $wpLang  = explode( '_', get_option( 'WPLANG' ) );
+        $default = ( isset( $wpLang[0] ) && ! empty( $wpLang[0] ) ) ? $wpLang[0] : 'en';
+
+        $lang_code = function_exists( 'pll_current_language' ) ? pll_current_language() : $default;
+        if ( empty( $lang_code ) ) $lang_code = $default;
+
+        $data = json_decode( file_get_contents( $lang_path ), true );
+        if ( ! is_array( $data ) ) return [];
+
+        $translation              = $data[ $lang_code ] ?? $data[ $default ] ?? [];
+        $translation['default']   = $data[ $default ] ?? [];
+        return $translation;
+    }
+}
+
+if ( ! function_exists( 'pm_essence_translation_text' ) ) {
+    function pm_essence_translation_text( $data, $key ) {
+        return $data[ $key ] ?? $data['default'][ $key ] ?? '';
+    }
+}
+
+if ( ! function_exists( 'pm_essence_get_translation_level' ) ) {
+    function pm_essence_get_translation_level( $data, $level = [] ) {
+        if ( empty( $level ) ) return $data;
+        $tmp = [];
+        foreach ( $level as $lv ) {
+            $search_in          = empty( $tmp ) ? $data : $tmp;
+            $tmp                = $search_in[ $lv ] ?? [];
+            $tmp['default']     = $search_in['default'][ $lv ] ?? [];
+        }
+        return $tmp;
+    }
+}
+
+if ( ! function_exists( 'pm_essence_get_hotels_gallery_data' ) ) {
+    function pm_essence_get_hotels_gallery_data() {
+        $hotels = get_posts( [
+            'post_type'   => 'hotel',
+            'post_status' => 'publish',
+            'orderby'     => 'title',
+            'order'       => 'ASC',
+            'numberposts' => -1,
+        ] );
+
+        $lang_code   = function_exists( 'pll_current_language' ) ? pll_current_language() : '';
+        $lang_suffix = ( ! in_array( $lang_code, [ 'es', 'en', '' ], true ) ) ? '_' . $lang_code : '';
+
+        $result = [
+            'hotels'     => [],
+            'categories' => [],
+            'gallery'    => [],
+        ];
+
+        $seen_categories = [];
+
+        foreach ( $hotels as $hotel ) {
+            $filter_id = 'filter-resort-' . $hotel->ID;
+
+            $result['hotels'][ $hotel->ID ] = [
+                'title'       => $hotel->post_title,
+                'filterId'    => $filter_id,
+                'isAvailable' => false,
+                'classes'     => [ $filter_id ],
+            ];
+
+            if ( ! intval( get_field( 'available_hotel_filter_gallery', $hotel->ID ), 10 ) ) continue;
+
+            $result['hotels'][ $hotel->ID ]['isAvailable'] = true;
+
+            $gallery_group = get_field( 'gallery_option_group', $hotel->ID );
+            if ( empty( $gallery_group ) ) continue;
+
+            foreach ( $gallery_group as $gg ) {
+                if ( empty( $gg['hotel_image_gallery']['id'] ) ) continue;
+
+                $cat_raw = $gg[ 'category_image_gallery' . $lang_suffix ] ?? $gg['category_image_gallery'] ?? [];
+                $cats    = is_array( $cat_raw ) ? $cat_raw : array_filter( [ $cat_raw ] );
+
+                $tag_raw = $gg['custom_tag_filter'] ?? [];
+                $tags    = is_array( $tag_raw )
+                    ? $tag_raw
+                    : array_values( array_filter( explode( ',', (string) $tag_raw ) ) );
+
+                foreach ( $cats as $cat ) {
+                    if ( $cat && ! in_array( $cat, $seen_categories, true ) ) {
+                        $seen_categories[]    = $cat;
+                        $result['categories'][] = $cat;
+                    }
+                }
+
+                $result['gallery'][] = [
+                    'imageId'    => $gg['hotel_image_gallery']['id'],
+                    'image'      => $gg['hotel_image_gallery']['url'],
+                    'categories' => $cats,
+                    'tags'       => $tags,
+                    'resort'     => [
+                        'title'   => $hotel->post_title,
+                        'classes' => [ $filter_id ],
+                    ],
+                ];
+            }
+        }
+
+        shuffle( $result['gallery'] );
+        return $result;
+    }
+}
+
+if ( ! function_exists( 'pm_page_has_section_layout' ) ) {
+    function pm_page_has_section_layout( $layout_name ) {
+        $post_id = get_queried_object_id();
+        if ( ! $post_id ) return false;
+        $sections = get_field( 'sections', $post_id );
+        if ( ! is_array( $sections ) ) return false;
+        foreach ( $sections as $section ) {
+            if ( ( $section['acf_fc_layout'] ?? '' ) === $layout_name ) return true;
+        }
+        return false;
     }
 }
 

@@ -1666,7 +1666,7 @@ window.App = window.App || {};
         });
 
         if (input) input.addEventListener('input', resetAndApply);
-        if (loadMoreBtn) loadMoreBtn.addEventListener('click', function () { visibleLimit += STEP; apply(); });
+        if (loadMoreBtn) loadMoreBtn.addEventListener('click', function () { visibleLimit += STEP; apply(); if (window.lenis) window.lenis.resize(); });
 
         // Drag-to-scroll (mouse only)
         if (pillsScroller) {

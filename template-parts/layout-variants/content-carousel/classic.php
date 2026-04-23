@@ -22,7 +22,7 @@ if (empty($items) || !is_array($items)) {
 }
 
 ?>
-<section data-anim="slide-up delay-2" class="content-carousel content-carousel--classic" data-content-carousel
+<section data-anim="slide-up delay-2" class="content-carousel content-carousel--classic<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>" data-content-carousel
          data-content-carousel-variant="classic">
     <div class="container">
         <div class="row g-0">

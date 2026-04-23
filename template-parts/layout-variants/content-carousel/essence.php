@@ -9,7 +9,7 @@ if (empty($items) || !is_array($items)) {
 }
 
 ?>
-<section data-anim="slide-up delay-2" class="content-carousel content-carousel--essence" data-content-carousel
+<section data-anim="slide-up delay-2" class="content-carousel content-carousel--essence<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>" data-content-carousel
          data-content-carousel-variant="essence">
     <div class="container">
         <div class="row g-0">

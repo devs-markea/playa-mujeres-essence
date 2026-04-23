@@ -1,4 +1,12 @@
 <?php
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
+
 // Campos ACF
 $video_url = get_sub_field('video_url');
 $poster = get_sub_field('poster_image');
@@ -18,7 +26,7 @@ $video = pm_parse_video($video_url);
 
 ?>
 
-<section class="video-hero <?php echo esc_attr($overlap_class); ?>">
+<section class="video-hero <?php echo esc_attr($overlap_class); ?><?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
 
     <div class="video-hero__media">
         <div class="video-hero__overlay"></div>

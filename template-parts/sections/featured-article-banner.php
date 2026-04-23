@@ -1,4 +1,12 @@
 <?php
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
+
 // Fields
 $background_image_override = get_sub_field('background_image_override');
 $bg_desktop = $background_image_override['desktop'] ?? null;
@@ -26,7 +34,7 @@ $bg_mobile_url  = $bg_mobile['url']  ?? ($post_id ? get_the_post_thumbnail_url($
 ?>
 
 <?php if ( $post_id && $post_link ) : ?>
-    <section data-anim="slide-up delay-2" class="featured-article-banner featured-article-banner--<?php echo esc_attr($layout_width); ?>">
+    <section data-anim="slide-up delay-2" class="featured-article-banner featured-article-banner--<?php echo esc_attr($layout_width); ?><?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
         <a class="featured-article-banner__link" href="<?php echo esc_url($post_link); ?>">
             <picture class="featured-article-banner__media">
                 <?php if ( $bg_mobile_url ) : ?>

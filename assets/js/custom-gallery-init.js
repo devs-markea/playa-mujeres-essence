@@ -37,12 +37,26 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const getActiveCategories = () => {
+        // New UI: .hg-cat-btn
+        const newPills = qsa('.hg-cat-btn.active');
+        if (newPills.length) {
+            const classes = newPills.map(el => el.dataset.category);
+            return classes.includes("all") ? [] : classes;
+        }
+        // Legacy UI: .btn-filter-gallery
         const actives = qsa(`.${filterClass.category}.active`);
         const classes = actives.map(el => el.dataset.category);
         return classes.includes("all") ? [] : classes;
     };
 
     const getCheckedResorts = () => {
+        // New UI: hotel select dropdown (.hg-select-resort)
+        const select = qs('.hg-select-resort');
+        if (select) {
+            const val = select.value;
+            return val === 'all' ? [] : [val];
+        }
+        // Legacy UI: checkbox-based (.chk-filter-gallery)
         const checked = qsa(`.${filterClass.resort}:checked`);
         const classes = checked.map(el => el.dataset.hotel);
         return classes.includes("all") ? [] : classes;
@@ -113,32 +127,63 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     /* =========================
-       BLOCK UI (simple version)
+       PAGINATION
     ========================== */
 
-    const blockContainer = (selector) => {
-        const container = qs(selector);
-        if (!container) return;
+    const ITEMS_PER_PAGE = 15;
+    let currentPage = 1;
 
-        container.style.position = "relative";
+    const paginateGallery = (reset = false) => {
+        if (reset) currentPage = 1;
 
-        const overlay = document.createElement("div");
-        overlay.className = "vanilla-blocker";
-        overlay.style.position = "absolute";
-        overlay.style.top = 0;
-        overlay.style.left = 0;
-        overlay.style.width = "100%";
-        overlay.style.height = "100%";
-        overlay.style.background = "rgba(255,255,255,0.9)";
-        overlay.style.display = "flex";
-        overlay.style.alignItems = "center";
-        overlay.style.justifyContent = "center";
-        overlay.style.zIndex = 9;
-        overlay.innerHTML = '<span class="loader"></span>';
+        const filtered = qsa('.hg-grid-item:not(.d-none)');
+        const limit    = currentPage * ITEMS_PER_PAGE;
 
-        container.appendChild(overlay);
+        filtered.forEach((item, i) => {
+            if (i < limit) {
+                item.classList.remove('hg-page-hidden');
+                item.setAttribute('data-lightbox', 'resorts-gallery');
+            } else {
+                item.classList.add('hg-page-hidden');
+                item.removeAttribute('data-lightbox');
+            }
+        });
 
-        setTimeout(() => overlay.remove(), 300);
+        const btn = qs('.hg-load-more');
+        if (btn) {
+            btn.style.display = limit >= filtered.length ? 'none' : 'flex';
+        }
+    };
+
+    const loadMoreBtn = qs('.hg-load-more');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            currentPage++;
+            paginateGallery(false);
+            applySkeletons();
+            if (window.lenis) window.lenis.resize();
+        });
+    }
+
+    /* =========================
+       PER-IMAGE SKELETON LOADER
+    ========================== */
+
+    const applySkeletons = () => {
+        const items = qsa('.hg-grid-item:not(.d-none):not(.hg-page-hidden)');
+
+        items.forEach(item => {
+            const img = item.querySelector('img');
+            if (!img) return;
+
+            if (img.complete && img.naturalWidth > 0) return;
+
+            item.classList.add('hg-skeleton');
+
+            const onDone = () => item.classList.remove('hg-skeleton');
+            img.addEventListener('load',  onDone, { once: true });
+            img.addEventListener('error', onDone, { once: true });
+        });
     };
 
     /* =========================
@@ -146,8 +191,6 @@ document.addEventListener("DOMContentLoaded", function () {
     ========================== */
 
     const startFilter = () => {
-
-        blockContainer('.gallery-grid-resorts');
 
         const notFound = qs('.gallery-not-found');
         if (notFound) notFound.classList.add('d-none');
@@ -170,6 +213,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (total <= 0 && notFound) {
             notFound.classList.remove('d-none');
+        } else {
+            paginateGallery(true);
+            applySkeletons();
         }
 
         setTotalFiltered(total);
@@ -238,6 +284,31 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    /* Hotel select (new UI) */
+    const hotelSelect = qs('.hg-select-resort');
+    if (hotelSelect) {
+        hotelSelect.addEventListener('change', startFilter);
+    }
+
+    /* Category pills (new UI — .hg-cat-btn) */
+    qsa('.hg-cat-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const filter = button.dataset.category;
+            const allBtn = qs('.hg-cat-btn[data-category="all"]');
+            if (filter !== 'all') {
+                if (allBtn) allBtn.classList.remove('active');
+                button.classList.toggle('active');
+                if (!qs('.hg-cat-btn.active')) {
+                    if (allBtn) allBtn.classList.add('active');
+                }
+            } else {
+                qsa('.hg-cat-btn').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+            }
+            startFilter();
+        });
+    });
+
     /* INPUT debounce */
     let typingTimer;
     const doneTypingInterval = 300;
@@ -248,6 +319,12 @@ document.addEventListener("DOMContentLoaded", function () {
             clearTimeout(typingTimer);
             typingTimer = setTimeout(startFilter, doneTypingInterval);
         });
+    }
+
+    // Paginación inicial
+    if (qs('.hg-grid')) {
+        paginateGallery(true);
+        applySkeletons();
     }
 
 });

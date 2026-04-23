@@ -1,6 +1,14 @@
 <?php
 // template-parts/sections/content-accordion.php
 
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
+
 $heading_title       = get_sub_field('heading_title');
 $heading_level_title = get_sub_field('heading_level_title');
 $accordion_items     = get_sub_field('accordion_items');
@@ -15,7 +23,7 @@ if (empty($heading_tag)) {
 $accordion_id = 'content-accordion-' . uniqid();
 ?>
 
-<section data-anim="slide-up delay-2" class="content-accordion">
+<section data-anim="slide-up delay-2" class="content-accordion<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="container">
 
         <?php if ($heading_title) : ?>

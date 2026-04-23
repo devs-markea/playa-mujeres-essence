@@ -21,7 +21,7 @@ $classes = array(
 ?>
 <script>document.body.style.opacity='0';window.__pageCoverReady=false;</script>
 
-<section data-anim="slide-up delay-2" class="<?php echo esc_attr(implode(' ', $classes)); ?>" data-force-header-theme="menu">
+<section data-anim="slide-up delay-2" class="<?php echo esc_attr(implode(' ', $classes)); ?><?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>" data-force-header-theme="menu">
     <div class="page-cover__essence">
         <div class="container px-0 px-md-4">
             <div class="page-cover__essence-grid row g-0 gx-md-4">

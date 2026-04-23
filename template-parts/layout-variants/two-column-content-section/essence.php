@@ -13,7 +13,7 @@
  * - $heading_font_style ('primary' | 'secondary')
  */
 ?>
-<section data-anim="slide-up delay-2" class="container px-0 px-md-4">
+<section data-anim="slide-up delay-2" class="container px-0 px-md-4<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="row g-0">
         <div class="col-12 col-md-10 mx-auto">
 

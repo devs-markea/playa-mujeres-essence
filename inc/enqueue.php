@@ -20,8 +20,8 @@ function pm_enqueue_assets() {
         'all'
     );
 
-    // Lightbox — solo en gallery
-    if ( is_page( 'gallery' ) ) {
+    // Lightbox — en gallery page o cuando el layout hotels_gallery está presente
+    if ( is_page( 'gallery' ) || pm_page_has_section_layout( 'hotels_gallery' ) ) {
         wp_enqueue_style('pm-light-box2-css', PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/css/lightbox2.css',
             array(),
             $pm_essence_version,
@@ -74,7 +74,7 @@ function pm_enqueue_assets() {
      *  PAGE-SPECIFIC: Gallery
      * --------------------------------- */
 
-    if ( is_page( 'gallery' ) ) {
+    if ( is_page( 'gallery' ) || pm_page_has_section_layout( 'hotels_gallery' ) ) {
         wp_enqueue_style(
             'custom-gallery-style',
             PM_ESSENCE_TEMPLATE_URI . '/assets/css/custom-gallery.css',

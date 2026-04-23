@@ -1,4 +1,12 @@
 <?php
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
+
 $title              = get_sub_field('title');
 $description        = get_sub_field('description');
 $subscribe_text     = get_sub_field('subscribe_button_text') ?: 'Subscribe';
@@ -30,7 +38,7 @@ if (is_string($form_position)) {
 
 ?>
 
-<section class="newsletter-subscribe-banner">
+<section class="newsletter-subscribe-banner<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="row g-0">
 
         <div class="<?php echo esc_attr($col_class); ?> mx-auto">

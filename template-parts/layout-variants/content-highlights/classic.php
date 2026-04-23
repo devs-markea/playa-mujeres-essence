@@ -10,7 +10,7 @@
  * - $show_image, $image, $image_id, $image_alt
  */
 ?>
-<section data-anim="slide-up delay-2" class="content-highlights content-highlights--classic">
+<section data-anim="slide-up delay-2" class="content-highlights content-highlights--classic<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
 
     <div class="container px-0 px-md-4">
         <div class="row g-0">

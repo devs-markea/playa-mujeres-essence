@@ -4,6 +4,14 @@
 // ACF alignment      : left | center | right
 // ACF width          : full | narrow  (solo textonly)
 
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
+
 // ACF sub fields
 $heading          = get_sub_field('heading');
 $heading_level    = get_sub_field('heading_level');
@@ -73,7 +81,8 @@ $has_right       = ($has_subheading || $has_text || $has_button);
 ?>
 
 <section data-anim="slide-up delay-2"
-         class="pm-text-block pm-text-block--<?= esc_attr($variant); ?> pm-text-block--<?= esc_attr($alignment); ?><?= ! $has_decor_image ? ' pm-text-block--no-decor' : ''; ?>">
+         class="pm-text-block pm-text-block--<?= esc_attr($variant); ?> pm-text-block--<?= esc_attr($alignment); ?><?= ! $has_decor_image ? ' pm-text-block--no-decor' : ''; ?>"
+         <?php echo $section_uid ? 'class="pm-text-block pm-text-block--' . esc_attr($variant) . ' pm-text-block--' . esc_attr($alignment) . ( ! $has_decor_image ? ' pm-text-block--no-decor' : '' ) . ' ' . esc_attr( $section_uid ) . '"' : ''; ?>>
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">

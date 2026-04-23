@@ -23,7 +23,7 @@ $classes = array(
 
 <script>document.body.style.opacity='0';window.__pageCoverReady=false;</script>
 
-<section data-anim="slide-up delay-2" class="<?php echo esc_attr(implode(' ', $classes)); ?>" data-force-header-theme="menu">
+<section data-anim="slide-up delay-2" class="<?php echo esc_attr(implode(' ', $classes)); ?><?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>" data-force-header-theme="menu">
 
     <div class="container px-0 px-md-4">
         <div class="row g-0">
@@ -63,8 +63,7 @@ $classes = array(
                             'alt'           => esc_attr($hero_alt),
                             'loading'       => 'eager',
                             'decoding'      => 'async',
-                            'fetchpriority' => 'high',
-                            'sizes'         => '(min-width: 992px) 50vw, 100vw',
+                            'fetchpriority' => 'high'
                     )
             ); ?>
         </div>

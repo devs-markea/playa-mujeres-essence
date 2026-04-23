@@ -27,7 +27,7 @@ $classes = array(
 <?php /* Script bloqueante: oculta el body antes de que se pinte nada */ ?>
 <script>document.body.style.opacity='0';window.__pageCoverReady=false;</script>
 
-<section class="<?php echo esc_attr(implode(' ', $classes)); ?>">
+<section class="<?php echo esc_attr(implode(' ', $classes)); ?><?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="page-cover__media" aria-hidden="true">
         <?php if ($bg_desktop_id || $bg_mobile_id) : ?>
             <picture class="page-cover__picture">

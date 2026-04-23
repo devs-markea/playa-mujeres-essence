@@ -12,7 +12,7 @@
  * - $image_media_id, $image_media_alt, $image_media
  */
 ?>
-<section data-anim="slide-up delay-2" class="two-column-layout g-0 <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right' ?>">
+<section data-anim="slide-up delay-2" class="two-column-layout g-0 <?php echo $layout_direction == 'left' ? 'is-left' : 'is-right'; ?><?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
 
     <?php if ($section_title || $section_description) : ?>
         <div class="col-12">

@@ -5,7 +5,7 @@
         "content" : "Take a glimpse at this collection of photos that showcase some of the best spots and captured moments, courtesy of our magnificent resorts.",
         "gallery": {
             "title" : "Filters", 
-            "all" : "All", 
+            "all" : "All Categories",
             "search" : "Search by keyword", 
             "notFoundTitle" : "No results found", 
             "notFoundTryAgain" : "It seems that there are no images with the selected parameters, please try again.", 

@@ -1,6 +1,13 @@
 <?php
 // template-parts/sections/content-highlights.php (loader de variantes)
 
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+
 // Variante ACF: classic | essence
 $layout_variant = get_sub_field('layout_variant');
 $layout_variant = is_string($layout_variant) ? trim($layout_variant) : '';
@@ -41,6 +48,8 @@ if (is_array($image) && ! empty($image['alt'])) {
 } elseif (is_string($heading_title) && trim($heading_title) !== '') {
     $image_alt = $heading_title;
 }
+
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
 
 $variant_path = dirname(__DIR__) . '/layout-variants/content-highlights/' . $layout_variant . '.php';
 

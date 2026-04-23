@@ -5,7 +5,7 @@ $button_settings = get_sub_field('button_settings');
 $images          = get_sub_field('images');
 ?>
 
-<section data-anim="slide-up delay-2" class="images-carousel images-carousel--gallery-slider">
+<section data-anim="slide-up delay-2" class="images-carousel images-carousel--gallery-slider<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="images-carousel__header px-4 px-md-0">
         <div class="row g-0">
             <div class="col-12 col-md-8 mx-auto">

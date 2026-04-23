@@ -4,6 +4,14 @@
 // Variante ACF:         classic | essence
 // show_section_header:  switch — activa section_title y section_description
 // heading_font_style:   primary | secondary (solo essence)
+
+$padding_top           = get_sub_field( 'padding_top' );
+$padding_bottom        = get_sub_field( 'padding_bottom' );
+$padding_top_mobile    = get_sub_field( 'padding_top_mobile' );
+$padding_bottom_mobile = get_sub_field( 'padding_bottom_mobile' );
+$has_spacing           = ( $padding_top !== '' || $padding_bottom !== '' || $padding_top_mobile !== '' || $padding_bottom_mobile !== '' );
+$section_uid           = $has_spacing ? 'pm-' . get_the_ID() . '-' . get_row_index() : '';
+
 $layout_variant = get_sub_field('if_layout_variant');
 $layout_variant = is_string($layout_variant) ? trim($layout_variant) : '';
 if ($layout_variant === '') {
@@ -72,6 +80,8 @@ if (is_array($image_media) && ! empty($image_media['alt'])) {
 } elseif (is_string($title) && trim($title) !== '') {
     $image_media_alt = $title;
 }
+
+pm_essence_render_section_spacing( $section_uid, $padding_top, $padding_bottom, $padding_top_mobile, $padding_bottom_mobile );
 
 $variant_template_path = dirname(__DIR__) . '/layout-variants/two-column-content-section/' . $layout_variant . '.php';
 
