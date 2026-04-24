@@ -23,15 +23,30 @@
                     $featured  = get_the_post_thumbnail_url($hotel->ID);
                     $hotel_url = get_permalink($hotel->ID);
 
-                    $logo_src = is_array($logo_data) && !empty($logo_data['url']) ? $logo_data['url'] : '';
-                    $logo_alt = is_array($logo_data) && !empty($logo_data['alt']) ? $logo_data['alt'] : get_the_title($hotel->ID);
-
+                    $logo_id     = is_array($logo_data) && !empty($logo_data['ID'])  ? (int) $logo_data['ID']  : 0;
+                    $logo_alt    = is_array($logo_data) && !empty($logo_data['alt']) ? $logo_data['alt'] : get_the_title($hotel->ID);
+                    $featured_id = get_post_thumbnail_id($hotel->ID);
                     ?>
                     <div class="col-6 col-md-3">
-                        <div onclick="location.href='<?= esc_url($hotel_url); ?>';" class="cover-cc-bg p-2 hotel-card__image-wrapper" style="background-image:url('<?= esc_url($featured); ?>');">
-                            <img class="hotel-card__logo d-block mx-auto mt-1 position-relative z-1"
-                                 src="<?= esc_url($logo_src); ?>"
-                                 alt="<?= esc_attr($logo_alt); ?>">
+                        <div onclick="location.href='<?= esc_url($hotel_url); ?>';" class="cover-cc-bg p-2 hotel-card__image-wrapper">
+                            <?php if ( $featured_id ) : ?>
+                                <?php echo wp_get_attachment_image( $featured_id, 'large', false, [
+                                    'class'   => 'hotel-card__image',
+                                    'alt'     => '',
+                                    'loading' => 'lazy',
+                                    'decoding'=> 'async',
+                                ] ); ?>
+                            <?php endif; ?>
+                            <?php if ( $logo_id ) : ?>
+                                <div class="hotel-card__logo-wrapper">
+                                    <?php echo wp_get_attachment_image( $logo_id, 'medium', false, [
+                                        'class'   => 'hotel-card__logo',
+                                        'alt'     => esc_attr( $logo_alt ),
+                                        'loading' => 'lazy',
+                                        'decoding'=> 'async',
+                                    ] ); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

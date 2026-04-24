@@ -263,7 +263,17 @@ add_action( 'wp_enqueue_scripts', function () {
  * el browser lo descarga en background y lo aplica sin bloquear el render.
  */
 add_filter( 'style_loader_tag', function ( $html, $handle ) {
-    $defer_handles = [ 'pm-swiper', 'pm-essence-fonts' ];
+    // CSS diferidos (no críticos above-the-fold):
+    // - pm-swiper, pm-essence-fonts: siempre diferidos
+    // - essence-components: estilos de componentes, no todos son above-the-fold
+    // - pm-bootstrap-css: grid y utilidades, diferido con noscript fallback
+    // NOTA: si aparece FOUC, mueve pm-bootstrap-css fuera de esta lista.
+    $defer_handles = [
+        'pm-swiper',
+        'pm-essence-fonts',
+        'essence-components',
+        'pm-bootstrap-css',
+    ];
 
     if ( ! in_array( $handle, $defer_handles, true ) ) {
         return $html;

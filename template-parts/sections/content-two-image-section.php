@@ -20,6 +20,7 @@ $show_button     = is_array($button_settings) && !empty($button_settings['show_b
 $button_link     = (is_array($button_settings) && !empty($button_settings['button_link']) && is_array($button_settings['button_link']))
     ? $button_settings['button_link']
     : null;
+$button_classes  = (is_array($button_settings) && !empty($button_settings['button_classes'])) ? $button_settings['button_classes'] : '';
 
 $title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
 if (empty($title_tag)) {
@@ -69,7 +70,7 @@ if (is_array($decorative_image) && !empty($decorative_image['alt'])) {
 
                                 <a href="<?php echo $btn_url; ?>"
                                    target="<?php echo esc_attr( $btn_target ); ?>"<?php echo $btn_rel; ?>
-                                   class="btn btn-primary btn-border-bottom-black">
+                                   class="btn btn-primary btn-border-bottom-black <?php echo esc_attr( $button_classes ); ?>">
                                     <?php echo $btn_title; ?>
                                 </a>
                             <?php endif; ?>
@@ -120,7 +121,7 @@ if (is_array($decorative_image) && !empty($decorative_image['alt'])) {
                                         'class'    => 'img-fluid',
                                         'alt'      => $main_image_alt,
                                         'loading'  => 'lazy',
-                                        'decoding' => 'async',
+                                        'decoding' => 'async'
                                     )
                                 );
                                 ?>

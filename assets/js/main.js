@@ -7,8 +7,11 @@
     var isMac    = /Macintosh|MacIntel|MacPPC/.test(ua);
     var isSafari = /^((?!chrome|android).)*safari/i.test(ua);
 
+    var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
     if (isMac)    document.documentElement.classList.add('is-mac');
     if (isSafari) document.documentElement.classList.add('is-safari');
+    if (isTouch)  document.documentElement.classList.add('is-touch');
 })();
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -62,8 +65,8 @@ window.App = window.App || {};
 
         megaPanelWhere        = document.querySelector('.mega-panel__where-to-stay');
         megaPanelExp          = document.querySelector('.mega-panel__experiences');
-        menuWhereTrigger      = document.querySelector('.pm-navbar-desktop .trigger-filters');
-        menuExpTrigger        = document.querySelector('.pm-navbar-desktop .trigger-experiences');
+        menuWhereTrigger      = null;
+        menuExpTrigger        = null;
 
         langSwitcher          = document.querySelector('.pm-lang-switcher__current');
         navDesktop            = document.querySelectorAll('.pm-header__menu .pm-navbar .menu-item > a');
@@ -405,22 +408,23 @@ window.App = window.App || {};
 
     // Megapanel desktop
     function initMegaPanels() {
-        if (menuWhereTrigger && megaPanelWhere) {
-            menuWhereTrigger.addEventListener('click', (event) => {
+        document.addEventListener('click', function (event) {
+            var whereTrigger = event.target.closest('.trigger-filters');
+            var expTrigger   = event.target.closest('.trigger-experiences');
+
+            if (whereTrigger && megaPanelWhere) {
                 togglePanel('where', event);
-            });
-        }
+                return;
+            }
 
-        if (menuExpTrigger && megaPanelExp) {
-            menuExpTrigger.addEventListener('click', (event) => {
+            if (expTrigger && megaPanelExp) {
                 togglePanel('experiences', event);
-            });
-        }
+                return;
+            }
 
-        // Cerrar al hacer click fuera del header
-        document.addEventListener('click', (event) => {
-            const clickInsideHeader = header && header.contains(event.target);
-            const anyPanelOpen = state.isWhereOpen || state.isExperiencesOpen;
+            // Cerrar al hacer click fuera del header
+            var clickInsideHeader = header && header.contains(event.target);
+            var anyPanelOpen = state.isWhereOpen || state.isExperiencesOpen;
 
             if (!clickInsideHeader && anyPanelOpen) {
                 closeAllPanels();

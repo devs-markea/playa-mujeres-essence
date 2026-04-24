@@ -76,15 +76,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const filterImages = (categories, resorts, inputWords) => {
 
-        const images = qsa('.custom-gallery-image');
+        const items = qsa('.hg-grid-item');
         const lightboxLink = 'resorts-gallery';
         let total = 0;
 
-        images.forEach(image => {
+        items.forEach(item => {
+            const link = item.querySelector('.custom-gallery-image');
 
             if (!categories.length && !resorts.length && !inputWords.length) {
-                image.classList.remove('d-none');
-                image.setAttribute('data-lightbox', lightboxLink);
+                item.classList.remove('d-none');
+                if (link) link.setAttribute('data-lightbox', lightboxLink);
                 total++;
                 return;
             }
@@ -93,33 +94,33 @@ document.addEventListener("DOMContentLoaded", function () {
             let flagResort = true;
             let flagInput = true;
 
-            const imageClasses = [...image.classList];
+            const itemClasses = [...item.classList];
 
             /* CATEGORY */
             if (categories.length) {
-                flagCategory = categories.some(cat => imageClasses.includes(cat));
+                flagCategory = categories.some(cat => itemClasses.includes(cat));
             }
 
             /* RESORT */
             if (resorts.length) {
-                flagResort = resorts.some(res => imageClasses.includes(res));
+                flagResort = resorts.some(res => itemClasses.includes(res));
             }
 
             /* INPUT */
             if (inputWords.length) {
-                const tags = (image.dataset.filter || "").toLowerCase();
+                const tags = (item.dataset.filter || "").toLowerCase();
                 flagInput = inputWords.some(word =>
                     tags.includes(word.toLowerCase())
                 );
             }
 
             if (flagCategory && flagResort && flagInput) {
-                image.classList.remove('d-none');
-                image.setAttribute('data-lightbox', lightboxLink);
+                item.classList.remove('d-none');
+                if (link) link.setAttribute('data-lightbox', lightboxLink);
                 total++;
             } else {
-                image.classList.add('d-none');
-                image.removeAttribute('data-lightbox');
+                item.classList.add('d-none');
+                if (link) link.removeAttribute('data-lightbox');
             }
         });
 
@@ -140,12 +141,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const limit    = currentPage * ITEMS_PER_PAGE;
 
         filtered.forEach((item, i) => {
+            const link = item.querySelector('.custom-gallery-image');
             if (i < limit) {
                 item.classList.remove('hg-page-hidden');
-                item.setAttribute('data-lightbox', 'resorts-gallery');
+                if (link) link.setAttribute('data-lightbox', 'resorts-gallery');
             } else {
                 item.classList.add('hg-page-hidden');
-                item.removeAttribute('data-lightbox');
+                if (link) link.removeAttribute('data-lightbox');
             }
         });
 
@@ -173,14 +175,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const items = qsa('.hg-grid-item:not(.d-none):not(.hg-page-hidden)');
 
         items.forEach(item => {
-            const img = item.querySelector('img');
-            if (!img) return;
+            const inner = item.querySelector('.hg-grid-item__inner');
+            const img   = item.querySelector('img');
+            if (!inner || !img) return;
 
             if (img.complete && img.naturalWidth > 0) return;
 
-            item.classList.add('hg-skeleton');
+            inner.classList.add('hg-skeleton');
 
-            const onDone = () => item.classList.remove('hg-skeleton');
+            const onDone = () => inner.classList.remove('hg-skeleton');
             img.addEventListener('load',  onDone, { once: true });
             img.addEventListener('error', onDone, { once: true });
         });

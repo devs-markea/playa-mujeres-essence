@@ -91,7 +91,7 @@ $available_hotels = array_filter( $hotel_gallery['hotels'], fn( $h ) => $h['isAv
 
         </div>
 
-        <div class="hg-grid">
+        <div class="row g-3 hg-grid">
             <?php foreach ( $hotel_gallery['gallery'] as $item ) :
                 $cat_classes  = pm_essence_gallery_implode_filter( $item['categories'], ' ' );
                 $resort_class = implode( ' ', $item['resort']['classes'] );
@@ -101,17 +101,21 @@ $available_hotels = array_filter( $hotel_gallery['hotels'], fn( $h ) => $h['isAv
                 $title_attr   = $item['resort']['title']
                     . ( ! empty( $item['categories'] ) ? ' – ' . implode( ', ', $item['categories'] ) : '' );
             ?>
-            <a href="<?php echo esc_url( $item['image'] ); ?>"
-               class="hg-grid-item custom-gallery-image <?php echo esc_attr( trim( $cat_classes . ' ' . $resort_class ) ); ?>"
-               data-filter="<?php echo esc_attr( $filter_data ); ?>"
-               data-lightbox="resorts-gallery"
-               data-title="<?php echo esc_attr( $title_attr ); ?>">
-                <?php echo wp_get_attachment_image( $item['imageId'], 'large', false, [
-                    'class'   => 'hg-img',
-                    'loading' => 'lazy',
-                    'alt'     => esc_attr( $title_attr ),
-                ] ); ?>
-            </a>
+            <div class="col-12 col-sm-6 col-lg-4 hg-grid-item <?php echo esc_attr( trim( $cat_classes . ' ' . $resort_class ) ); ?>"
+                 data-filter="<?php echo esc_attr( $filter_data ); ?>">
+                <div class="hg-grid-item__inner">
+                    <a href="<?php echo esc_url( $item['image'] ); ?>"
+                       class="custom-gallery-image"
+                       data-lightbox="resorts-gallery"
+                       data-title="<?php echo esc_attr( $title_attr ); ?>">
+                        <?php echo wp_get_attachment_image( $item['imageId'], 'large', false, [
+                            'class'   => 'hg-img',
+                            'loading' => 'lazy',
+                            'alt'     => esc_attr( $title_attr ),
+                        ] ); ?>
+                    </a>
+                </div>
+            </div>
             <?php endforeach; ?>
         </div>
 

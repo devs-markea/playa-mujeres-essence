@@ -16,6 +16,7 @@ $button_text = get_sub_field('button_label');
 $button_link = get_sub_field('button_link');
 $enable_overlap = get_sub_field('enable_overlap');
 $target = get_sub_field('button_target');
+$decorative_image = get_sub_field('image_decorative');
 
 // Clase opcional para overlap
 $overlap_class = $enable_overlap ? 'video-hero--overlap' : '';
@@ -30,18 +31,18 @@ $video = pm_parse_video($video_url);
 
     <div class="video-hero__media">
         <div class="video-hero__overlay"></div>
+        <div class="video-hero__iframe-blocker" aria-hidden="true"></div>
         <?php if ($video['type'] === 'youtube'):
             wp_enqueue_script('pm-youtube-background');
 
             $poster_attrs = [
-                'class'         => 'video-hero__poster skip-lazy',
+                'class'         => 'video-hero__poster',
                 'alt'           => '',
                 'aria-hidden'   => 'true',
                 'fetchpriority' => 'high',
                 'loading'       => 'eager',
-                'data-no-lazy'  => '1',
                 'decoding'      => 'sync',
-                'sizes'         => '100vw',
+                'sizes'         => '100vw'
             ];
 
             if ( $poster && ! empty( $poster['ID'] ) ) {
@@ -66,6 +67,7 @@ $video = pm_parse_video($video_url);
                 data-vbg="<?php echo esc_url($video['original_url']); ?>"
                 data-vbg-autoplay="true"
                 data-vbg-muted="true"
+                data-vbg-controls="false"
                 data-vbg-loop="true"
                 data-vbg-no-cookie="true"
                 aria-hidden="true"
@@ -141,4 +143,20 @@ $video = pm_parse_video($video_url);
         </div>
     </div>
 
+
+
 </section>
+
+<?php if ( $decorative_image && ! empty( $decorative_image['ID'] ) ) : ?>
+    <div class="video-hero__decorative-image-wrapper" aria-hidden="true">
+        <?php echo wp_get_attachment_image( $decorative_image['ID'], 'full', false, [
+            'class'       => 'video-hero__decorative-image',
+            'alt'         => '',
+            'role'        => 'presentation',
+            'aria-hidden' => 'true',
+            'loading'     => 'lazy',
+            'decoding'    => 'async',
+        ] ); ?>
+    </div>
+<?php endif; ?>
+

@@ -135,6 +135,12 @@ h1, h2, h3, h4 {
     font-weight: var(--fw-light);
 }
 
+.btn-check:checked + .btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check) + .btn:active {
+    color: var(--pm-secondary-900);
+    background-color: transparent;
+    border-color: transparent;
+}
+
 .btn-primary {
     background: transparent;
     color: var(--pm-secondary-900);
