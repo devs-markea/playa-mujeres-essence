@@ -1,23 +1,23 @@
 <?php
 
-function pm_add_svg_to_items_with_children( $title, $item, $args, $depth ) {
-    if ( ! in_array( 'menu-item-has-children', (array) $item->classes, true ) ) {
-        return $title;
-    }
-
-    $svg = '
-        <svg class="pm-menu-chevron" fill="none" width="16" height="16" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path d="M9.75 4.125L6 7.875L2.25 4.125" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-
-    ';
-
-    // Envolvemos el texto en un span para poder alinearlo mejor
-    $title = '<span class="pm-menu-text">' . $title . '</span>' . $svg;
-
-    return $title;
-}
-add_filter( 'nav_menu_item_title', 'pm_add_svg_to_items_with_children', 10, 4 );
+//function pm_add_svg_to_items_with_children( $title, $item, $args, $depth ) {
+//    if ( ! in_array( 'menu-item-has-children', (array) $item->classes, true ) ) {
+//        return $title;
+//    }
+//
+//    $svg = '
+//        <svg class="pm-menu-chevron" fill="none" width="16" height="16" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+//            <path d="M9.75 4.125L6 7.875L2.25 4.125" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+//        </svg>
+//
+//    ';
+//
+//    // Envolvemos el texto en un span para poder alinearlo mejor
+//    $title = '<span class="pm-menu-text">' . $title . '</span>' . $svg;
+//
+//    return $title;
+//}
+//add_filter( 'nav_menu_item_title', 'pm_add_svg_to_items_with_children', 10, 4 );
 
 add_filter('show_admin_bar', '__return_false');
 

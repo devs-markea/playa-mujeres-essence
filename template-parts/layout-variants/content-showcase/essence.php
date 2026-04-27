@@ -95,14 +95,14 @@ if (! $items) return;
                                                 <?= wp_get_attachment_image($img_id, 'large', false, [
                                                     'class'    => 'content-showcase__media-img',
                                                     'alt'      => $img_alt,
-                                                    'loading'  => $i === 0 ? 'eager' : 'lazy',
+                                                    'loading'  => 'lazy',
                                                     'decoding' => 'async',
                                                 ]); ?>
                                             <?php elseif (! empty($img['url'])) : ?>
                                                 <img src="<?= esc_url($img['url']); ?>"
                                                      alt="<?= esc_attr($img_alt); ?>"
                                                      class="content-showcase__media-img"
-                                                     loading="<?= $i === 0 ? 'eager' : 'lazy'; ?>"
+                                                     loading="lazy"
                                                      decoding="async">
                                             <?php endif; ?>
                                         </div>
@@ -110,6 +110,7 @@ if (! $items) return;
                                 </div>
                                 <div class="swiper-button-prev content-showcase__prev"></div>
                                 <div class="swiper-button-next content-showcase__next"></div>
+                                <div class="swiper-pagination content-showcase__pagination"></div>
                             </div>
                         </div>
                     </div>

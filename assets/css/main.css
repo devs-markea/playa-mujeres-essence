@@ -100,7 +100,7 @@ html.is-mac:not(.is-safari) {
     --fw-regular: 400;
 }
 
-html { scrollbar-gutter: stable; }
+html { scrollbar-gutter: stable; scroll-behavior: smooth; }
 
 
 html, body {

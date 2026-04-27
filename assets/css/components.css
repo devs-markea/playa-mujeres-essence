@@ -207,15 +207,16 @@
 .pm-lang-switcher__list {
     position: absolute;
     right: 0;
-    top: 100%;
-    margin-top: 6px;
+    top: calc(100% + 20px);
     list-style: none;
     padding: 8px 0;
-    background: rgba(0, 0, 0, 0.8);
-    min-width: 84px;
-    text-align: center;
+    margin: 0;
+    background: #fff;
+    min-width: 120px;
+    text-align: left;
     display: none;
-    z-index: 20;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    z-index: 9999;
 }
 
 .pm-lang-switcher__current.is-open-black {
@@ -228,14 +229,25 @@
 
 .pm-lang-switcher__item a {
     display: block;
-    padding: 4px 12px;
-    color: #fff;
+    padding: 10px 24px;
+    color: var(--pm-secondary-900) !important;
     text-decoration: none;
-    letter-spacing: 0.18em;
+    font-size: 0.8125rem;
+    font-weight: var(--fw-light);
+    letter-spacing: 2px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.pm-lang-switcher__item a:hover {
+    color: var(--pm-primary-900) !important;
+    background: rgba(0, 0, 0, 0.04);
 }
 
 .pm-lang-switcher__item.is-active a {
-    opacity: 0.6;
+    font-weight: var(--fw-medium);
+    opacity: 1;
     cursor: default;
     pointer-events: none;
 }
@@ -293,68 +305,45 @@
 
 }
 
-/* 1.5 Priority Nav — "Plan your trip" dropdown (≤ 1400px)
+/* 1.5 Submenús nativos del nav de escritorio
+   --------------------------------------------------------------------------
+   WP añade .menu-item-has-children al padre y .sub-menu al <ul> hijo.
+   El toggle (clase .is-open) lo gestiona initDesktopSubmenus() en main.js.
    -------------------------------------------------------------------------- */
 
-/*
- * El botón está pre-renderizado en el HTML (via filtro wp_nav_menu_items).
- * CSS controla la visibilidad inicial → elimina el CLS que causaba la
- * inserción dinámica de initPriorityNav(). El JS solo gestiona el toggle
- * y el movimiento de items (ya ocultos via CSS → sin layout shift).
- */
-.pm-navbar__more {
+.pm-navbar-desktop .menu-item-has-children {
     position: relative;
-    white-space: nowrap;
-    display: none; /* Oculto por defecto (> 1400px todos los items caben) */
 }
 
-@media (max-width: 1399px) {
-    /* Mostrar el botón "Plan your trip" */
-    .pm-navbar__more {
-        display: list-item;
-    }
-
-    /* Ocultar los items .group del nav (JS los mueve al dropdown sin shift visual) */
-    .pm-navbar-desktop > .menu-item.group {
-        display: none;
-    }
+/* Chevron junto al enlace padre — usa currentColor, hereda color del link */
+.pm-navbar-desktop .menu-item-has-children > a::after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
+    margin-left: 7px;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
 }
 
-.pm-navbar__more-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 0.875rem;
-    font-weight: var(--fw-light);
-    font-family: inherit;
-    color: #fff;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: color 0.2s ease;
-}
-
-.pm-navbar__more-btn:hover {
+/* Color dorado en hover — el chevron hereda automáticamente */
+.pm-navbar-desktop .menu-item-has-children > a:hover {
     color: var(--pm-primary-900);
 }
 
-.pm-navbar__more-btn svg {
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
+.pm-navbar-desktop .menu-item-has-children.is-open > a::after {
+    transform: rotate(225deg) translateY(2px);
 }
 
-.pm-navbar__more.is-open .pm-navbar__more-btn svg {
-    transform: rotate(180deg);
-}
-
-.pm-navbar__more-dropdown {
+/* Dropdown */
+.pm-navbar-desktop .sub-menu {
     display: none;
     position: absolute;
     top: calc(100% + 20px);
-    right: 0;
+    left: 0;
     background: #fff;
     min-width: 200px;
     padding: 8px 0;
@@ -364,15 +353,15 @@
     z-index: 9999;
 }
 
-.pm-navbar__more.is-open .pm-navbar__more-dropdown {
+.pm-navbar-desktop .menu-item-has-children.is-open > .sub-menu {
     display: block;
 }
 
-.pm-navbar__more-dropdown .menu-item {
+.pm-navbar-desktop .sub-menu .menu-item {
     margin: 0 !important;
 }
 
-.pm-navbar__more-dropdown .menu-item > a {
+.pm-navbar-desktop .sub-menu .menu-item > a {
     display: block !important;
     padding: 10px 24px !important;
     color: var(--pm-secondary-900) !important;
@@ -382,14 +371,15 @@
     white-space: nowrap;
     text-transform: uppercase;
     transition: color 0.2s ease, background 0.2s ease;
+    text-decoration: none;
 }
 
-.pm-navbar__more-dropdown .menu-item > a:hover {
+.pm-navbar-desktop .sub-menu .menu-item > a:hover {
     color: var(--pm-primary-900) !important;
     background: rgba(0, 0, 0, 0.04);
 }
 
-.pm-navbar__more-dropdown .menu-item.current_page_item > a {
+.pm-navbar-desktop .sub-menu .menu-item.current-menu-item > a {
     font-weight: var(--fw-medium) !important;
 }
 
@@ -2647,7 +2637,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 
     .blog-listing__sidebar--sticky {
         position: sticky;
-        top: -242px;
+        top: -100px;
     }
 }
 
@@ -3869,14 +3859,15 @@ body.is-showcase-scrolllocked { overflow: hidden; }
 }
 
 .content-showcase__pagination {
-    position: static;
-    left: auto; bottom: auto;
-    transform: none;
+    position: static !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
     margin-top: 12px;
     display: flex;
     justify-content: center;
     gap: 10px;
-    width: 100%;
+    width: 100% !important;
 }
 
 .content-showcase__pagination .swiper-pagination-bullet {
@@ -3951,6 +3942,7 @@ body.is-showcase-scrolllocked { overflow: hidden; }
     letter-spacing: 2px;
     color: var(--pm-secondary-900);
     margin-bottom: 16px;
+    text-align: center;
 }
 
 .content-showcase__intro {
@@ -3978,7 +3970,10 @@ body.is-showcase-scrolllocked { overflow: hidden; }
         margin: 40px 0;
     }
 
-    .content-showcase--essence .content-showcase__title { font-size: 24px; }
+    .content-showcase--essence .content-showcase__title {
+        font-size: 24px;
+        text-align: start
+    }
 
     .content-showcase__media-img { height: 520px; }
 }
@@ -4732,6 +4727,15 @@ body.is-experiences-scrolllocked {
 /*    font-weight: var(--fw-medium);*/
 /*    text-align: start;*/
 /*}*/
+.content-collection__heading--list {
+    color: var(--pm-secondary-900);
+    text-align: start;
+    font-family: var(--pm-font-secondary);
+    font-size: 28px;
+    font-style: italic;
+    font-weight: var(--fw-medium);
+    letter-spacing: 2px;
+}
 
 .content-collection__description--list {}
 
@@ -4788,6 +4792,7 @@ body.is-experiences-scrolllocked {
 @media (min-width: 992px) {
     .content-collection__heading--list {
         text-align: center;
+        font-size: 32px;
     }
     .content-collection__grid--list > .content-collection__col--list {
         margin-bottom: 64px;
@@ -5145,6 +5150,9 @@ body.is-experiences-scrolllocked {
     align-items: center;
     justify-content: center;
     margin: 24px 32px 32px;
+    font-size: 16px;
+    font-weight: var(--fw-light);
+    color: var(--pm-secondary-900);
 }
 
 .page-cover__essence-media-b {
@@ -5230,7 +5238,7 @@ body.is-experiences-scrolllocked {
     font-family: var(--pm-font-primary) !important;
     font-style: normal;
     font-weight: var(--fw-regular);
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .two-column-layout__heading-essence--font-secondary {
@@ -5238,7 +5246,7 @@ body.is-experiences-scrolllocked {
     font-style: italic;
     letter-spacing: 2px;
     font-weight: var(--fw-medium);
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .two-column-layout--variant-essence .two-column-layout__content-description {
@@ -5628,4 +5636,64 @@ body.is-experiences-scrolllocked {
 .content-collection__load-more .content-collection__load-more-btn:hover {
     background-color: var(--pm-secondary-900);
     color: #fff;
+}
+
+/* ==========================================================================
+   CONTENT FEATURE MEDIA BLOCK
+   ========================================================================== */
+
+.content-feature-media-block {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+/* Header / título */
+.content-feature-media-block__header {
+    margin-bottom: 32px;
+}
+
+.content-feature-media-block__title {
+    font-family: var(--pm-font-secondary);
+    font-weight: var(--fw-medium);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: 1px;
+    color: var(--pm-secondary-900);
+    margin: 0;
+}
+
+/* Media: imagen */
+.content-feature-media-block__image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Media: mapa (shortcode) */
+.content-feature-media-block__map {
+    width: 100%;
+    overflow: hidden;
+}
+
+.content-feature-media-block__map > * {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+
+@media (min-width: 768px) {
+    .content-feature-media-block {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+
+    .content-feature-media-block__header {
+        margin-bottom: 40px;
+    }
+
+    .content-feature-media-block__title {
+        font-size: 24px;
+    }
 }

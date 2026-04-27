@@ -432,70 +432,37 @@ window.App = window.App || {};
         });
     }
 
-    // Priority Nav — agrupa items .group en "Plan your trip" por debajo de 1400px.
-    // El botón .pm-navbar__more está pre-renderizado en el HTML (via filtro PHP)
-    // y su visibilidad la controla CSS puro → sin CLS en carga inicial.
-    // Este función solo gestiona: mover items al dropdown y el toggle del menú.
-    function initPriorityNav() {
-        var BREAKPOINT = 1400;
-
+    // Submenús nativos del nav de escritorio — toggle click + cerrar fuera.
+    // WP renderiza los hijos como .sub-menu dentro de .menu-item-has-children.
+    function initDesktopSubmenus() {
         var nav = document.querySelector('.pm-navbar-desktop');
         if (!nav) return;
 
-        // El botón ya existe en el DOM (pre-renderizado por PHP)
-        var moreLi = nav.querySelector('.pm-navbar__more');
-        if (!moreLi) return;
+        var parentItems = Array.from(nav.querySelectorAll(':scope > .menu-item-has-children'));
+        if (!parentItems.length) return;
 
-        var groupItems = Array.from(nav.querySelectorAll(':scope > .menu-item.group'));
-        if (!groupItems.length) return;
+        parentItems.forEach(function (li) {
+            var link = li.querySelector(':scope > a');
+            if (!link) return;
 
-        // Guardar el siguiente hermano de cada item ANTES de mover nada
-        // para poder restaurarlos en su posición original exacta
-        var groupAnchors = groupItems.map(function (item) {
-            return item.nextElementSibling;
+            // Toggle al hacer click en el enlace padre
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                var isOpen = li.classList.contains('is-open');
+
+                // Cerrar todos primero
+                parentItems.forEach(function (el) { el.classList.remove('is-open'); });
+
+                if (!isOpen) li.classList.add('is-open');
+            });
         });
 
-        var moreBtn      = moreLi.querySelector('.pm-navbar__more-btn');
-        var moreDropdown = moreLi.querySelector('.pm-navbar__more-dropdown');
-
-        // Toggle dropdown
-        moreBtn.addEventListener('click', function () {
-            var expanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', String(!expanded));
-            moreLi.classList.toggle('is-open', !expanded);
-        });
-
-        // Cerrar al hacer click fuera
+        // Cerrar al hacer click fuera del nav
         document.addEventListener('click', function (e) {
-            if (!moreLi.contains(e.target)) {
-                moreBtn.setAttribute('aria-expanded', 'false');
-                moreLi.classList.remove('is-open');
+            if (!nav.contains(e.target)) {
+                parentItems.forEach(function (el) { el.classList.remove('is-open'); });
             }
         });
-
-        function update() {
-            if (window.innerWidth <= BREAKPOINT) {
-                // Mover items .group al dropdown (CSS ya los oculta → sin layout shift)
-                groupItems.forEach(function (item) { moreDropdown.appendChild(item); });
-            } else {
-                // Restaurar en orden inverso usando el anchor original de cada item
-                for (var i = groupItems.length - 1; i >= 0; i--) {
-                    var anchor = groupAnchors[i];
-                    var ref = (anchor && anchor.parentNode === nav) ? anchor : moreLi;
-                    nav.insertBefore(groupItems[i], ref);
-                }
-                moreBtn.setAttribute('aria-expanded', 'false');
-                moreLi.classList.remove('is-open');
-            }
-        }
-
-        var resizeTimer;
-        window.addEventListener('resize', function () {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(update, 60);
-        });
-
-        update();
     }
 
     // Video hero: botón y scroll top
@@ -1027,7 +994,7 @@ window.App = window.App || {};
         let tabsSwiper = null;
         if (tabsRoot) {
             tabsSwiper = new Swiper(tabsRoot, {
-                slidesPerView: 3,
+                slidesPerView: 2,
                 slidesPerGroup: 1,
                 spaceBetween: 0,
                 allowTouchMove: true,
@@ -1070,7 +1037,7 @@ window.App = window.App || {};
 
             if (tabsSwiper) {
                 const total      = tabsSwiper.slides ? tabsSwiper.slides.length : 0;
-                const lastStart  = Math.max(0, total - 3);
+                const lastStart  = Math.max(0, total - 2);
                 let desiredStart = index <= 0 ? 0 : index >= total - 1 ? lastStart : index - 1;
                 desiredStart     = Math.max(0, Math.min(desiredStart, lastStart));
 
@@ -1467,30 +1434,6 @@ window.App = window.App || {};
         });
     }
 
-    // Lenis — smooth scroll nativo, compatible con fixed/sticky
-    function initLenis() {
-        if (typeof Lenis === 'undefined') return;
-
-        window.lenis = new Lenis({
-            lerp:        0.45,
-            smoothTouch: false,
-            overscroll:  false,
-        });
-
-        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-            window.lenis.on('scroll', ScrollTrigger.update);
-            gsap.ticker.add(function (time) {
-                window.lenis.raf(time * 1000);
-            });
-            gsap.ticker.lagSmoothing(0);
-        } else {
-            function lenisRaf(time) {
-                window.lenis.raf(time);
-                requestAnimationFrame(lenisRaf);
-            }
-            requestAnimationFrame(lenisRaf);
-        }
-    }
 
     // Lazy loading con IntersectionObserver
     function lazyLoadImages(selector, options = { threshold: 0.5 }) {
@@ -1670,7 +1613,7 @@ window.App = window.App || {};
         });
 
         if (input) input.addEventListener('input', resetAndApply);
-        if (loadMoreBtn) loadMoreBtn.addEventListener('click', function () { visibleLimit += STEP; apply(); if (window.lenis) window.lenis.resize(); });
+        if (loadMoreBtn) loadMoreBtn.addEventListener('click', function () { visibleLimit += STEP; apply(); });
 
         // Drag-to-scroll (mouse only)
         if (pillsScroller) {
@@ -1855,6 +1798,10 @@ window.App = window.App || {};
                     nextEl: section.querySelector('.content-showcase__next'),
                     prevEl: section.querySelector('.content-showcase__prev'),
                 },
+                pagination: {
+                    el:        section.querySelector('.content-showcase__pagination'),
+                    clickable: true,
+                },
             });
 
             _initContentShowcaseTabs(section, contentSwiper);
@@ -1884,7 +1831,6 @@ window.App = window.App || {};
 
     // Init global
     App.init = function () {
-        initLenis();
         cacheElements();
         initPrimaryShowcaseHeroDropdown();
         initRecaptchaV3();
@@ -1917,7 +1863,7 @@ window.App = window.App || {};
         if (!header) return;
         initToTopButton();
         initLangSwitcher();
-        initPriorityNav();
+        initDesktopSubmenus();
         initMobileMenu();
         initMobilePanels();
         initMegaPanels();

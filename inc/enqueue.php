@@ -146,15 +146,6 @@ function pm_enqueue_assets() {
         true
     );
 
-    wp_register_script(
-        'pm-lenis',
-        'https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js',
-        array(),
-        '1.1.13',
-        true
-    );
-    wp_enqueue_script('pm-lenis');
-
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
     wp_register_script(
         'pm-youtube-background',

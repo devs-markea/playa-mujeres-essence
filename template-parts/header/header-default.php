@@ -19,6 +19,9 @@
             if ( function_exists( 'pll_current_language' ) && pll_current_language() === 'es' ) {
                 $more_label = 'Planea tu viaje';
             }
+            if ( function_exists( 'pll_current_language' ) && pll_current_language() === 'fr' ) {
+                $more_label = 'Planifiez votre voyage';
+            }
             ?>
             <div class="pm-header__menu" data-more-label="<?php echo esc_attr( $more_label ); ?>">
                 <?php pm_essence_nav_menu(); ?>

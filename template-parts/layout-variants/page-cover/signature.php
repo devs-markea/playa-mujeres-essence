@@ -92,11 +92,10 @@ $classes = array(
 
     .page-cover-signature__heading {
         font-family: var(--pm-font-secondary);
-        font-size: 26px;
+        font-size: 24px;
         font-style: italic;
         font-weight: var(--fw-medium);
-        line-height: 1.2;
-        letter-spacing: 1px;
+        letter-spacing: 2px;
         color: var(--pm-secondary-900);
         margin: 0 0 16px;
     }
@@ -106,9 +105,8 @@ $classes = array(
     }
 
     .page-cover-signature__description {
-        font-size: 15px;
+        font-size: 16px;
         font-weight: var(--fw-light);
-        line-height: 1.6;
         color: var(--pm-secondary-900);
         margin: 0;
     }

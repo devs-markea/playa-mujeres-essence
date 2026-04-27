@@ -8,7 +8,7 @@
 
                 <div class="content-collection__inner-heading">
                     <div class="row">
-                        <div class="col-12 col-md-5 mx-auto">
+                        <div class="col-12 col-md-6 mx-auto">
                             <?php if ( ! empty( $heading_tag ) && ! empty( $heading ) ) : ?>
                             <<?php echo tag_escape( $heading_tag ); ?> class="content-collection__heading--list">
                                 <?php echo esc_html( $heading ); ?>
