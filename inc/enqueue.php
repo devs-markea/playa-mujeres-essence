@@ -127,7 +127,7 @@ function pm_enqueue_assets() {
     }
     $load_swiper = apply_filters( 'pm_essence_should_load_swiper', $load_swiper );
 
-    // GSAP — registrado antes del enqueue para que WP conozca la URL al encolar
+    // GSAP — siempre se carga: lo usan initPageCoverReveal e initFadeAnimations en todas las páginas
     wp_register_script(
         'pm-gsap',
         'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js',
@@ -142,12 +142,13 @@ function pm_enqueue_assets() {
         null,
         true
     );
+    wp_enqueue_script('pm-gsap');
+    wp_enqueue_script('pm-gsap-st');
 
+    // Swiper — solo en páginas que lo necesitan
     if ( $load_swiper ) {
         wp_enqueue_style('pm-swiper');
         wp_enqueue_script('pm-swiper');
-        wp_enqueue_script('pm-gsap');
-        wp_enqueue_script('pm-gsap-st');
     }
 
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
@@ -243,8 +244,7 @@ function pm_preconnect_hints() {
     // Swiper + GSAP vienen de jsDelivr — preconnect elimina el DNS/TLS handshake en runtime.
     echo '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>' . "\n";
     // YouTube — usado en video_hero como iframe y como fuente de thumbnails.
-    echo '<link rel="preconnect" href="https://www.youtube.com" crossorigin>' . "\n";
-    echo '<link rel="dns-prefetch" href="https://img.youtube.com">' . "\n";
+
 }
 add_action( 'wp_head', 'pm_preconnect_hints', 1 );
 

@@ -1008,15 +1008,22 @@ window.App = window.App || {};
             const slideEl = tabsSwiper.slides[index];
             if (!slideEl) return;
             const btn = slideEl.querySelector('.content-showcase__tab') || slideEl;
-            const pl  = parseFloat(getComputedStyle(tabsSwiper.el).paddingLeft) || 0;
-            const tx  = (typeof tabsSwiper.translate === 'number') ? tabsSwiper.translate : tabsSwiper.getTranslate();
-            underline.style.transform = `translate3d(${pl + slideEl.offsetLeft + tx}px,0,0)`;
-            underline.style.width     = `${btn.offsetWidth}px`;
+            // Batch reads first — evita reflow forzado por write-then-read
+            const pl       = parseFloat(getComputedStyle(tabsSwiper.el).paddingLeft) || 0;
+            const tx       = (typeof tabsSwiper.translate === 'number') ? tabsSwiper.translate : tabsSwiper.getTranslate();
+            const offsetL  = slideEl.offsetLeft;
+            const btnWidth = btn.offsetWidth;
+            // Writes al final
+            underline.style.transform = `translate3d(${pl + offsetL + tx}px,0,0)`;
+            underline.style.width     = `${btnWidth}px`;
         }
 
+        // Cache de offsetTop por índice — evita leer del DOM en cada animación
+        let indicatorOffsets = desktopTabs.map(tab => tab.offsetTop);
+
         function moveIndicatorTo(index) {
-            if (!indicator || !desktopTabs[index]) return;
-            indicator.style.transform = `translateY(${desktopTabs[index].offsetTop + 10}px)`;
+            if (!indicator || indicatorOffsets[index] == null) return;
+            indicator.style.transform = `translateY(${indicatorOffsets[index] + 10}px)`;
         }
 
         function setActive(index, opts = {}) {
@@ -1067,13 +1074,22 @@ window.App = window.App || {};
         });
 
         // Mantener underline mientras el tabs swiper se mueve
+        // setTranslate dispara en cada frame de drag — throttle con rAF para evitar reflows continuos
         if (tabsSwiper) {
-            tabsSwiper.on('setTranslate', () => moveUnderlineTo(contentSwiper.activeIndex || 0));
-            tabsSwiper.on('transitionEnd',  () => moveUnderlineTo(contentSwiper.activeIndex || 0));
+            let _underlineRaf = null;
+            tabsSwiper.on('setTranslate', () => {
+                if (_underlineRaf) return;
+                _underlineRaf = requestAnimationFrame(() => {
+                    moveUnderlineTo(contentSwiper.activeIndex || 0);
+                    _underlineRaf = null;
+                });
+            });
+            tabsSwiper.on('transitionEnd', () => moveUnderlineTo(contentSwiper.activeIndex || 0));
         }
 
         // Resize
         window.addEventListener('resize', () => {
+            indicatorOffsets = desktopTabs.map(tab => tab.offsetTop);
             if (tabsSwiper) tabsSwiper.update();
             contentSwiper.update();
             setActive(contentSwiper.activeIndex, { moveUi: true });
