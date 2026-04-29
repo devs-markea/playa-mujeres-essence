@@ -59,6 +59,13 @@ $align_class = [
     'right'  => 'text-end',
 ][$alignment];
 
+// textonly: mobile/md siempre left, desde lg aplica el alignment del ACF.
+$align_class_textonly = [
+    'left'   => 'text-start',
+    'center' => 'text-start text-lg-center',
+    'right'  => 'text-start text-lg-end',
+][$alignment];
+
 // Content presence flags
 $has_heading    = (! empty($heading) && ! empty($heading_tag));
 $has_subheading = (! empty($subheading) && ! empty($subheading_tag));
@@ -81,8 +88,7 @@ $has_right       = ($has_subheading || $has_text || $has_button);
 ?>
 
 <section data-anim="slide-up delay-2"
-         class="pm-text-block pm-text-block--<?= esc_attr($variant); ?> pm-text-block--<?= esc_attr($alignment); ?><?= ! $has_decor_image ? ' pm-text-block--no-decor' : ''; ?>"
-         <?php echo $section_uid ? 'class="pm-text-block pm-text-block--' . esc_attr($variant) . ' pm-text-block--' . esc_attr($alignment) . ( ! $has_decor_image ? ' pm-text-block--no-decor' : '' ) . ' ' . esc_attr( $section_uid ) . '"' : ''; ?>>
+         class="pm-text-block pm-text-block--<?= esc_attr($variant); ?> pm-text-block--<?= esc_attr($alignment); ?><?= ! $has_decor_image ? ' pm-text-block--no-decor' : ''; ?><?= $section_uid ? ' ' . esc_attr($section_uid) : ''; ?>">
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">
@@ -147,7 +153,7 @@ $has_right       = ($has_subheading || $has_text || $has_button);
                     <?php $textonly_col = ($width === 'narrow') ? 'col-12 col-lg-8 mx-auto' : 'col-12'; ?>
                     <div class="row g-0">
                         <div class="<?= esc_attr($textonly_col); ?>">
-                            <div class="pm-text-block__text-only <?= esc_attr($align_class); ?>">
+                            <div class="pm-text-block__text-only <?= esc_attr($align_class_textonly); ?>">
                                 <?php if ($has_text) : ?>
                                     <div class="pm-text-block__text">
                                         <?= wp_kses_post($text); ?>

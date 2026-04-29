@@ -449,13 +449,16 @@
     background-color: white;
     z-index: 1500;
     pointer-events: none;
+    visibility: hidden;
     transform: translateX(-100%);
-    transition: transform 0.35s ease-in-out;
+    transition: transform 0.35s ease-in-out, visibility 0s linear 0.35s;
 }
 
 .pm-menu-mobile.-is-active {
     pointer-events: auto;
+    visibility: visible;
     transform: translateX(0);
+    transition: transform 0.35s ease-in-out, visibility 0s linear 0s;
 }
 
 .pm-menu-mobile__nav .pm-navbar-mobile .menu-item > a {
@@ -3942,7 +3945,16 @@ body.is-showcase-scrolllocked { overflow: hidden; }
     letter-spacing: 2px;
     color: var(--pm-secondary-900);
     margin-bottom: 16px;
-    text-align: center;
+}
+
+@media (min-width: 992px) {
+    .content-showcase--header-left .content-showcase__title {
+        font-size: 24px;
+    }
+
+    .content-showcase--header-center .content-showcase__title {
+        font-size: 32px;
+    }
 }
 
 .content-showcase__intro {
@@ -3970,12 +3982,24 @@ body.is-showcase-scrolllocked { overflow: hidden; }
         margin: 40px 0;
     }
 
-    .content-showcase--essence .content-showcase__title {
-        font-size: 24px;
-        text-align: start
-    }
+
 
     .content-showcase__media-img { height: 520px; }
+}
+
+/* slide en essence: sin paddings */
+.content-showcase--essence .content-showcase__slide {
+    padding: 0;
+}
+
+/* slide-card en essence: siempre relative, nunca absolute */
+.content-showcase--essence .content-showcase__slide-card {
+    position: relative;
+    width: 90%;
+    left: auto;
+    bottom: 25px;
+    margin: 0 auto;
+    max-width: none;
 }
 
 /* ----- Legacy (experiences-tabs) — mantener por compatibilidad ----- */

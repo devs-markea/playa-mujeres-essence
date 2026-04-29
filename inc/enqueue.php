@@ -100,14 +100,14 @@ function pm_enqueue_assets() {
         'pm-swiper',
         'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
         array(),
-        '11.0.0',
+        null, // null → no ?ver=; la versión ya está fijada en la URL del CDN
         'all'
     );
     wp_register_script(
         'pm-swiper',
         'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
         array(),
-        '11.0.0',
+        null, // null → no ?ver=; la versión ya está fijada en la URL del CDN
         true
     );
 
@@ -116,12 +116,32 @@ function pm_enqueue_assets() {
         wp_script_add_data('pm-swiper', 'strategy', 'defer');
     }
 
-    /**
-     * Por defecto: TRUE (porque indicas que Swiper se usa en todas las páginas).
-     * Más adelante puedes cambiarlo a detección real por ACF o por template.
-     */
-    $load_swiper = true;
-    $load_swiper = apply_filters('pm_essence_should_load_swiper', $load_swiper);
+    // Layouts que usan Swiper — añadir aquí si se incorporan nuevos.
+    $swiper_layouts = [ 'content_showcase', 'video_hero', 'content_carousel', 'hotels_gallery' ];
+    $load_swiper    = false;
+    foreach ( $swiper_layouts as $_layout ) {
+        if ( pm_page_has_section_layout( $_layout ) ) {
+            $load_swiper = true;
+            break;
+        }
+    }
+    $load_swiper = apply_filters( 'pm_essence_should_load_swiper', $load_swiper );
+
+    // GSAP — registrado antes del enqueue para que WP conozca la URL al encolar
+    wp_register_script(
+        'pm-gsap',
+        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js',
+        array(),
+        null,
+        true
+    );
+    wp_register_script(
+        'pm-gsap-st',
+        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js',
+        array('pm-gsap'),
+        null,
+        true
+    );
 
     if ( $load_swiper ) {
         wp_enqueue_style('pm-swiper');
@@ -129,22 +149,6 @@ function pm_enqueue_assets() {
         wp_enqueue_script('pm-gsap');
         wp_enqueue_script('pm-gsap-st');
     }
-
-    // GSAP
-    wp_register_script(
-        'pm-gsap',
-        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js',
-        array(),
-        '3.14.1',
-        true
-    );
-    wp_register_script(
-        'pm-gsap-st',
-        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js',
-        array('pm-gsap'),
-        '3.14.1',
-        true
-    );
 
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
     wp_register_script(
@@ -236,7 +240,11 @@ add_action( 'wp_head', 'pm_preload_lcp_image', 1 );
  * Preconnect a dominios externos usados en above-the-fold.
  */
 function pm_preconnect_hints() {
-
+    // Swiper + GSAP vienen de jsDelivr — preconnect elimina el DNS/TLS handshake en runtime.
+    echo '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>' . "\n";
+    // YouTube — usado en video_hero como iframe y como fuente de thumbnails.
+    echo '<link rel="preconnect" href="https://www.youtube.com" crossorigin>' . "\n";
+    echo '<link rel="dns-prefetch" href="https://img.youtube.com">' . "\n";
 }
 add_action( 'wp_head', 'pm_preconnect_hints', 1 );
 
@@ -262,8 +270,6 @@ add_filter( 'style_loader_tag', function ( $html, $handle ) {
     $defer_handles = [
         'pm-swiper',
         'pm-essence-fonts',
-        'essence-components',
-        'pm-bootstrap-css',
     ];
 
     if ( ! in_array( $handle, $defer_handles, true ) ) {

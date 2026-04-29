@@ -31,13 +31,17 @@ $image_alt = ( is_array( $media_image ) && ! empty( $media_image['alt'] ) ) ? $m
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">
 
-                <?php if ( $heading_title ) : ?>
-                    <div class="content-feature-media-block__header text-<?php echo esc_attr( $heading_position ?: 'left' ); ?>">
-                        <<?php echo $heading_tag; ?> class="content-feature-media-block__title">
+                <div class="row g-0">
+                    <div class="col-12 col-md-6 mx-auto">
+                        <?php if ( $heading_title ) : ?>
+                        <div class="content-feature-media-block__header text-<?php echo esc_attr( $heading_position ?: 'left' ); ?>">
+                            <<?php echo $heading_tag; ?> class="content-feature-media-block__title">
                             <?php echo esc_html( $heading_title ); ?>
                         </<?php echo $heading_tag; ?>>
                     </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                    </div>
+                </div>
 
                 <div class="content-feature-media-block__media">
 

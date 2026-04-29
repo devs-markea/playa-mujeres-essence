@@ -15,24 +15,31 @@
 if (! $items) return;
 ?>
 
-<section data-anim="slide-up delay-2" class="content-showcase content-showcase--essence<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
+<section data-anim="slide-up delay-2" class="content-showcase content-showcase--essence content-showcase--header-<?= esc_attr($header_alignment); ?><?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="container">
         <div class="row g-0">
             <div class="col-12 col-md-10 mx-auto">
 
-                <?php if ($title || $description) : ?>
+                <?php if ($title || $description) :
+                    $header_col   = $header_alignment === 'center' ? 'col-12 col-md-6 mx-auto' : 'col-12';
+                    $header_align = $header_alignment === 'center' ? 'text-start text-md-center' : 'text-start';
+                ?>
                     <div class="content-showcase__header">
-                        <?php if ($title) : ?>
-                            <<?= esc_html($title_tag); ?> class="content-showcase__title">
-                                <?= esc_html($title); ?>
-                            </<?= esc_html($title_tag); ?>>
-                        <?php endif; ?>
+                        <div class="row g-0">
+                            <div class="<?= esc_attr($header_col); ?> <?= esc_attr($header_align); ?>">
+                                <?php if ($title) : ?>
+                                    <<?= esc_html($title_tag); ?> class="content-showcase__title">
+                                        <?= esc_html($title); ?>
+                                    </<?= esc_html($title_tag); ?>>
+                                <?php endif; ?>
 
-                        <?php if ($description) : ?>
-                            <div class="content-showcase__intro">
-                                <?= wp_kses_post($description); ?>
+                                <?php if ($description) : ?>
+                                    <div class="content-showcase__intro">
+                                        <?= wp_kses_post($description); ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                        <?php endif; ?>
+                        </div>
                     </div>
                 <?php endif; ?>
 
@@ -89,23 +96,49 @@ if (! $items) return;
                                         $img     = $item['image'] ?? null;
                                         $img_id  = (is_array($img) && ! empty($img['ID'])) ? (int) $img['ID'] : 0;
                                         $img_alt = (is_array($img) && ! empty($img['alt'])) ? $img['alt'] : ($item['name'] ?? '');
+
+                                        $desc   = $item['description'] ?? null;
+                                        $btn    = $item['_button_settings'] ?? null;
+                                        $btn_ok = ! empty($btn['show_button']) && ! empty($btn['button_link']);
+                                        $link   = $btn_ok ? $btn['button_link'] : null;
                                     ?>
-                                        <div class="swiper-slide content-showcase__slide">
-                                            <?php if ($img_id) : ?>
-                                                <?= wp_get_attachment_image($img_id, 'large', false, [
-                                                    'class'    => 'content-showcase__media-img',
-                                                    'alt'      => $img_alt,
-                                                    'loading'  => 'lazy',
-                                                    'decoding' => 'async',
-                                                ]); ?>
-                                            <?php elseif (! empty($img['url'])) : ?>
-                                                <img src="<?= esc_url($img['url']); ?>"
-                                                     alt="<?= esc_attr($img_alt); ?>"
-                                                     class="content-showcase__media-img"
-                                                     loading="lazy"
-                                                     decoding="async">
+                                        <article class="swiper-slide content-showcase__slide" id="showcase-slide-<?= esc_attr($i); ?>" data-slide-index="<?= esc_attr($i); ?>">
+
+                                            <div class="content-showcase__slide-media">
+                                                <?php if ($img_id) : ?>
+                                                    <?= wp_get_attachment_image($img_id, 'large', false, [
+                                                        'alt'      => $img_alt,
+                                                        'loading'  => 'lazy',
+                                                        'decoding' => 'async',
+                                                    ]); ?>
+                                                <?php elseif (! empty($img['url'])) : ?>
+                                                    <img src="<?= esc_url($img['url']); ?>"
+                                                         alt="<?= esc_attr($img_alt); ?>"
+                                                         loading="lazy"
+                                                         decoding="async">
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <?php if ($desc || $btn_ok) : ?>
+                                                <div class="content-showcase__slide-card">
+                                                    <?php if ($desc) : ?>
+                                                        <div class="content-showcase__slide-text">
+                                                            <?= wp_kses_post($desc); ?>
+                                                        </div>
+                                                    <?php endif; ?>
+
+                                                    <?php if ($btn_ok) : ?>
+                                                        <a class="btn btn-primary btn-border-bottom-black content-showcase__slide-cta"
+                                                           href="<?= esc_url($link['url']); ?>"
+                                                           target="<?= esc_attr($link['target'] ?? '_self'); ?>"
+                                                           rel="<?= ($link['target'] ?? '') === '_blank' ? 'noopener noreferrer' : ''; ?>">
+                                                            <?= esc_html($link['title']); ?>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                </div>
                                             <?php endif; ?>
-                                        </div>
+
+                                        </article>
                                     <?php endforeach; ?>
                                 </div>
                                 <div class="swiper-button-prev content-showcase__prev"></div>

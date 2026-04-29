@@ -18,10 +18,12 @@ if (! in_array($layout_variant, $allowed_variants, true)) {
 }
 
 // Campos comunes disponibles para ambas variantes
-$title       = get_sub_field('title');
-$title_level = get_sub_field('title_level');
-$description = get_sub_field('description');
-$items       = get_sub_field('items');
+$title            = get_sub_field('title');
+$title_level      = get_sub_field('title_level');
+$description      = get_sub_field('description');
+$items            = get_sub_field('items');
+$header_alignment = get_sub_field('header_alignment'); // 'left' | 'center'
+$header_alignment = in_array($header_alignment, ['left', 'center'], true) ? $header_alignment : 'left';
 
 $title_tag = pm_essence_heading_tag_or_null($title_level, 'h2');
 if (empty($title_tag)) {

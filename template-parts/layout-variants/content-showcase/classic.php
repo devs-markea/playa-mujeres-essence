@@ -92,13 +92,13 @@
                                         <?php if ($img_id) : ?>
                                             <?= wp_get_attachment_image($img_id, 'large', false, [
                                                 'alt'      => $img_alt,
-                                                'loading'  => $i === 0 ? 'eager' : 'lazy',
+                                                'loading'  => 'lazy',
                                                 'decoding' => 'async',
                                             ]); ?>
                                         <?php elseif (! empty($img['url'])) : ?>
                                             <img src="<?= esc_url($img['url']); ?>"
                                                  alt="<?= esc_attr($img_alt); ?>"
-                                                 loading="<?= $i === 0 ? 'eager' : 'lazy'; ?>"
+                                                 loading="lazy"
                                                  decoding="async">
                                         <?php endif; ?>
                                     </div>

@@ -26,13 +26,17 @@ $accordion_id = 'content-accordion-' . uniqid();
 <section data-anim="slide-up delay-2" class="content-accordion<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
     <div class="container">
 
-        <?php if ($heading_title) : ?>
-            <div class="content-accordion__header">
-                <<?php echo esc_html($heading_tag); ?> class="content-accordion__title">
+        <div class="row g-0">
+            <div class="col-12 col-md-6 mx-auto">
+                <?php if ($heading_title) : ?>
+                <div class="content-accordion__header">
+                    <<?php echo esc_html($heading_tag); ?> class="content-accordion__title">
                     <?php echo esc_html($heading_title); ?>
                 </<?php echo esc_html($heading_tag); ?>>
             </div>
-        <?php endif; ?>
+            <?php endif; ?>
+            </div>
+        </div>
 
         <?php if ($accordion_items) : ?>
             <div class="content-accordion__list" id="<?php echo esc_attr($accordion_id); ?>">
