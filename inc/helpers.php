@@ -19,7 +19,7 @@
 //}
 //add_filter( 'nav_menu_item_title', 'pm_add_svg_to_items_with_children', 10, 4 );
 
-//add_filter('show_admin_bar', '__return_false');
+add_filter('show_admin_bar', '__return_false');
 
 
 if (!function_exists('pm_parse_video')) {

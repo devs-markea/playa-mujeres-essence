@@ -116,13 +116,15 @@ function pm_enqueue_assets() {
         wp_script_add_data('pm-swiper', 'strategy', 'defer');
     }
 
-    // Layouts que usan Swiper — añadir aquí si se incorporan nuevos.
-    $swiper_layouts = [ 'content_showcase', 'video_hero', 'content_carousel', 'hotels_gallery' ];
-    $load_swiper    = false;
-    foreach ( $swiper_layouts as $_layout ) {
-        if ( pm_page_has_section_layout( $_layout ) ) {
-            $load_swiper = true;
-            break;
+    // Layouts ACF que usan Swiper — añadir aquí si se incorporan nuevos.
+    $swiper_layouts = [ 'content_showcase', 'content_carousel', 'images_carousel' ];
+    $load_swiper    = is_home() || is_category() || is_singular( 'post' ) || is_page_template( 'page-templates/template-page-blog.php' );
+    if ( ! $load_swiper ) {
+        foreach ( $swiper_layouts as $_layout ) {
+            if ( pm_page_has_section_layout( $_layout ) ) {
+                $load_swiper = true;
+                break;
+            }
         }
     }
     $load_swiper = apply_filters( 'pm_essence_should_load_swiper', $load_swiper );

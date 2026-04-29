@@ -40,13 +40,13 @@ $classes = array(
                 </div>
                 <div class="page-cover__essence-media-b" aria-hidden="true">
                     <?php if ($secondary_image_id) : ?>
-                        <?php echo wp_get_attachment_image($secondary_image_id, 'large', false, [
+                        <?php echo wp_get_attachment_image($secondary_image_id, 'medium', false, [
                                 'class'         => 'page-cover__image page-cover__image--secondary',
                                 'alt'           => esc_attr($hero_alt),
                                 'loading'       => 'eager',
                                 'decoding'      => 'async',
                                 'fetchpriority' => 'high',
-                                'sizes'         => '(min-width: 992px) 40vw, 70vw',
+                                'sizes'         => '(min-width: 992px) 40vw, 100vw',
                         ]); ?>
                     <?php endif; ?>
                 </div>
@@ -55,7 +55,7 @@ $classes = array(
             <div class="page-cover__essence-inner-right">
                 <div class="page-cover__essence-media-a" aria-hidden="true">
                     <?php if ($primary_image_id) : ?>
-                        <?php echo wp_get_attachment_image($primary_image_id, 'medium', false, [
+                        <?php echo wp_get_attachment_image($primary_image_id, 'large', false, [
                                 'class'         => 'page-cover__image page-cover__image--primary',
                                 'alt'           => esc_attr($hero_alt),
                                 'loading'       => 'eager',

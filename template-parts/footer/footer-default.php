@@ -193,6 +193,34 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
         letter-spacing: 1px;
     }
 
+    .footer-bottom .footer-bottom__copyright a {
+        position: relative;
+        border-bottom: none !important;
+        padding-left: 0;
+        padding-right: 0;
+        width: fit-content;
+        margin: 0;
+        padding-bottom: 0;
+        color: var(--pm-secondary-900);
+    }
+
+    .footer-bottom .footer-bottom__copyright a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background-color: var(--pm-secondary-900);
+        transform: scaleX(1);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+
+    .footer-bottom .footer-bottom__copyright a:hover::after {
+        transform: scaleX(0);
+    }
+
     @media (min-width: 992px) {
         .footer-top .footer-top__logo,
         .footer-top .footer-top__find-us,
