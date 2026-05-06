@@ -258,13 +258,21 @@ function pm_preload_lcp_image() {
 add_action( 'wp_head', 'pm_preload_lcp_image', 1 );
 
 /**
- * Preconnect a dominios externos usados en above-the-fold.
+ * Preconnect + preload para Adobe Fonts (Typekit) y otros dominios externos.
+ * Se ejecuta en prioridad 1 para que el browser establezca conexiones lo antes posible.
  */
 function pm_preconnect_hints() {
-    // Swiper + GSAP vienen de jsDelivr — preconnect elimina el DNS/TLS handshake en runtime.
-//    echo '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>' . "\n";
-    // YouTube — usado en video_hero como iframe y como fuente de thumbnails.
+    // Adobe Fonts — solo los 2 preconnect esenciales. preconnect ya implica dns-prefetch,
+    // no es necesario duplicar con dns-prefetch explícito.
+    echo '<link rel="preconnect" href="https://use.typekit.net" crossorigin>' . "\n";
+    echo '<link rel="preconnect" href="https://p.typekit.net" crossorigin>' . "\n";
 
+    // Preload del CSS de Typekit — lo descarga en paralelo con el HTML.
+    $kit_id = apply_filters( 'pm_essence_adobe_kit_id', 'jky6aby' );
+    if ( ! empty( $kit_id ) ) {
+        echo '<link rel="preload" href="https://use.typekit.net/' . esc_attr( $kit_id ) . '.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' . "\n";
+        echo '<noscript><link rel="stylesheet" href="https://use.typekit.net/' . esc_attr( $kit_id ) . '.css"></noscript>' . "\n";
+    }
 }
 add_action( 'wp_head', 'pm_preconnect_hints', 1 );
 
@@ -275,36 +283,11 @@ add_action( 'wp_head', 'pm_preconnect_hints', 1 );
 add_action( 'wp_enqueue_scripts', function () {
     wp_dequeue_style( 'wp-block-library' );
     wp_dequeue_style( 'wp-block-library-theme' );
+    // pm-essence-fonts se inyecta manualmente en wp_head (prioridad 1) con preload+preconnect.
+    // Desencolamos aquí para evitar duplicado.
+    wp_dequeue_style( 'pm-essence-fonts' );
 }, 100 );
 
-/**
- * Difiere CSS no crítico para el above-the-fold usando el media trick:
- * el browser lo descarga en background y lo aplica sin bloquear el render.
- */
-add_filter( 'style_loader_tag', function ( $html, $handle ) {
-    // CSS diferidos (no críticos above-the-fold):
-    // - pm-swiper, pm-essence-fonts: siempre diferidos
-    // - essence-components: estilos de componentes, no todos son above-the-fold
-    // - pm-bootstrap-css: grid y utilidades, diferido con noscript fallback
-    // NOTA: si aparece FOUC, mueve pm-bootstrap-css fuera de esta lista.
-    $defer_handles = [
-        'pm-swiper',
-        'pm-essence-fonts',
-    ];
-
-    if ( ! in_array( $handle, $defer_handles, true ) ) {
-        return $html;
-    }
-
-    preg_match( '/href=[\'"]([^\'"]+)[\'"]/', $html, $m );
-    if ( empty( $m[1] ) ) {
-        return $html;
-    }
-
-    $href = esc_url( $m[1] );
-
-    return '<link rel="preload" href="' . $href . '" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' . "\n"
-         . '<noscript><link rel="stylesheet" href="' . $href . '"></noscript>' . "\n";
-}, 10, 2 );
+// El defer de CSS lo maneja critical-css.php de forma global.
 
 

@@ -1011,8 +1011,8 @@ p.as-link {
 }
 
 @keyframes hg-skeleton-pulse {
-    0%, 100% { background-color: #ede9e3; }
-    50%       { background-color: #e0dbd3; }
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
 }
 
 /* ── Responsive ── */

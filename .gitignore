@@ -1,6 +1,7 @@
 .vscode/sftp.json
-
+# .gitignore
 .gitignore
 
 .vscode
 .idea
+node_modules/

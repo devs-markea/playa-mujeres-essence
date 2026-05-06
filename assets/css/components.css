@@ -3732,10 +3732,11 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     position: absolute;
     left: 0; bottom: 0;
     height: 2px;
-    width: 40px;
+    width: 1px;
     background: #111;
-    transform: translate3d(18px, 0, 0);
-    transition: transform .25s ease, width .25s ease;
+    transform: translate3d(18px, 0, 0) scaleX(40);
+    transform-origin: left center;
+    transition: transform .25s ease;
     z-index: 2;
 }
 

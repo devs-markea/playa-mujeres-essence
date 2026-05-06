@@ -1021,9 +1021,8 @@ window.App = window.App || {};
             const tx       = (typeof tabsSwiper.translate === 'number') ? tabsSwiper.translate : tabsSwiper.getTranslate();
             const offsetL  = slideEl.offsetLeft;
             const btnWidth = btn.offsetWidth;
-            // Writes al final
-            underline.style.transform = `translate3d(${pl + offsetL + tx}px,0,0)`;
-            underline.style.width     = `${btnWidth}px`;
+            // Solo propiedades compuestas — scaleX reemplaza la animación de width
+            underline.style.transform = `translate3d(${pl + offsetL + tx}px,0,0) scaleX(${btnWidth})`;
         }
 
         // Cache de offsetTop por índice — evita leer del DOM en cada animación

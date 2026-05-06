@@ -261,17 +261,10 @@ if ( ! class_exists( 'PM_Essence_Core' ) ) :
         }
 
         /**
-         * Preconnect hints for external font loading.
+         * Preconnect hints are emitted directly in pm_preconnect_hints() (enqueue.php, wp_head priority 1).
+         * Using wp_resource_hints here would duplicate them, triggering a PageSpeed warning for >4 preconnects.
          */
         public function resource_hints( $urls, $relation_type ) {
-            if ( 'preconnect' === $relation_type ) {
-                $urls[] = 'https://use.typekit.net';
-                $urls[] = array(
-                    'href' => 'https://p.typekit.net',
-                    'crossorigin' => 'anonymous',
-                );
-            }
-
             return $urls;
         }
 

@@ -149,14 +149,40 @@ $video = pm_parse_video($video_url);
 
 <?php if ( $decorative_image && ! empty( $decorative_image['ID'] ) ) : ?>
     <div class="video-hero__decorative-image-wrapper" aria-hidden="true">
-        <?php echo wp_get_attachment_image( $decorative_image['ID'], 'full', false, [
-            'class'       => 'video-hero__decorative-image',
-            'alt'         => '',
-            'role'        => 'presentation',
-            'aria-hidden' => 'true',
-            'loading'     => 'lazy',
-            'decoding'    => 'async',
-        ] ); ?>
+        <?php
+        $img_id   = $decorative_image['ID'];
+        $img_src  = wp_get_attachment_image_src( $img_id, 'full' );
+        $metadata = wp_get_attachment_metadata( $img_id );
+        $webp_src = '';
+
+        // WP 5.8+ stores generated WebP sources in attachment metadata
+        if ( ! empty( $metadata['sources']['image/webp']['file'] ) && ! empty( $metadata['file'] ) ) {
+            $upload_dir = wp_upload_dir();
+            $webp_src   = trailingslashit( $upload_dir['baseurl'] )
+                          . trailingslashit( dirname( $metadata['file'] ) )
+                          . $metadata['sources']['image/webp']['file'];
+        }
+
+        if ( $webp_src && $img_src ) :
+        ?>
+            <picture>
+                <source type="image/webp" srcset="<?php echo esc_url( $webp_src ); ?>">
+                <img src="<?php echo esc_url( $img_src[0] ); ?>"
+                     width="<?php echo esc_attr( $img_src[1] ); ?>"
+                     height="<?php echo esc_attr( $img_src[2] ); ?>"
+                     class="video-hero__decorative-image"
+                     alt="" role="presentation" aria-hidden="true" loading="lazy" decoding="async">
+            </picture>
+        <?php else : ?>
+            <?php echo wp_get_attachment_image( $img_id, 'full', false, [
+                'class'       => 'video-hero__decorative-image',
+                'alt'         => '',
+                'role'        => 'presentation',
+                'aria-hidden' => 'true',
+                'loading'     => 'lazy',
+                'decoding'    => 'async',
+            ] ); ?>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 
