@@ -3,6 +3,9 @@ $title           = get_sub_field('title');
 $description     = get_sub_field('description');
 $button_settings = get_sub_field('button_settings');
 $images          = get_sub_field('images');
+
+// Grupo único por sección para que el lightbox agrupe las imágenes correctamente
+$lightbox_group  = 'gallery-slider-' . get_the_ID() . '-' . get_row_index();
 ?>
 
 <section data-anim="slide-up delay-2" class="images-carousel images-carousel--gallery-slider<?php echo $section_uid ? ' ' . esc_attr( $section_uid ) : ''; ?>">
@@ -50,27 +53,35 @@ $images          = get_sub_field('images');
                         $img_id = (int) $img['id'];
                     }
 
-                    $img_url = '';
+                    $img_url      = '';
+                    $img_url_full = '';
                     if ($img_id) {
-                        $img_url = wp_get_attachment_image_url($img_id, 'large');
+                        $img_url      = wp_get_attachment_image_url($img_id, 'large');
+                        $img_url_full = wp_get_attachment_image_url($img_id, 'full');
                     }
 
                     // Fallback si no hay ID o no existe ese tamaño por alguna razón.
                     if (empty($img_url) && !empty($img['url'])) {
                         $img_url = $img['url'];
                     }
+                    if (empty($img_url_full)) {
+                        $img_url_full = $img_url;
+                    }
+
+                    $caption = !empty($item['caption']) ? $item['caption'] : '';
                     ?>
                     <div class="images-carousel__item swiper-slide">
 
-                        <?php if (!empty($link)): ?>
-                        <a class="images-carousel__link" href="<?php echo esc_url($link); ?>">
-                            <?php endif; ?>
+                        <a class="images-carousel__link"
+                           href="<?php echo esc_url($img_url_full); ?>"
+                           data-lightbox="<?php echo esc_attr($lightbox_group); ?>"
+                           <?php if ($caption): ?>data-title="<?php echo esc_attr($caption); ?>"<?php endif; ?>>
 
                             <figure class="images-carousel__image"
                                     style="background-image:url('<?php echo esc_url($img_url); ?>')">
-                                <?php if (!empty($item['caption'])): ?>
+                                <?php if ($caption): ?>
                                     <div class="images-carousel__caption">
-                                        <figcaption class="images-carousel__caption-title"><?php echo esc_html($item['caption']); ?></figcaption>
+                                        <figcaption class="images-carousel__caption-title"><?php echo esc_html($caption); ?></figcaption>
                                         <?php if (!empty($item['description'])): ?>
                                             <p class="images-carousel__caption-text"><?php echo esc_html($item['description']); ?></p>
                                         <?php endif; ?>
@@ -78,9 +89,7 @@ $images          = get_sub_field('images');
                                 <?php endif; ?>
                             </figure>
 
-                            <?php if (!empty($link)): ?>
                         </a>
-                    <?php endif; ?>
 
                     </div>
                 <?php endforeach; ?>

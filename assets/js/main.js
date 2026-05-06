@@ -379,12 +379,14 @@ window.App = window.App || {};
                 opener.addEventListener('click', e => {
                     e.preventDefault();
                     panelWhereMobile.classList.add('is-open');
+                    opener.classList.add('is-open');
                 });
             });
 
             closerWhere && closerWhere.addEventListener('click', e => {
                 e.preventDefault();
                 panelWhereMobile.classList.remove('is-open');
+                openersWhere.forEach(opener => opener.classList.remove('is-open'));
             });
         }
 
@@ -396,12 +398,14 @@ window.App = window.App || {};
                 opener.addEventListener('click', e => {
                     e.preventDefault();
                     panelExpMobile.classList.add('is-open');
+                    opener.classList.add('is-open');
                 });
             });
 
             closerExp && closerExp.addEventListener('click', e => {
                 e.preventDefault();
                 panelExpMobile.classList.remove('is-open');
+                openersExp.forEach(opener => opener.classList.remove('is-open'));
             });
         }
     }
@@ -1247,98 +1251,100 @@ window.App = window.App || {};
 
     //Funciones de Adriel
     function initRecaptchaV3() {
-        if (typeof grecaptcha === 'undefined') return;
-
         const forms = document.querySelectorAll('.newsletter-subscribe-banner__form, .blog-listing__newsletter-form');
         if (!forms || !forms.length) return;
 
-        forms.forEach(function (form) {
+        const siteKey = (window.pmNewsletter && window.pmNewsletter.recaptchaSiteKey) || '';
+        if (!siteKey) return;
+
+        function attachSubmit(form) {
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
                 grecaptcha.ready(function () {
-                    grecaptcha.execute('6LeGNlgsAAAAAHc_b3oI50c6z0qJf5WNrNOrpY3_', { action: 'newsletter_submit' })
+                    grecaptcha.execute(siteKey, { action: 'newsletter_submit' })
                         .then(function (token) {
-                            let input = form.querySelector('input[name="recaptcha_token"]');
-                            if (!input) {
-                                input = document.createElement('input');
-                                input.type = 'hidden';
-                                input.name = 'recaptcha_token';
-                                form.appendChild(input);
-                            }
-                            input.value = token;
-
                             sendFormAjax(form, token);
                         })
-                        .catch(function(error) {
+                        .catch(function (error) {
                             console.error('reCAPTCHA error:', error);
-                            alert('Security verification failed. Please reload the page.');
+                            showFormMessage(form, 'Security verification failed. Please reload the page.', false);
                         });
                 });
             });
-        });
+        }
+
+        // reCAPTCHA puede no estar listo aún en DOMContentLoaded — esperar con grecaptcha.ready
+        if (typeof grecaptcha !== 'undefined') {
+            forms.forEach(attachSubmit);
+        } else {
+            // Fallback: esperar a que el script de reCAPTCHA termine de cargar
+            window.onRecaptchaLoad = function () {
+                forms.forEach(attachSubmit);
+            };
+        }
     }
 
-    //funcion para initRecaptchaV3
+    // Muestra mensaje de éxito/error inline debajo del form
+    function showFormMessage(form, message, success) {
+        var existing = form.parentNode.querySelector('.newsletter-form__message');
+        if (existing) existing.remove();
+
+        var msg = document.createElement('p');
+        msg.className = 'newsletter-form__message newsletter-form__message--' + (success ? 'success' : 'error');
+        msg.textContent = message;
+        form.parentNode.insertBefore(msg, form.nextSibling);
+    }
+
     function sendFormAjax(form, token) {
         const emailInput = form.querySelector('input[type="email"]');
-        if (!emailInput) {
-            alert('Email field not found.');
-            return;
-        }
+        if (!emailInput) return;
 
-        // Validar email básico
-        const email = emailInput.value;
+        const email = emailInput.value.trim();
         if (!email || !email.includes('@')) {
-            alert('Please enter a valid email address.');
+            showFormMessage(form, 'Please enter a valid email address.', false);
             return;
         }
 
-        // Mostrar loader opcional
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn ? submitBtn.innerHTML : '';
+        const submitBtn   = form.querySelector('button[type="submit"]');
+        const originalBtn = submitBtn ? submitBtn.innerHTML : '';
         if (submitBtn) {
             submitBtn.innerHTML = 'Sending...';
-            submitBtn.disabled = true;
+            submitBtn.disabled  = true;
         }
 
+        const ajaxurl = (window.pmNewsletter && window.pmNewsletter.ajaxurl) || '/wp-admin/admin-ajax.php';
+
         const data = new URLSearchParams();
-        data.append('action', 'newsletter_submit');
-        data.append('email', email);
+        data.append('action',          'newsletter_submit');
+        data.append('email',           email);
         data.append('recaptcha_token', token);
 
-        fetch('/wp-admin/admin-ajax.php', {
-            method: 'POST',
+        fetch(ajaxurl, {
+            method:  'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: data.toString()
+            body:    data.toString(),
         })
         .then(res => {
             if (!res.ok) throw new Error('Network error');
             return res.json();
         })
         .then(res => {
-            console.log('AJAX response:', res);
             if (res.success) {
-                // Mensaje según el status (opcional)
-                const message = res.data.response || '¡Operation completed successfully.!';
-                alert(message);
-
-                // Resetear formulario
+                showFormMessage(form, res.data.response || 'You have been successfully subscribed.', true);
                 form.reset();
-
             } else {
-                alert(res.data?.response || 'There was an error processing your subscription.');
+                showFormMessage(form, res.data?.response || 'There was an error processing your subscription.', false);
             }
         })
         .catch(err => {
             console.error('AJAX error:', err);
-            alert('Connection error. Please try again.');
+            showFormMessage(form, 'Connection error. Please try again.', false);
         })
         .finally(() => {
-            // Restaurar botón
             if (submitBtn) {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtn;
+                submitBtn.disabled  = false;
             }
         });
     }

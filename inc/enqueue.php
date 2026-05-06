@@ -20,8 +20,8 @@ function pm_enqueue_assets() {
         'all'
     );
 
-    // Lightbox — en gallery page o cuando el layout hotels_gallery está presente
-    if ( is_page( 'gallery' ) || pm_page_has_section_layout( 'hotels_gallery' ) ) {
+    // Lightbox — en gallery page, hotels_gallery o images_carousel (gallery-slider variant)
+    if ( is_page( 'gallery' ) || pm_page_has_section_layout( 'hotels_gallery' ) || pm_page_has_section_layout( 'images_carousel' ) ) {
         wp_enqueue_style('pm-light-box2-css', PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/css/lightbox2.css',
             array(),
             $pm_essence_version,
@@ -74,7 +74,7 @@ function pm_enqueue_assets() {
      *  PAGE-SPECIFIC: Gallery
      * --------------------------------- */
 
-    if ( is_page( 'gallery' ) || pm_page_has_section_layout( 'hotels_gallery' ) ) {
+    if ( is_page( 'gallery' ) || pm_page_has_section_layout( 'hotels_gallery' ) || pm_page_has_section_layout( 'images_carousel' ) ) {
         wp_enqueue_style(
             'custom-gallery-style',
             PM_ESSENCE_TEMPLATE_URI . '/assets/css/custom-gallery.css',
@@ -163,16 +163,24 @@ function pm_enqueue_assets() {
     );
     wp_script_add_data( 'pm-youtube-background', 'strategy', 'defer' );
 
-    // reCAPTCHA (NO lo cargues globalmente; solo en páginas con formularios)
-    $recaptcha_site_key = (string) get_theme_mod('pm_recaptcha_site_key', '');
-    if ( $recaptcha_site_key !== '' ) {
-        wp_register_script(
+    // reCAPTCHA — solo en páginas con formulario de newsletter
+    $recaptcha_site_key = defined('KEY_API_RECAPTCHA') ? KEY_API_RECAPTCHA : (string) get_theme_mod('pm_recaptcha_site_key', '');
+    $has_newsletter     = pm_page_has_section_layout('newsletter_subscribe_banner');
+
+    if ( $recaptcha_site_key !== '' && $has_newsletter ) {
+        wp_enqueue_script(
             'pm-recaptcha',
             'https://www.google.com/recaptcha/api.js?render=' . rawurlencode($recaptcha_site_key),
             array(),
             null,
             true
         );
+
+        // Pasar ajaxurl y site key al JS de forma segura
+        wp_localize_script( 'main-js', 'pmNewsletter', array(
+            'ajaxurl'       => admin_url('admin-ajax.php'),
+            'recaptchaSiteKey' => $recaptcha_site_key,
+        ) );
     }
 
     /* ---------------------------------

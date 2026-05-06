@@ -20,9 +20,9 @@ $col_class = ($layout_width === 'full_width')
     ? 'col-12'
     : 'col-12 col-md-10';
 
-$bg_url = !empty($bg['sizes']['full'])
+$bg_url = !empty($bg['sizes']['large'])
     ? $bg['sizes']['large']
-    : ($bg['url'] ?? '');
+    : (!empty($bg['url']) ? $bg['url'] : '');
 
 $justify_class = 'justify-content-center';
 if (is_string($form_position)) {

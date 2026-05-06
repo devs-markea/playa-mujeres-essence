@@ -485,6 +485,20 @@ if ( ! function_exists( 'pm_essence_show_social_links' ) ) {
     }
 }
 
+add_filter( 'walker_nav_menu_start_el', 'pm_essence_nav_menu_trigger_arrow', 10, 4 );
+function pm_essence_nav_menu_trigger_arrow( $item_output, $item, $depth, $args ) {
+    $classes = is_array( $item->classes ) ? $item->classes : array();
+    $has_trigger = in_array( 'trigger-filters', $classes, true ) || in_array( 'trigger-experiences', $classes, true );
+
+    if ( ! $has_trigger ) {
+        return $item_output;
+    }
+
+    $svg = '<svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9.75 4.125L6 7.875L2.25 4.125" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+
+    return str_replace( '</a>', $svg . '</a>', $item_output );
+}
+
 if ( ! function_exists( 'pm_essence_menu_where_to_stay_mobile' ) ) {
     /**
      * Display Menu Mobile

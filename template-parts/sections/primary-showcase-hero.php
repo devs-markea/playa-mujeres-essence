@@ -54,8 +54,8 @@ $contact_options        = get_sub_field('contact_options'); // repeater
 $heading_tag = pm_essence_heading_tag_or_null($heading_level, 'h1');
 
 
-$logo_desktop_id = (is_array($logo) && ! empty($logo['ID'])) ? (int) $logo['ID'] : 0;
-$logo_mobile_id  = (is_array($logo_dark) && ! empty($logo_dark['ID'])) ? (int) $logo_dark['ID'] : 0;
+[ $logo_desktop_id ] = pm_normalize_acf_image( $logo );
+[ $logo_mobile_id ]  = pm_normalize_acf_image( $logo_dark );
 
 $logo_alt = '';
 if (is_array($logo) && ! empty($logo['alt'])) {
@@ -143,7 +143,7 @@ $overlay_alpha = pm_page_cover_overlay_alpha($enable_overlay, $overlay_opacity);
                                             <?php if ( $logo_mobile_id ) : ?>
                                                 <source
                                                     media="(max-width: 991.98px)"
-                                                    srcset="<?php echo esc_attr( wp_get_attachment_image_srcset( $logo_mobile_id, 'full' ) ); ?>">
+                                                    srcset="<?php echo esc_attr( wp_get_attachment_image_url( $logo_mobile_id, 'full' ) ); ?>">
                                             <?php endif; ?>
 
                                             <?php

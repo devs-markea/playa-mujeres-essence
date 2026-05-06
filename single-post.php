@@ -285,8 +285,11 @@ if ( have_posts() ) :
                             <h1 class="single-blog-hero__title"><?php echo esc_html( $post_title ); ?></h1>
 
                             <div class="single-blog-hero__meta">
+                                <?php if ( $selected_category instanceof WP_Term ) : ?>
+                                    <span><?php echo esc_html( $selected_category->name ); ?></span>
+                                    <span class="single-blog-hero__meta-line" aria-hidden="true"></span>
+                                <?php endif; ?>
                                 <span><?php echo esc_html( $post_date ); ?></span>
-                                <span><?php echo esc_html( $read_time_label ); ?></span>
                             </div>
                         </div>
                     </div>
