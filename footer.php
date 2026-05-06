@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     <?php get_template_part( 'template-parts/footer/footer', 'default' ); ?>
 </footer>
 <?php get_template_part('inc/components/ui/to-top'); ?>
+<?php get_template_part('template-parts/menu/filters/gastronomy/filter-by-hotel'); ?>
 
 <?php wp_footer(); ?>
 

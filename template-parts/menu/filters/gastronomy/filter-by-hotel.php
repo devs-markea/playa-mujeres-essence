@@ -25,9 +25,21 @@
 
         <div class="pm-collection-filters-menu__body">
             <div class="container">
+                <p class="pm-collection-filters-menu__filter-title"><?php echo esc_html__( 'Filter By Hotel', 'textdomain' ); ?></p>
+                <p class="pm-collection-filters-menu__filter-desc"><?php echo esc_html__( 'You can filter by hotel, choose one from the list below.', 'textdomain' ); ?></p>
                 <div class="pm-collection-filters-menu__pills" data-collection-filters-external-pills>
                     <!-- JS inyecta aquí los pills clonados desde dynamic-collection -->
                 </div>
+            </div>
+        </div>
+
+        <div class="pm-collection-filters-menu__footer">
+            <div class="container">
+                <button type="button"
+                        class="pm-collection-filters-menu__apply"
+                        data-collection-filters-mobile-close>
+                    <?php echo esc_html__( 'View results', 'textdomain' ); ?> (<span data-pm-results-count>0</span>)
+                </button>
             </div>
         </div>
     </div>
@@ -118,12 +130,62 @@
         cursor: pointer;
     }
 
-    /* Contenido scrolleable (cuando metas pills/listas) */
+    /* Body scrolleable */
     .pm-collection-filters-menu__body{
         flex: 1 1 auto;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+        padding: 24px 16px 16px;
+    }
+
+    .pm-collection-filters-menu__filter-title{
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #111;
+        margin-bottom: 8px;
+    }
+
+    .pm-collection-filters-menu__filter-desc{
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 24px;
+    }
+
+    /* Pills: grid 2 columnas */
+    .pm-collection-filters-menu__pills .content-collection__pills-wrap { overflow: visible; }
+    .pm-collection-filters-menu__pills .content-collection__pills {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        flex-wrap: unset;
+        overflow: visible;
+    }
+    .pm-collection-filters-menu__pills .content-collection__pill {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+    }
+
+    /* Footer con botón View results */
+    .pm-collection-filters-menu__footer{
+        flex: 0 0 auto;
         padding: 16px;
+        border-top: 1px solid #E5E5E5;
+    }
+
+    .pm-collection-filters-menu__apply{
+        display: block;
+        width: 100%;
+        background: #111;
+        color: #fff;
+        border: none;
+        padding: 16px;
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
     }
 
     @media (prefers-reduced-motion: reduce){
@@ -165,13 +227,6 @@
             if (isOpen()) closeFiltersMenu();
             else openFiltersMenu();
         };
-
-        document.addEventListener('click', function (e) {
-            var trigger = e.target.closest('[data-collection-filters-mobile-trigger]');
-            if (!trigger) return;
-            e.preventDefault();
-            toggleFiltersMenu();
-        });
 
         document.addEventListener('click', function (e) {
             var closer = e.target.closest('[data-collection-filters-mobile-close]');

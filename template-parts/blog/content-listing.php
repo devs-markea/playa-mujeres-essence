@@ -51,6 +51,7 @@ $categories = get_categories(array(
     'hide_empty' => true,
     'orderby'    => 'name',
     'order'      => 'ASC',
+    'exclude'    => array( get_cat_ID( 'Uncategorized' ) ),
 ));
 
 $listing_query_args = array(
@@ -200,7 +201,23 @@ if (! $has_listing_content) {
                         </div>
                     <?php endif; ?>
 
-                    <?php if ($has_top_posts_sidebar) : ?>
+                    <?php if ( function_exists('wpp_get_mostpopular') ) : ?>
+                        <div class="blog-listing__sidebar-block blog-listing__sidebar-block--panel blog-listing__sidebar-block--top-posts">
+                            <h3 class="blog-listing__sidebar-title">Top Posts</h3>
+                            <?php
+                            wpp_get_mostpopular( array(
+                                'limit'              => 4,
+                                'range'              => 'all',
+                                'thumbnail_width'    => 0,
+                                'thumbnail_height'   => 0,
+                                'display_post_title' => 1,
+                                'wpp_start'          => '<ul class="blog-listing__top-posts">',
+                                'wpp_end'            => '</ul>',
+                                'post_html'          => '<li class="blog-listing__top-posts-item"><a href="{url}" class="blog-listing__top-posts-link">{text_title}</a></li>',
+                            ) );
+                            ?>
+                        </div>
+                    <?php elseif ($has_top_posts_sidebar) : ?>
                         <div class="blog-listing__sidebar-block blog-listing__sidebar-block--panel blog-listing__sidebar-block--top-posts">
                             <h3 class="blog-listing__sidebar-title">Top Posts</h3>
                             <ul class="blog-listing__top-posts">

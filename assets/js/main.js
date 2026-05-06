@@ -1183,7 +1183,7 @@ window.App = window.App || {};
 
 
             new Swiper(el, {
-                initialSlide: lastIndex,
+
                 centeredSlides: true,
                 slidesPerView: 1.25,
                 spaceBetween: 16,
@@ -1428,7 +1428,10 @@ window.App = window.App || {};
         // ── Elemento individual: data-anim="slide-up delay-2" ──
         document.querySelectorAll('[data-anim]').forEach(function (el) {
             var parsed    = parseAnim(el.getAttribute('data-anim'));
-            var fromProps = Object.assign({}, getFromProps(parsed.type), { delay: parsed.delay });
+            var fromProps = Object.assign({}, getFromProps(parsed.type), {
+                delay:    parsed.delay,
+                onComplete: function () { gsap.set(el, { clearProps: 'transform' }); },
+            });
 
             if (inViewport(el)) {
                 gsap.from(el, fromProps);
@@ -1617,14 +1620,21 @@ window.App = window.App || {};
             for (var j = 0; j < cards.length; j++) {
                 var colAll = cards[j].closest('.content-collection__col') || cards[j];
                 colAll.style.display = 'none';
+                colAll.classList.remove('content-collection__col--odd', 'content-collection__col--even');
             }
             for (var k = 0; k < filtered.length; k++) {
                 var col = filtered[k].closest('.content-collection__col') || filtered[k];
-                if (k < visibleLimit) col.style.display = '';
+                if (k < visibleLimit) {
+                    col.style.display = '';
+                    // Reasignar odd/even según posición visible para mantener el escalonado
+                    col.classList.add(k % 2 === 0 ? 'content-collection__col--odd' : 'content-collection__col--even');
+                }
             }
             if (loadMoreBtn) {
                 loadMoreBtn.style.display = filtered.length > visibleLimit ? '' : 'none';
             }
+            var countEl = document.querySelector('[data-pm-results-count]');
+            if (countEl) countEl.textContent = filtered.length;
         }
 
         function resetAndApply() { visibleLimit = STEP; apply(); }
@@ -1745,6 +1755,22 @@ window.App = window.App || {};
         syncPillsUI();
         apply();
         mountExternalPillsFromScroller();
+
+        // Wire trigger button → existing .pm-collection-filters-menu panel
+        var triggerBtn = section.querySelector('[data-collection-filters-mobile-trigger]');
+        if (triggerBtn) {
+            triggerBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var panel = document.querySelector('.pm-collection-filters-menu');
+                if (!panel) return;
+                var opening = !panel.classList.contains('-is-active');
+                panel.classList.toggle('-is-active', opening);
+                panel.setAttribute('aria-hidden', opening ? 'false' : 'true');
+                document.body.style.overflow = opening ? 'hidden' : '';
+                if (opening) apply();
+            });
+        }
+
     }
 
     // Blog Listing — Featured swiper

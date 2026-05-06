@@ -68,7 +68,6 @@ if ( empty( $section_text ) ) {
         display: block;
         width: 100%;
         height: auto;
-        aspect-ratio: 1.45 / 1;
         object-fit: cover;
     }
 

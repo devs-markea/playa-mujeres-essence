@@ -2272,8 +2272,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     border-left: 1px solid #fff;
 }
 
-.images-carousel.images-carousel--gallery-slider
-.images-carousel__caption-title {
+.images-carousel.images-carousel--gallery-slider .images-carousel__caption-title {
     font-family: var(--pm-font-secondary);
     font-size: 18px;
     font-weight: var(--fw-medium);
@@ -2292,11 +2291,9 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     display: flex;
     justify-content: center;
     gap: 10px;
-    flex-direction: row-reverse;
 }
 
-.images-carousel.images-carousel--gallery-slider
-.images-carousel__pagination .swiper-pagination-bullet {
+.images-carousel.images-carousel--gallery-slider .images-carousel__pagination .swiper-pagination-bullet {
     width: 16px;
     height: 8px;
     background: #A9AAAA;
@@ -2306,8 +2303,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.images-carousel.images-carousel--gallery-slider
-.images-carousel__pagination .swiper-pagination-bullet-active {
+.images-carousel.images-carousel--gallery-slider .images-carousel__pagination .swiper-pagination-bullet-active {
     width: 32px;
     height: 8px;
     background: #CFAB76;
@@ -2535,7 +2531,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 }
 
 .blog-listing__card {
-    height: 110px;
+    min-height: 110px;
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -2552,11 +2548,12 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 
 .blog-listing__card-media-link {
     display: block;
-    flex: 0 0 50%;
+    flex: 0 0 132px;
     max-width: 132px;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
     background: #e6e1d8;
-    height: 100%;
+    align-self: flex-start;
     text-decoration: none;
 }
 
@@ -2575,7 +2572,6 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 .blog-listing__card-content {
     width: 100%;
     flex: 1 1 auto;
-    padding: 8px 24px;
     gap: 8px;
 }
 
@@ -2668,15 +2664,13 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     }
 
     .blog-listing__card {
-        height: 168px;
+        min-height: 168px;
     }
 
     .blog-listing__card-media-link {
+        flex: 0 0 50%;
         max-width: 50%;
-    }
-
-    .blog-listing__card-taxonomy {
-        font-size: 16px;
+        aspect-ratio: 4 / 3;
     }
 
 
@@ -2829,6 +2823,10 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     object-fit: cover;
 }
 
+.single-blog-content {
+    margin-bottom: 48px;
+}
+
 .single-blog-content h2,
 .single-blog-content h3,
 .single-blog-content h4,
@@ -2848,6 +2846,12 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     color: #323232;
     font-size: 16px;
     font-weight: var(--fw-regular);
+}
+
+@media (min-width: 992px) {
+    .single-blog-content {
+        margin-bottom: 62px;
+    }
 }
 
 .single-post-share-this {
@@ -2927,6 +2931,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 }
 
 @media (max-width: 991.98px) {
+
 
     .category-hero {
         padding: 167px 0 32px;
@@ -3724,6 +3729,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     font-weight: var(--fw-light);
     cursor: pointer;
     transition: opacity .25s ease;
+    color: var(--pm-secondary-900);
 }
 
 .content-showcase__rail--mobile .content-showcase__tab.is-active { opacity: 1; }
@@ -4760,11 +4766,11 @@ body.is-experiences-scrolllocked {
         padding: 30px 30px 0;
     }
 
-    .content-collection__grid > .content-collection__col:nth-child(odd) {
+    .content-collection__grid > .content-collection__col--odd {
         margin-top: 40px;
     }
 
-    .content-collection__grid > .content-collection__col:nth-child(even) {
+    .content-collection__grid > .content-collection__col--even {
         margin-top: 240px;
     }
 }
@@ -4909,6 +4915,10 @@ body.is-experiences-scrolllocked {
 .content-collection--dynamic-collection .content-collection__media {
     aspect-ratio: 4 / 3;
     max-height: 420px;
+}
+
+.content-collection--dynamic-collection .content-collection__wrapper-content-collection {
+    margin-bottom: 3rem;
 }
 
 .content-collection--dynamic-collection .content-collection__image,
