@@ -98,16 +98,16 @@ function pm_enqueue_assets() {
          * --------------------------------- */
     wp_register_style(
         'pm-swiper',
-        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/libs/swiper/swiper-bundle.min.css',
         array(),
-        null, // null → no ?ver=; la versión ya está fijada en la URL del CDN
+        '11',
         'all'
     );
     wp_register_script(
         'pm-swiper',
-        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/libs/swiper/swiper-bundle.min.js',
         array(),
-        null, // null → no ?ver=; la versión ya está fijada en la URL del CDN
+        '11',
         true
     );
 
@@ -132,26 +132,36 @@ function pm_enqueue_assets() {
     // GSAP — siempre se carga: lo usan initPageCoverReveal e initFadeAnimations en todas las páginas
     wp_register_script(
         'pm-gsap',
-        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/libs/gsap/gsap.min.js',
         array(),
-        null,
+        '3.14.1',
         true
     );
     wp_register_script(
         'pm-gsap-st',
-        'https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/libs/gsap/ScrollTrigger.min.js',
         array('pm-gsap'),
-        null,
+        '3.14.1',
         true
     );
     wp_enqueue_script('pm-gsap');
     wp_enqueue_script('pm-gsap-st');
+    wp_script_add_data('pm-gsap',    'strategy', 'defer');
+    wp_script_add_data('pm-gsap-st', 'strategy', 'defer');
 
-    // Swiper — solo en páginas que lo necesitan
+    // Swiper — solo en páginas que lo necesitan (debe encolarse antes de main-js)
     if ( $load_swiper ) {
         wp_enqueue_style('pm-swiper');
         wp_enqueue_script('pm-swiper');
     }
+
+    // main-js: depende de GSAP, ScrollTrigger y opcionalmente Swiper — siempre al final.
+    $main_deps = array( 'jquery', 'pm-gsap', 'pm-gsap-st' );
+    if ( $load_swiper ) {
+        $main_deps[] = 'pm-swiper';
+    }
+    wp_enqueue_script( 'main-js', get_template_directory_uri() . '/assets/js/main.js', $main_deps, $pm_essence_version, true );
+    wp_script_add_data('main-js', 'strategy', 'defer');
 
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
     wp_register_script(
@@ -252,7 +262,7 @@ add_action( 'wp_head', 'pm_preload_lcp_image', 1 );
  */
 function pm_preconnect_hints() {
     // Swiper + GSAP vienen de jsDelivr — preconnect elimina el DNS/TLS handshake en runtime.
-    echo '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>' . "\n";
+//    echo '<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>' . "\n";
     // YouTube — usado en video_hero como iframe y como fuente de thumbnails.
 
 }

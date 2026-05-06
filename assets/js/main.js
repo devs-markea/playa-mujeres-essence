@@ -350,34 +350,36 @@ window.App = window.App || {};
     }
 
 
+    const openMenu = () => {
+        if (menuMobile) menuMobile.classList.add("-is-active");
+        if (body) body.style.overflow = "hidden";
+    };
+
+    const closeMenu = () => {
+        if (menuMobile) menuMobile.classList.remove("-is-active");
+        if (body) body.style.overflow = "";
+    };
+
     // Menú mobile
     function initMobileMenu() {
         if (!header) return;
-
-        const openMenu = () => {
-            if (menuMobile) menuMobile.classList.add("-is-active");
-            if (body) body.style.overflow = "hidden";
-        };
-
-        const closeMenu = () => {
-            //header.classList.remove("menu-open");
-            if (menuMobile) menuMobile.classList.remove("-is-active");
-            if (body) body.style.overflow = "";
-        };
-
         hamburgerBtn && hamburgerBtn.addEventListener("click", openMenu);
         closeBtn     && closeBtn.addEventListener("click", closeMenu);
     }
 
+    var isMobile = () => window.innerWidth < 992;
+
     // Menús mobile de filtros/experiencias
     function initMobilePanels() {
-        const openersWhere = document.querySelectorAll('.pm-navbar-mobile .trigger-filters');
+        const openersWhere = document.querySelectorAll('.trigger-filters');
         const closerWhere  = document.querySelector('.back-arrow-where-to-stay');
 
         if (panelWhereMobile) {
             openersWhere.forEach(opener => {
                 opener.addEventListener('click', e => {
+                    if (!isMobile()) return;
                     e.preventDefault();
+                    openMenu();
                     panelWhereMobile.classList.add('is-open');
                     opener.classList.add('is-open');
                 });
@@ -390,13 +392,15 @@ window.App = window.App || {};
             });
         }
 
-        const openersExp = document.querySelectorAll('.pm-navbar-mobile .trigger-experiences');
+        const openersExp = document.querySelectorAll('.trigger-experiences');
         const closerExp  = document.querySelector('.back-arrow-menu-experiences');
 
         if (panelExpMobile) {
             openersExp.forEach(opener => {
                 opener.addEventListener('click', e => {
+                    if (!isMobile()) return;
                     e.preventDefault();
+                    openMenu();
                     panelExpMobile.classList.add('is-open');
                     opener.classList.add('is-open');
                 });
@@ -416,12 +420,12 @@ window.App = window.App || {};
             var whereTrigger = event.target.closest('.trigger-filters');
             var expTrigger   = event.target.closest('.trigger-experiences');
 
-            if (whereTrigger && megaPanelWhere) {
+            if (whereTrigger && megaPanelWhere && !isMobile()) {
                 togglePanel('where', event);
                 return;
             }
 
-            if (expTrigger && megaPanelExp) {
+            if (expTrigger && megaPanelExp && !isMobile()) {
                 togglePanel('experiences', event);
                 return;
             }
@@ -1417,18 +1421,27 @@ window.App = window.App || {};
             }
         }
 
+        function inViewport(el) {
+            var rect = el.getBoundingClientRect();
+            return rect.top < window.innerHeight && rect.bottom > 0;
+        }
+
         // ── Elemento individual: data-anim="slide-up delay-2" ──
         document.querySelectorAll('[data-anim]').forEach(function (el) {
             var parsed    = parseAnim(el.getAttribute('data-anim'));
-            var fromProps = Object.assign({}, getFromProps(parsed.type), {
-                delay: parsed.delay,
-                scrollTrigger: {
-                    trigger: el,
-                    start: 'top 70%',
-                    toggleActions: 'play none none none',
-                }
-            });
-            gsap.from(el, fromProps);
+            var fromProps = Object.assign({}, getFromProps(parsed.type), { delay: parsed.delay });
+
+            if (inViewport(el)) {
+                gsap.from(el, fromProps);
+            } else {
+                gsap.from(el, Object.assign({}, fromProps, {
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 70%',
+                        toggleActions: 'play none none none',
+                    }
+                }));
+            }
         });
 
         // ── Grupo: data-anim-wrap > data-anim-child="slide-up delay-1" ──
@@ -1436,18 +1449,25 @@ window.App = window.App || {};
             var children = wrap.querySelectorAll('[data-anim-child]');
             if (!children.length) return;
 
-            var tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: wrap,
-                    start: 'top 70%',
-                    toggleActions: 'play none none none',
-                }
-            });
-
-            children.forEach(function (child) {
-                var parsed = parseAnim(child.getAttribute('data-anim-child'));
-                tl.from(child, getFromProps(parsed.type), parsed.delay);
-            });
+            if (inViewport(wrap)) {
+                var tl = gsap.timeline();
+                children.forEach(function (child) {
+                    var parsed = parseAnim(child.getAttribute('data-anim-child'));
+                    tl.from(child, getFromProps(parsed.type), parsed.delay);
+                });
+            } else {
+                var tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: wrap,
+                        start: 'top 70%',
+                        toggleActions: 'play none none none',
+                    }
+                });
+                children.forEach(function (child) {
+                    var parsed = parseAnim(child.getAttribute('data-anim-child'));
+                    tl.from(child, getFromProps(parsed.type), parsed.delay);
+                });
+            }
         });
 
         // Recalcular posiciones tras carga completa (imágenes, layout final)
@@ -1876,9 +1896,9 @@ window.App = window.App || {};
             };
 
             if ('requestIdleCallback' in window) {
-                requestIdleCallback(initVbg, { timeout: 3000 });
+                requestIdleCallback(initVbg, { timeout: 800 });
             } else {
-                setTimeout(initVbg, 3000);
+                setTimeout(initVbg, 800);
             }
         }
 
@@ -1909,9 +1929,11 @@ window.App = window.App || {};
 
 })(window.App);
 
-// DOM listo
-document.addEventListener("DOMContentLoaded", function () {
-    if (window.App && typeof window.App.init === 'function') {
+// DOM listo — si DOMContentLoaded ya disparó (script defer cargó tarde), ejecutar de inmediato.
+if (document.readyState === 'loading') {
+    document.addEventListener("DOMContentLoaded", function () {
         window.App.init();
-    }
-});
+    });
+} else {
+    window.App.init();
+}

@@ -255,7 +255,7 @@ if ( ! class_exists( 'PM_Essence_Core' ) ) :
             wp_enqueue_script('jquery');
 
             //wp_enqueue_script( 'blockui-js', get_template_directory_uri() . '/assets/libs/blockui/jquery.blockUI.min.js', array('jquery'), $pm_essence_version, false );
-            wp_enqueue_script( 'main-js', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), $pm_essence_version, false );
+            // main-js se encola en enqueue.php (prioridad 20) donde pm-gsap ya está registrado.
 
 
         }
