@@ -712,6 +712,48 @@ if (!function_exists('pm_get_hotel_primary_showcase_logo')) {
 }
 
 
+add_filter( 'rest_pre_dispatch', function( $result, $server, $request ) {
+    $route = $request->get_route();
+
+    if ( strpos( $route, '/wordpress-popular-posts/' ) === false ) {
+        return $result;
+    }
+
+    if ( 'POST' !== $request->get_method() ) {
+        return $result;
+    }
+
+    if ( ! preg_match( '#/v2/views/(\d+)#', $route, $matches ) ) {
+        return $result;
+    }
+
+    $post_id = (int) $matches[1];
+    if ( ! $post_id ) {
+        return $result;
+    }
+
+    $ip = '';
+    if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+        $ip = trim( explode( ',', $_SERVER['HTTP_X_FORWARDED_FOR'] )[0] );
+    } elseif ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+
+    if ( ! $ip ) {
+        return $result;
+    }
+
+    $transient_key = 'wpp_ip_' . md5( $ip . '_' . $post_id );
+
+    if ( false !== get_transient( $transient_key ) ) {
+        return new WP_REST_Response( array( 'results' => 'WPP: OK. Already counted.' ), 200 );
+    }
+
+    set_transient( $transient_key, 1, DAY_IN_SECONDS );
+
+    return $result;
+}, 10, 3 );
+
 if (!function_exists('pm_essence_contact_href')) {
     /**
      *

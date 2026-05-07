@@ -290,6 +290,11 @@ if ( have_posts() ) :
                                     <span class="single-blog-hero__meta-line" aria-hidden="true"></span>
                                 <?php endif; ?>
                                 <span><?php echo esc_html( $post_date ); ?></span>
+                                <?php if ( function_exists('get_favorites_button') ) : ?>
+                                    <span class="single-blog-hero__favorite">
+                                        <?php echo get_favorites_button( get_the_ID() ); ?>
+                                    </span>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

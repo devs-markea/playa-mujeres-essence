@@ -1950,7 +1950,43 @@ window.App = window.App || {};
         initFadeAnimations();
         initDynamicCollectionFilter();
         lazyLoadImages('.img-fluid');
+        initFavoritesI18n();
     };
+
+    function initFavoritesI18n() {
+        var lang = (document.documentElement.lang || 'en').split('-')[0].toLowerCase();
+        var labels = {
+            'en': { save: 'Like',     saved: 'Liked'    },
+            'es': { save: 'Me gusta', saved: 'Me gusta' },
+            'fr': { save: "J'aime",   saved: "J'aime"   }
+        };
+        var l = labels[lang] || labels['en'];
+
+        // Sobrescribir los labels en el objeto JS del plugin (controla el toggle)
+        if (window.favorites_data && window.favorites_data.button_options && window.favorites_data.button_options.button_type) {
+            window.favorites_data.button_options.button_type.state_default = l.save;
+            window.favorites_data.button_options.button_type.state_active  = l.saved;
+        }
+
+        function updateBtn(btn) {
+            var isActive = btn.classList.contains('simplefavorite-button-added');
+            // Preset mode: texto en nodo de texto tras el <i>
+            var icon = btn.querySelector('i');
+            if (icon && icon.nextSibling && icon.nextSibling.nodeType === 3) {
+                icon.nextSibling.textContent = isActive ? l.saved : l.save;
+            } else if (!icon) {
+                // Custom markup mode
+                var textEl = btn.querySelector('.favorites-button-text');
+                if (textEl) textEl.textContent = isActive ? l.saved : l.save;
+            }
+        }
+
+        document.querySelectorAll('.simplefavorite-button, .favorites-button').forEach(updateBtn);
+
+        jQuery(document).on('favorites-updated-single', function() {
+            document.querySelectorAll('.simplefavorite-button, .favorites-button').forEach(updateBtn);
+        });
+    }
 
 })(window.App);
 

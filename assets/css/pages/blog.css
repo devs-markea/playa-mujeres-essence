@@ -73,7 +73,7 @@
 
 .blog-hero-card {
     position: relative;
-    min-height: 420px;
+    min-height: 448px;
     height: 100%;
     background: #d8d8d8;
     overflow: hidden;
@@ -100,8 +100,8 @@
     pointer-events: none;
     background: linear-gradient(
             180deg,
-            rgba(0, 0, 0, 0) 9.33%,
-            rgba(0, 0, 0, 0.60) 78.15%
+            rgba(0, 0, 0, 0.18) 0%,
+            rgba(0, 0, 0, 0.65) 100%
     );
 }
 
@@ -126,7 +126,7 @@
     font-weight: var(--fw-medium);
     line-height: 1.15;
     color: #fff;
-    font-size: 24px;
+    font-size: 20px;
     max-width: 100%;
     opacity: 0.9;
     transform: translateY(6px);
@@ -152,40 +152,32 @@
 
 .blog-hero-card__excerpt {
     display: block;
-    max-width: 100%;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
 }
 
 .blog-hero-card__footer {
-    margin-top: 18px;
     pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 16px;
 }
 
-.blog-hero-card__cta-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
+.blog-hero-card__footer .arrow-circle {
+    flex-shrink: 0;
+}
+
+.blog-hero-card__footer .arrow-circle__link {
     color: #fff;
-    text-decoration: none;
-    pointer-events: auto;
 }
 
-.blog-hero-card__cta-label {
+.blog-hero-card__footer .arrow-circle__label {
     font-size: 14px;
     line-height: 1;
-    color: #fff;
 }
 
-.blog-hero-card__cta-icon {
-    width: 34px;
-    height: 34px;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    flex: 0 0 34px;
-}
 
 .blog-hero__controls {
     display: flex;
@@ -221,6 +213,22 @@
         min-height: calc(100vh - 90px);
         padding: 0;
         margin-top: 90px;
+    }
+
+    .blog-hero-card__footer {
+        pointer-events: auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .blog-hero-card {
+        min-height: 420px;
+    }
+
+    .blog-hero-card__title {
+        font-size: 24px;
     }
 
     .blog-hero__heading {
@@ -307,9 +315,7 @@
         line-height: 1.45;
     }
 
-    .blog-hero__slide .blog-hero-card__footer {
-        align-items: end;
-    }
+
 
     .blog-hero__slide.is-featured .blog-hero-card__title-label {
         opacity: 0;

@@ -54,12 +54,37 @@ $categories = get_categories(array(
     'exclude'    => array( get_cat_ID( 'Uncategorized' ) ),
 ));
 
+$sidebar_featured_posts = array();
+$featured_swiper_posts  = array();
+
+// Posts destacados: tag 'featured' (Polylang filtra automáticamente por idioma)
+$featured_swiper_query = new WP_Query( array(
+    'post_type'           => 'post',
+    'post_status'         => 'publish',
+    'posts_per_page'      => 4,
+    'tag'                 => 'featured',
+    'orderby'             => 'date',
+    'order'               => 'DESC',
+    'ignore_sticky_posts' => true,
+) );
+$featured_swiper_posts = $featured_swiper_query->have_posts() ? $featured_swiper_query->posts : array();
+wp_reset_postdata();
+// Sin posts con tag 'featured' → swiper se oculta
+
+$swiper_post_ids = ! empty( $featured_swiper_posts )
+    ? array_map( function( $p ) { return $p->ID; }, $featured_swiper_posts )
+    : array();
+
 $listing_query_args = array(
     'post_type'           => 'post',
     'post_status'         => 'publish',
     'posts_per_page'      => -1,
     'ignore_sticky_posts' => true,
 );
+
+if ( ! empty( $swiper_post_ids ) ) {
+    $listing_query_args['post__not_in'] = $swiper_post_ids;
+}
 
 if ($selected_category instanceof WP_Term) {
     $listing_query_args['tax_query'] = array(
@@ -87,48 +112,6 @@ $remaining_posts     = array_slice($listing_posts, $primary_visible_limit);
 if (! $enable_load_more) {
     $remaining_posts = array_slice($remaining_posts, 0, $secondary_visible_posts);
 }
-
-$sidebar_featured_posts = array();
-$featured_swiper_posts  = array();
-$sticky_posts           = array_map('absint', (array) get_option('sticky_posts'));
-
-$featured_base_query_args = array(
-    'post_type'           => 'post',
-    'post_status'         => 'publish',
-    'posts_per_page'      => 4,
-    'ignore_sticky_posts' => false,
-);
-
-if ($selected_category instanceof WP_Term) {
-    $featured_base_query_args['tax_query'] = array(
-        array(
-            'taxonomy' => 'category',
-            'field'    => 'term_id',
-            'terms'    => $selected_category->term_id,
-        ),
-    );
-}
-
-if (! empty($sticky_posts)) {
-    $featured_base_query_args['post__in'] = $sticky_posts;
-    $featured_base_query_args['orderby']  = 'post__in';
-}
-
-$featured_swiper_query = new WP_Query($featured_base_query_args);
-
-if ($featured_swiper_query->have_posts()) {
-    $featured_swiper_posts = $featured_swiper_query->posts;
-} elseif (empty($sticky_posts)) {
-    $featured_swiper_fallback_args = $featured_base_query_args;
-    $featured_swiper_fallback_args['ignore_sticky_posts'] = true;
-    unset($featured_swiper_fallback_args['post__in'], $featured_swiper_fallback_args['orderby']);
-
-    $featured_swiper_fallback_query = new WP_Query($featured_swiper_fallback_args);
-    $featured_swiper_posts          = $featured_swiper_fallback_query->have_posts() ? $featured_swiper_fallback_query->posts : array();
-    wp_reset_postdata();
-}
-
-wp_reset_postdata();
 
 if ($display_featured_posts) {
     $sidebar_featured_posts = $featured_swiper_posts;

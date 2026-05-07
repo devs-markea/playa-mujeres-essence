@@ -2358,7 +2358,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     font-weight: var(--fw-regular);
     line-height: normal;
     margin: 0;
-    padding: 0 12px;
+    padding: 0;
 }
 
 .blog-listing__description {
@@ -2657,6 +2657,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
 @media (min-width: 991.98px) {
     .blog-listing__heading {
         font-size: 26px;
+        padding: 0 12px;
     }
 
     .blog-listing__sidebar-title {
@@ -2809,6 +2810,10 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     height: 1px;
     background: #999;
     flex: 0 0 auto;
+}
+
+.single-blog-hero__favorite {
+    margin-left: auto;
 }
 
 .single-blog-hero__media {

@@ -53,6 +53,7 @@ if ( is_admin() ) {
  * across translations — avoids corruption when a component is removed and
  * ACF re-indexes the remaining items.
  */
+
 add_filter( 'pll_copy_post_metas', function( $metas, $sync ) {
     return array_values( array_filter( $metas, function( $key ) {
         return ! str_starts_with( $key, 'sections' )

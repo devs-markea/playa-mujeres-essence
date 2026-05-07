@@ -191,6 +191,7 @@ function pm_enqueue_assets() {
             'ajaxurl'       => admin_url('admin-ajax.php'),
             'recaptchaSiteKey' => $recaptcha_site_key,
         ) );
+
     }
 
     /* ---------------------------------
