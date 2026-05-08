@@ -1,8 +1,14 @@
 <?php get_header(); ?>
 
-<main>
-    <h2>INDEX TEST - PM ESSENCE</h2>
-    <p>Prueba de escritorio</p>
-</main>
+<?php if( have_posts() ): ?>
+    <?php while( have_posts() ): the_post(); ?>
+        <section class="py-5">
+            <div class="container">
+                <?php the_content(); ?>
+            </div>
+        </section>
+    <?php endwhile; ?>
+<?php endif; ?>
 
 <?php get_footer(); ?>
+

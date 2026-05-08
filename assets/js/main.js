@@ -1264,6 +1264,11 @@ window.App = window.App || {};
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
+                if (typeof grecaptcha === 'undefined') {
+                    showFormMessage(form, 'Security verification not ready. Please try again in a moment.', false);
+                    return;
+                }
+
                 grecaptcha.ready(function () {
                     grecaptcha.execute(siteKey, { action: 'newsletter_submit' })
                         .then(function (token) {
@@ -1277,15 +1282,8 @@ window.App = window.App || {};
             });
         }
 
-        // reCAPTCHA puede no estar listo aún en DOMContentLoaded — esperar con grecaptcha.ready
-        if (typeof grecaptcha !== 'undefined') {
-            forms.forEach(attachSubmit);
-        } else {
-            // Fallback: esperar a que el script de reCAPTCHA termine de cargar
-            window.onRecaptchaLoad = function () {
-                forms.forEach(attachSubmit);
-            };
-        }
+        // Siempre adjuntar el listener — grecaptcha.ready() maneja el timing internamente
+        forms.forEach(attachSubmit);
     }
 
     // Muestra mensaje de éxito/error inline debajo del form
@@ -1800,47 +1798,54 @@ window.App = window.App || {};
         });
     }
 
-    // Blog Listing — Load more
+    // Blog Listing — Load more (AJAX)
     function initBlogListingLoadMore() {
         var listingRoots = document.querySelectorAll('[data-blog-listing-root]');
         if (!listingRoots.length) return;
 
+        var ajaxUrl = (window.pmNewsletter && window.pmNewsletter.ajaxurl) || '/wp-admin/admin-ajax.php';
+
         listingRoots.forEach(function (listingRoot) {
-            var button   = listingRoot.querySelector('[data-blog-listing-load-more][data-blog-listing-trigger="items"]');
-            var itemsGrid = listingRoot.querySelector('[data-blog-listing-items]');
-            if (!button || !itemsGrid) return;
-
-            function getHiddenCards() {
-                return itemsGrid.querySelectorAll('[data-blog-listing-grid-item][data-blog-listing-hidden="true"]');
-            }
-
-            function updateButtonVisibility() {
-                button.style.display = getHiddenCards().length ? '' : 'none';
-            }
-
-            updateButtonVisibility();
+            var button = listingRoot.querySelector('[data-blog-listing-load-more]');
+            var grid   = listingRoot.querySelector('[data-blog-listing-more-grid]');
+            if (!button || !grid) return;
 
             button.addEventListener('click', function () {
-                var batchSize   = parseInt(button.getAttribute('data-batch-size') || '8', 10);
-                var hiddenCards = getHiddenCards();
-                var revealed    = 0;
+                var page     = parseInt(button.getAttribute('data-page') || '3', 10);
+                var exclude  = button.getAttribute('data-exclude') || '';
+                var category = button.getAttribute('data-category') || '0';
+                var lang     = button.getAttribute('data-lang') || '';
+                var nonce    = button.getAttribute('data-nonce') || '';
 
-                hiddenCards.forEach(function (card) {
-                    if (revealed >= batchSize) return;
+                button.disabled = true;
+                button.classList.add('is-loading');
 
-                    var article = card.querySelector('.blog-listing__card');
-                    card.classList.remove('is-hidden');
-                    card.removeAttribute('data-blog-listing-hidden');
+                var formData = new FormData();
+                formData.append('action', 'pm_load_more_posts');
+                formData.append('nonce', nonce);
+                formData.append('page', page);
+                formData.append('exclude', exclude);
+                formData.append('category_id', category);
+                formData.append('lang', lang);
 
-                    if (article) {
-                        article.classList.remove('is-hidden');
-                        article.removeAttribute('data-blog-listing-hidden');
-                    }
-
-                    revealed += 1;
-                });
-
-                updateButtonVisibility();
+                fetch(ajaxUrl, { method: 'POST', body: formData })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.success && data.data.html) {
+                            grid.insertAdjacentHTML('beforeend', data.data.html);
+                            button.setAttribute('data-page', page + 1);
+                        }
+                        if (!data.success || !data.data.has_more) {
+                            button.closest('.blog-listing__actions').remove();
+                        } else {
+                            button.disabled = false;
+                            button.classList.remove('is-loading');
+                        }
+                    })
+                    .catch(function () {
+                        button.disabled = false;
+                        button.classList.remove('is-loading');
+                    });
             });
         });
     }

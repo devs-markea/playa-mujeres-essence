@@ -72,7 +72,6 @@ if ( ! function_exists( 'handle_newsletter_submit' ) ) {
             wp_send_json_error([
                 'status'   => 'server_error',
                 'response' => 'Server connection error.',
-                'debug' => $response->get_error_message()
             ]);
         }
 

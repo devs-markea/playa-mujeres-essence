@@ -1,15 +1,17 @@
 <?php
 $args = wp_parse_args($args ?? array(), array(
-    'blog_page_id'  => 0,
-    'blog_settings' => array(),
-    'current_term'  => null,
+    'blog_page_id'    => 0,
+    'blog_settings'   => array(),
+    'current_term'    => null,
     'listing_context' => 'blog',
+    'hero_post_ids'   => array(),
 ));
 
 $blog_page_id  = (int) $args['blog_page_id'];
 $blog_settings = is_array($args['blog_settings']) ? $args['blog_settings'] : array();
 $current_term  = $args['current_term'] instanceof WP_Term ? $args['current_term'] : null;
 $listing_context = in_array($args['listing_context'], array('blog', 'category'), true) ? $args['listing_context'] : 'blog';
+$hero_post_ids = array_filter( array_map( 'absint', (array) $args['hero_post_ids'] ) );
 
 $listing_heading       = isset($blog_settings['heading_listing']) ? $blog_settings['heading_listing'] : '';
 $listing_heading_level = isset($blog_settings['heading_level_listing']) ? $blog_settings['heading_level_listing'] : 'h2';
@@ -75,15 +77,19 @@ $swiper_post_ids = ! empty( $featured_swiper_posts )
     ? array_map( function( $p ) { return $p->ID; }, $featured_swiper_posts )
     : array();
 
+// Cargamos los 2 primeros lotes (8 + 8) en una sola query
+$pm_batch   = 8;
 $listing_query_args = array(
     'post_type'           => 'post',
     'post_status'         => 'publish',
-    'posts_per_page'      => -1,
+    'posts_per_page'      => $pm_batch * 2,
+    'paged'               => 1,
     'ignore_sticky_posts' => true,
 );
 
-if ( ! empty( $swiper_post_ids ) ) {
-    $listing_query_args['post__not_in'] = $swiper_post_ids;
+$exclude_ids = array_values( array_unique( array_merge( $hero_post_ids, $swiper_post_ids ) ) );
+if ( ! empty( $exclude_ids ) ) {
+    $listing_query_args['post__not_in'] = $exclude_ids;
 }
 
 if ($selected_category instanceof WP_Term) {
@@ -100,20 +106,17 @@ $listing_query = new WP_Query($listing_query_args);
 $listing_posts = $listing_query->have_posts() ? $listing_query->posts : array();
 $listing_posts = array_values($listing_posts);
 
-$initial_visible_posts = min($posts_per_page, count($listing_posts));
-$primary_visible_limit = min(8, $initial_visible_posts);
-$secondary_visible_posts = max(0, $initial_visible_posts - $primary_visible_limit);
-$load_more_start_index = $initial_visible_posts;
-$has_hidden_listing_posts = $enable_load_more && count($listing_posts) > $load_more_start_index;
+$first_listing_posts = array_slice($listing_posts, 0, $pm_batch);
+$remaining_posts     = array_slice($listing_posts, $pm_batch);
 
-$first_listing_posts = array_slice($listing_posts, 0, $primary_visible_limit);
-$remaining_posts     = array_slice($listing_posts, $primary_visible_limit);
+// ¿Hay más posts más allá de los 16 cargados?
+$has_more_posts = $listing_query->found_posts > ( $pm_batch * 2 );
+$load_more_page     = 3; // página siguiente tras los 2 lotes iniciales
+$load_more_exclude  = implode( ',', $exclude_ids );
+$load_more_category = ( $selected_category instanceof WP_Term ) ? (int) $selected_category->term_id : 0;
+$load_more_lang     = function_exists( 'pll_current_language' ) ? pll_current_language() : '';
 
-if (! $enable_load_more) {
-    $remaining_posts = array_slice($remaining_posts, 0, $secondary_visible_posts);
-}
-
-if ($display_featured_posts) {
+if ( $display_featured_posts ) {
     $sidebar_featured_posts = $featured_swiper_posts;
 }
 
@@ -275,7 +278,7 @@ if (! $has_listing_content) {
                                         $post_term_name = (! is_wp_error($post_terms) && ! empty($post_terms)) ? $post_terms[0]->name : '';
                                         ?>
                                         <div class="col-12 col-lg-6 mb-4 mb-lg-5" data-blog-listing-grid-item>
-                                            <article class="blog-listing__card card flex-row">
+                                            <article class="blog-listing__card card">
                                                 <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-media-link" aria-label="<?php echo esc_attr($post_title); ?>">
                                                     <?php if (has_post_thumbnail($post_id)) : ?>
                                                         <?php echo get_the_post_thumbnail($post_id, 'large', array('class' => 'blog-listing__card-image card-img-left example-card-img-responsive')); ?>
@@ -358,22 +361,20 @@ if (! $has_listing_content) {
                 </div>
             <?php endif; ?>
 
-            <?php if (! empty($remaining_posts)) : ?>
-                <div class="row g-0 blog-listing__remaining-row">
-                    <div class="col-12">
-                        <div class="blog-listing__grid row g-0" data-blog-listing-grid>
-                            <?php foreach ($remaining_posts as $index => $listing_post) : ?>
+            <div class="row g-0 blog-listing__remaining-row">
+                <div class="col-12">
+                    <?php if (! empty($remaining_posts)) : ?>
+                        <div class="blog-listing__grid row g-0" data-blog-listing-more-grid>
+                            <?php foreach ($remaining_posts as $listing_post) : ?>
                                 <?php
                                 $post_id        = (int) $listing_post->ID;
                                 $post_title     = get_the_title($post_id);
                                 $post_permalink = get_permalink($post_id);
                                 $post_terms     = get_the_terms($post_id, 'category');
                                 $post_term_name = (! is_wp_error($post_terms) && ! empty($post_terms)) ? $post_terms[0]->name : '';
-                                $absolute_index = $primary_visible_limit + $index;
-                                $is_hidden      = $has_hidden_listing_posts && $absolute_index >= $load_more_start_index;
                                 ?>
-                                <div class="col-12 col-lg-6 mb-4 mb-lg-5<?php echo $is_hidden ? ' is-hidden' : ''; ?>" data-blog-listing-grid-item <?php echo $is_hidden ? 'data-blog-listing-hidden="true"' : ''; ?>>
-                                    <article class="blog-listing__card card flex-row<?php echo $is_hidden ? ' is-hidden' : ''; ?>" <?php echo $is_hidden ? 'data-blog-listing-hidden="true"' : ''; ?>>
+                                <div class="col-12 col-lg-6 mb-4 mb-lg-5" data-blog-listing-grid-item>
+                                    <article class="blog-listing__card card">
                                         <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-media-link" aria-label="<?php echo esc_attr($post_title); ?>">
                                             <?php if (has_post_thumbnail($post_id)) : ?>
                                                 <?php echo get_the_post_thumbnail($post_id, 'large', array('class' => 'blog-listing__card-image card-img-left example-card-img-responsive')); ?>
@@ -381,43 +382,39 @@ if (! $has_listing_content) {
                                                 <span class="blog-listing__card-image blog-listing__card-image--placeholder card-img-left example-card-img-responsive"></span>
                                             <?php endif; ?>
                                         </a>
-
                                         <div class="blog-listing__card-content card-body d-flex flex-column justify-content-center">
                                             <?php if ($post_term_name) : ?>
                                                 <p class="blog-listing__card-taxonomy card-text"><?php echo esc_html($post_term_name); ?></p>
                                             <?php endif; ?>
-
                                             <h3 class="blog-listing__card-title card-title h5 h4-sm">
-                                                <a href="<?php echo esc_url($post_permalink); ?>">
-                                                    <?php echo esc_html($post_title); ?>
-                                                </a>
+                                                <a href="<?php echo esc_url($post_permalink); ?>"><?php echo esc_html($post_title); ?></a>
                                             </h3>
-
-                                            <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-link card-text">
-                                                Read more
-                                            </a>
+                                            <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-link card-text">Read more</a>
                                         </div>
                                     </article>
                                 </div>
                             <?php endforeach; ?>
                         </div>
+                    <?php endif; ?>
 
-                        <?php if ($has_hidden_listing_posts) : ?>
-                            <div class="blog-listing__actions">
-                                <button
-                                        type="button"
-                                        class="blog-listing__load-more"
-                                        data-blog-listing-load-more
-                                        data-batch-size="<?php echo esc_attr($posts_per_page); ?>"
-                                        data-blog-listing-trigger="items"
-                                >
-                                    <?php echo esc_html($load_more_text ?: 'Load more'); ?>
-                                </button>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                    <?php if ($has_more_posts) : ?>
+                        <div class="blog-listing__actions">
+                            <button
+                                type="button"
+                                class="blog-listing__load-more"
+                                data-blog-listing-load-more
+                                data-page="<?php echo esc_attr($load_more_page); ?>"
+                                data-exclude="<?php echo esc_attr($load_more_exclude); ?>"
+                                data-category="<?php echo esc_attr($load_more_category); ?>"
+                                data-lang="<?php echo esc_attr($load_more_lang); ?>"
+                                data-nonce="<?php echo esc_attr(wp_create_nonce('pm_load_more')); ?>"
+                            >
+                                <?php echo esc_html($load_more_text ?: 'Load more'); ?>
+                            </button>
+                        </div>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
 

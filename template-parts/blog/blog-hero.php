@@ -1,30 +1,44 @@
 <?php
 $args = wp_parse_args($args ?? array(), array(
-        'blog_page_id'  => 0,
-        'blog_settings' => array(),
+    'blog_page_id'  => 0,
+    'blog_settings' => array(),
+    'hero_post_ids' => array(),
 ));
 
 $blog_settings = is_array($args['blog_settings']) ? $args['blog_settings'] : array();
+$hero_post_ids = array_filter( array_map( 'absint', (array) $args['hero_post_ids'] ) );
 
-$heading_hero          = isset($blog_settings['page_heading']) ? $blog_settings['page_heading'] : '';
-$heading_level_hero    = isset($blog_settings['page_heading_level']) ? $blog_settings['page_heading_level'] : 'h1';
-
-$description_hero      = isset($blog_settings['page_description']) ? $blog_settings['page_description'] : '';
+$heading_hero       = isset($blog_settings['page_heading']) ? $blog_settings['page_heading'] : '';
+$heading_level_hero = isset($blog_settings['page_heading_level']) ? $blog_settings['page_heading_level'] : 'h1';
+$description_hero   = isset($blog_settings['page_description']) ? $blog_settings['page_description'] : '';
 
 $allowed_tags = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
 if (! in_array($heading_level_hero, $allowed_tags, true)) {
     $heading_level_hero = 'h1';
 }
 
+// Usar los IDs pre-consultados desde template-page-blog.php (máximo 4)
+$hero_post_ids = array_slice( $hero_post_ids, 0, 4 );
 
-$hero_query = new WP_Query(array(
+if ( ! empty( $hero_post_ids ) ) {
+    $hero_query = new WP_Query( array(
         'post_type'           => 'post',
         'post_status'         => 'publish',
-        'posts_per_page'      => 8,
+        'post__in'            => $hero_post_ids,
+        'orderby'             => 'post__in',
+        'posts_per_page'      => 4,
         'ignore_sticky_posts' => true,
-));
+    ) );
+} else {
+    $hero_query = new WP_Query( array(
+        'post_type'           => 'post',
+        'post_status'         => 'publish',
+        'posts_per_page'      => 4,
+        'ignore_sticky_posts' => true,
+    ) );
+}
 
-if (! $hero_query->have_posts() && ! $heading_hero &&  ! $description_hero) {
+if (! $hero_query->have_posts() && ! $heading_hero && ! $description_hero) {
     return;
 }
 ?>
