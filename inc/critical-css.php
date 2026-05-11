@@ -62,7 +62,10 @@ add_filter( 'style_loader_tag', function ( string $html, string $handle ): strin
     }
 
     $defer_handles = [
-        'pm-bootstrap-css',   // 27.2 KiB — mayor bloqueador de render
+        'pm-bootstrap-css',   // 27.2 KiB
+        'essence-components', // 128 KiB — mayor bloqueador de render
+        'essence-mainstyles', // 11 KiB  — @font-faces locales
+        'pm-blog',            // 7 KiB   — solo páginas blog
         'pm-swiper',
         'pm-essence-fonts',
         'pm-light-box2-css',

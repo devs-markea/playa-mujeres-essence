@@ -5,8 +5,8 @@
         </svg>
     </div>
     <div class="pm-menu-experiences__content">
-        <h4>Experiences</h4>
-        <p>Because paradise feels different for everyone.</p>
+        <h4><?php pll_e('Experiences'); ?></h4>
+        <p><?php pll_e('Because paradise feels different for everyone.'); ?></p>
         <div class="pm-menu-experiences__list">
             <?php
             $experiences = get_posts([

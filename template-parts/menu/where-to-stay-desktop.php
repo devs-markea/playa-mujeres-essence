@@ -1,7 +1,7 @@
 <div class="mega-panel mega-panel__where-to-stay">
     <div class="container mega-panel__inner">
         <p class="mega-panel__headline">
-            Because paradise feels different for everyone.
+            <?php pll_e('Because paradise feels different for everyone.'); ?>
         </p>
 
         <div class="where-to-stay__list">

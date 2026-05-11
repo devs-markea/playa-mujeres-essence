@@ -239,11 +239,11 @@ h1, h2, h3, h4 {
 }
 
 /* OCULTAR EL BADGE DE reCAPTCHA v3 */
-.grecaptcha-badge {
-    visibility: hidden !important;
-    opacity: 0 !important;
-    display: none !important;
-}
+/*.grecaptcha-badge {*/
+/*    visibility: hidden !important;*/
+/*    opacity: 0 !important;*/
+/*    display: none !important;*/
+/*}*/
 
 /* Class Media Queries Custom Bootstrap */
 @media (min-width: 576px) {

@@ -501,6 +501,7 @@ body.is-experiences-open .trigger-experiences svg {
     bottom: 0;
     right: 0;
     margin-bottom: 110px;
+    z-index: -10;
 }
 
 .pm-menu-mobile__footer .social-links h4,
@@ -1136,6 +1137,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     height: auto;
     transform: rotate(90deg);
     transform-origin: top right;
+    z-index: -10;
 }
 
 /* Desktop: sin espacio en el DOM, imagen centrada sobre el borde del section */
@@ -2372,6 +2374,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     display: flex;
     flex-direction: column;
     gap: 24px;
+    height: 100%;
 }
 
 .blog-listing__sidebar-block {
@@ -2658,9 +2661,9 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
         padding-top: 72px;
     }
 
-    .blog-listing__sidebar--sticky {
+    .blog-listing__sidebar-block--panel {
         position: sticky;
-        top: -100px;
+        top: 107px;
     }
 
     .blog-listing__heading {
@@ -2981,20 +2984,7 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     }
 }
 
-@media (max-width: 767.98px) {
-    .single-blog-related__card {
-        min-height: 0;
-    }
 
-    .single-blog-related__media-link {
-        flex-basis: auto;
-        max-width: 100%;
-    }
-
-    .single-blog-related__content {
-        padding: 18px 0 0;
-    }
-}
 
 /* ==========================================================================
    12. Content Accordion
@@ -3393,6 +3383,11 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     flex-direction: column;
     gap: 0.75rem;
     max-width: 100%;
+}
+
+.newsletter-form__message--success {
+    color: white;
+    margin-top: 1rem;
 }
 
 .newsletter-subscribe-banner__input {
@@ -5766,4 +5761,28 @@ body.is-experiences-scrolllocked {
     .content-feature-media-block__title {
         font-size: 24px;
     }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   reCAPTCHA — ocultar badge, mostrar aviso de privacidad requerido por Google
+   ───────────────────────────────────────────────────────────────────────────── */
+.grecaptcha-badge {
+    visibility: hidden !important;
+}
+
+.recaptcha-notice {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: white;
+}
+
+.recaptcha-notice a {
+    color: white;
+    text-decoration: underline;
+}
+
+.recaptcha-notice a {
+    text-decoration: underline;
 }

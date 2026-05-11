@@ -65,7 +65,7 @@ if (is_string($form_position)) {
                                         </p>
                                     <?php endif; ?>
 
-                                    <form class="newsletter-subscribe-banner__form">
+                                    <form class="newsletter-subscribe-banner__form" data-newsletter-form>
                                         <input
                                                 type="email"
                                                 class="newsletter-subscribe-banner__input"
@@ -97,6 +97,7 @@ if (is_string($form_position)) {
                                                         </span>
                                                         </span>
                                         </button>
+                                        <?php pm_recaptcha_notice(); ?>
                                     </form>
 
                                 </div>

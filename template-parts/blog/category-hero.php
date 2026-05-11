@@ -17,7 +17,7 @@ if ( ! $term instanceof WP_Term ) {
                 <div class="category-hero__content">
                     <div class="category-hero__subheading">
                         <span class="category-hero__subheading-line" aria-hidden="true"></span>
-                        <span class="category-hero__subheading-label"><?php esc_html_e( 'Blog', 'playa-mujeres-essence' ); ?></span>
+                        <span class="category-hero__subheading-label"><?php pll_e('Blog'); ?></span>
                         <span class="category-hero__subheading-line" aria-hidden="true"></span>
                     </div>
                     <h1 class="category-hero__title"><?php echo esc_html( $term->name ); ?></h1>

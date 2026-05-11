@@ -1,7 +1,7 @@
 <div class="mega-panel mega-panel__experiences">
     <div class="container mega-panel__inner">
         <p class="mega-panel__headline">
-            Discover a collection of world-class resorts in Playa Mujeres
+            <?php pll_e('Discover a collection of world-class resorts in Playa Mujeres'); ?>
         </p>
         <div class="experiences__list">
             <?php

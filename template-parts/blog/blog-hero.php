@@ -100,10 +100,10 @@ if (! $hero_query->have_posts() && ! $heading_hero && ! $description_hero) {
             </div>
 
             <div class="blog-hero__controls">
-                <button type="button" class="blog-hero__nav blog-hero__nav--prev" aria-label="Previous posts">
+                <button type="button" class="blog-hero__nav blog-hero__nav--prev" aria-label="<?php echo esc_attr( pll__('Previous posts') ); ?>">
                     <span aria-hidden="true">←</span>
                 </button>
-                <button type="button" class="blog-hero__nav blog-hero__nav--next" aria-label="Next posts">
+                <button type="button" class="blog-hero__nav blog-hero__nav--next" aria-label="<?php echo esc_attr( pll__('Next posts') ); ?>">
                     <span aria-hidden="true">→</span>
                 </button>
             </div>

@@ -614,5 +614,27 @@ if ( ! function_exists( 'pm_page_has_section_layout' ) ) {
         }
         return false;
     }
+
+    /**
+     * Returns the reCAPTCHA notice HTML required by Google when hiding the badge.
+     * Strings are translatable via Polylang (pll__) with fallback to wp i18n.
+     */
+    function pm_recaptcha_notice() {
+        $t = function( $str ) {
+            return function_exists('pll__') ? pll__($str) : __($str, 'pm-essence');
+        };
+
+        $privacy_link = '<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">' . esc_html($t('Privacy Policy')) . '</a>';
+        $terms_link   = '<a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">' . esc_html($t('Terms of Service')) . '</a>';
+
+        $notice = sprintf(
+            /* translators: %1$s = Privacy Policy link, %2$s = Terms of Service link */
+            $t('This site is protected by reCAPTCHA and the Google %1$s and %2$s apply.'),
+            $privacy_link,
+            $terms_link
+        );
+
+        echo '<p class="recaptcha-notice">' . $notice . '</p>';
+    }
 }
 

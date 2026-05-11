@@ -54,7 +54,7 @@ $image = get_the_post_thumbnail(
 
                 <div class="arrow-circle">
                     <a href="<?php echo esc_url($permalink); ?>" class="arrow-circle__link" aria-label="<?php echo esc_attr($title); ?>">
-                        <span class="arrow-circle__label">Read More</span>
+                        <span class="arrow-circle__label"><?php pll_e('Read more'); ?></span>
                         <span class="arrow-circle__icon">
                             <span class="arrow">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

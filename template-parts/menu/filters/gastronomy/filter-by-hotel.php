@@ -25,8 +25,8 @@
 
         <div class="pm-collection-filters-menu__body">
             <div class="container">
-                <p class="pm-collection-filters-menu__filter-title"><?php echo esc_html__( 'Filter By Hotel', 'textdomain' ); ?></p>
-                <p class="pm-collection-filters-menu__filter-desc"><?php echo esc_html__( 'You can filter by hotel, choose one from the list below.', 'textdomain' ); ?></p>
+                <p class="pm-collection-filters-menu__filter-title"><?php pll_e( 'Filter By Hotel' ); ?></p>
+                <p class="pm-collection-filters-menu__filter-desc"><?php pll_e( 'You can filter by hotel, choose one from the list below.' ); ?></p>
                 <div class="pm-collection-filters-menu__pills" data-collection-filters-external-pills>
                     <!-- JS inyecta aquí los pills clonados desde dynamic-collection -->
                 </div>
@@ -38,7 +38,7 @@
                 <button type="button"
                         class="pm-collection-filters-menu__apply"
                         data-collection-filters-mobile-close>
-                    <?php echo esc_html__( 'View results', 'textdomain' ); ?> (<span data-pm-results-count>0</span>)
+                    <?php pll_e( 'View results' ); ?> (<span data-pm-results-count>0</span>)
                 </button>
             </div>
         </div>

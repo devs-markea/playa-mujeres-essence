@@ -86,29 +86,25 @@ if (is_string($form_position)) {
                                 <div class="col-12 col-md-5">
                                     <div class="newsletter-subscribe-banner__inner">
 
-                                        <?php if ($title): ?>
-                                            <h2 class="newsletter-subscribe-banner__title">
-                                                <?php echo esc_html($title); ?>
-                                            </h2>
-                                        <?php endif; ?>
+                                        <h2 class="newsletter-subscribe-banner__title">
+                                            <?php pll_e('Join An Exclusive Club Of Sophisticated Travelers'); ?>
+                                        </h2>
 
-                                        <?php if ($description): ?>
-                                            <p class="newsletter-subscribe-banner__description">
-                                                <?php echo esc_html($description); ?>
-                                            </p>
-                                        <?php endif; ?>
+                                        <p class="newsletter-subscribe-banner__description">
+                                            <?php pll_e('Receive our monthly Playa Mujeres newsletter that offers you the best recommendations for your next getaway.'); ?>
+                                        </p>
 
-                                        <form class="newsletter-subscribe-banner__form">
+                                        <form class="newsletter-subscribe-banner__form" data-newsletter-form>
                                             <input
                                                     type="email"
                                                     class="newsletter-subscribe-banner__input"
-                                                    placeholder="Type your email address"
+                                                    placeholder="<?php echo esc_attr( pll__('Type your email address') ); ?>"
                                                     required
                                             >
                                             <button type="submit"
                                                     class="newsletter-subscribe-banner__submit arrow-circle__link">
                                             <span class="arrow-circle__label">
-                                                        <?php echo esc_html($subscribe_text); ?>
+                                                        <?php pll_e('Subscribe'); ?>
                                                     </span>
                                                 <span class="arrow-circle__icon">
                                                         <span class="arrow">
@@ -130,6 +126,7 @@ if (is_string($form_position)) {
                                                         </span>
                                                         </span>
                                             </button>
+                                            <?php pm_recaptcha_notice(); ?>
                                         </form>
 
                                     </div>

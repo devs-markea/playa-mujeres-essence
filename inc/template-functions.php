@@ -447,7 +447,7 @@ if ( ! function_exists( 'pm_essence_show_social_links' ) ) {
      * @return  void
      */
     function pm_essence_show_social_links() {
-        $show_mobile_social = (int) get_theme_mod( 'pm_mobile_show_social_links', 0 );
+        $show_mobile_social = (int) get_theme_mod( 'pm_mobile_show_social_links', 1 );
 
         if ( $show_mobile_social === 1 ) :
 
@@ -485,19 +485,21 @@ if ( ! function_exists( 'pm_essence_show_social_links' ) ) {
     }
 }
 
-add_filter( 'walker_nav_menu_start_el', 'pm_essence_nav_menu_trigger_arrow', 10, 4 );
-function pm_essence_nav_menu_trigger_arrow( $item_output, $item, $depth, $args ) {
-    $classes = is_array( $item->classes ) ? $item->classes : array();
-    $has_trigger = in_array( 'trigger-filters', $classes, true ) || in_array( 'trigger-experiences', $classes, true );
+if ( ! function_exists( 'pm_essence_nav_menu_trigger_arrow' ) ) {
+    function pm_essence_nav_menu_trigger_arrow( $item_output, $item, $depth, $args ) {
+        $classes = is_array( $item->classes ) ? $item->classes : array();
+        $has_trigger = in_array( 'trigger-filters', $classes, true ) || in_array( 'trigger-experiences', $classes, true );
 
-    if ( ! $has_trigger ) {
-        return $item_output;
+        if ( ! $has_trigger ) {
+            return $item_output;
+        }
+
+        $svg = '<svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9.75 4.125L6 7.875L2.25 4.125" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+
+        return str_replace( '</a>', $svg . '</a>', $item_output );
     }
-
-    $svg = '<svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9.75 4.125L6 7.875L2.25 4.125" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
-
-    return str_replace( '</a>', $svg . '</a>', $item_output );
 }
+add_filter( 'walker_nav_menu_start_el', 'pm_essence_nav_menu_trigger_arrow', 10, 4 );
 
 if ( ! function_exists( 'pm_essence_menu_where_to_stay_mobile' ) ) {
     /**
@@ -754,89 +756,6 @@ add_filter( 'rest_pre_dispatch', function( $result, $server, $request ) {
     return $result;
 }, 10, 3 );
 
-// ─────────────────────────────────────────────────────────────────────────────
-// AJAX: Load More posts — blog listing
-// ─────────────────────────────────────────────────────────────────────────────
-
-function pm_load_more_posts_ajax() {
-    check_ajax_referer( 'pm_load_more', 'nonce' );
-
-    $per_page    = 8;
-    $page        = max( 1, absint( $_POST['page'] ?? 1 ) );
-    $exclude_raw = isset( $_POST['exclude'] ) ? sanitize_text_field( wp_unslash( $_POST['exclude'] ) ) : '';
-    $exclude     = $exclude_raw ? array_filter( array_map( 'absint', explode( ',', $exclude_raw ) ) ) : array();
-    $category_id = absint( $_POST['category_id'] ?? 0 );
-    $lang        = isset( $_POST['lang'] ) ? sanitize_key( $_POST['lang'] ) : '';
-
-    $args = array(
-        'post_type'           => 'post',
-        'post_status'         => 'publish',
-        'posts_per_page'      => $per_page,
-        'paged'               => $page,
-        'ignore_sticky_posts' => true,
-    );
-
-    if ( ! empty( $exclude ) ) {
-        $args['post__not_in'] = $exclude;
-    }
-
-    if ( $category_id ) {
-        $args['tax_query'] = array(
-            array(
-                'taxonomy' => 'category',
-                'field'    => 'term_id',
-                'terms'    => $category_id,
-            ),
-        );
-    }
-
-    if ( $lang && function_exists( 'pll_current_language' ) ) {
-        $args['lang'] = $lang;
-    }
-
-    $query    = new WP_Query( $args );
-    $has_more = $query->found_posts > ( $page * $per_page );
-
-    if ( ! $query->have_posts() ) {
-        wp_send_json_success( array( 'html' => '', 'has_more' => false ) );
-    }
-
-    ob_start();
-    foreach ( $query->posts as $post ) {
-        $post_id        = (int) $post->ID;
-        $post_title     = get_the_title( $post_id );
-        $post_permalink = get_permalink( $post_id );
-        $post_terms     = get_the_terms( $post_id, 'category' );
-        $post_term_name = ( ! is_wp_error( $post_terms ) && ! empty( $post_terms ) ) ? $post_terms[0]->name : '';
-        ?>
-        <div class="col-12 col-lg-6 mb-4 mb-lg-5" data-blog-listing-grid-item>
-            <article class="blog-listing__card card">
-                <a href="<?php echo esc_url( $post_permalink ); ?>" class="blog-listing__card-media-link" aria-label="<?php echo esc_attr( $post_title ); ?>">
-                    <?php if ( has_post_thumbnail( $post_id ) ) : ?>
-                        <?php echo get_the_post_thumbnail( $post_id, 'large', array( 'class' => 'blog-listing__card-image card-img-left example-card-img-responsive' ) ); ?>
-                    <?php else : ?>
-                        <span class="blog-listing__card-image blog-listing__card-image--placeholder card-img-left example-card-img-responsive"></span>
-                    <?php endif; ?>
-                </a>
-                <div class="blog-listing__card-content card-body d-flex flex-column justify-content-center">
-                    <?php if ( $post_term_name ) : ?>
-                        <p class="blog-listing__card-taxonomy card-text"><?php echo esc_html( $post_term_name ); ?></p>
-                    <?php endif; ?>
-                    <h3 class="blog-listing__card-title card-title h5 h4-sm">
-                        <a href="<?php echo esc_url( $post_permalink ); ?>"><?php echo esc_html( $post_title ); ?></a>
-                    </h3>
-                    <a href="<?php echo esc_url( $post_permalink ); ?>" class="blog-listing__card-link card-text">Read more</a>
-                </div>
-            </article>
-        </div>
-        <?php
-    }
-    $html = ob_get_clean();
-
-    wp_send_json_success( array( 'html' => $html, 'has_more' => $has_more ) );
-}
-add_action( 'wp_ajax_pm_load_more_posts',        'pm_load_more_posts_ajax' );
-add_action( 'wp_ajax_nopriv_pm_load_more_posts', 'pm_load_more_posts_ajax' );
 
 if (!function_exists('pm_essence_contact_href')) {
     /**
@@ -883,8 +802,10 @@ if (!function_exists('pm_essence_contact_href')) {
  * @param $hreflangs
  * @return array
  */
-function disable_pll_hreflang_output( $hreflangs ) {
-    return array();
+if ( ! function_exists( 'disable_pll_hreflang_output' ) ) {
+    function disable_pll_hreflang_output( $hreflangs ) {
+        return array();
+    }
 }
 add_filter( 'pll_rel_hreflang_attributes', 'disable_pll_hreflang_output', 10, 1 );
 
@@ -894,49 +815,55 @@ add_filter( 'pll_rel_hreflang_attributes', 'disable_pll_hreflang_output', 10, 1 
  * @param array $presenters Array of presenter instances.
  * @return array Filtered array of presenters, excluding Locale_Presenter instances.
  */
-function remove_locale_presenter( $presenters ) {
-    return array_map( function( $presenter ) {
-        if ( ! $presenter instanceof Yoast\WP\SEO\Presenters\Open_Graph\Locale_Presenter ) {
-            return $presenter;
-        }
-    }, $presenters );
+if ( ! function_exists( 'remove_locale_presenter' ) ) {
+    function remove_locale_presenter( $presenters ) {
+        return array_map( function( $presenter ) {
+            if ( ! $presenter instanceof Yoast\WP\SEO\Presenters\Open_Graph\Locale_Presenter ) {
+                return $presenter;
+            }
+        }, $presenters );
+    }
 }
 add_action( 'wpseo_frontend_presenters', 'remove_locale_presenter' );
-function custom_og_locale_tag() {
-    if ( function_exists( 'get_bloginfo' ) ) {
-        $current_lang = get_bloginfo('language');
+if ( ! function_exists( 'custom_og_locale_tag' ) ) {
+    function custom_og_locale_tag() {
+        if ( function_exists( 'get_bloginfo' ) ) {
+            $current_lang = get_bloginfo('language');
 
-        switch ( $current_lang ) {
-            case 'es':
-                $locale = 'es';
-                break;
-            case 'fr':
-                $locale = 'fr';
-                break;
-            default:
-                $locale = 'en';
-                break;
+            switch ( $current_lang ) {
+                case 'es':
+                    $locale = 'es';
+                    break;
+                case 'fr':
+                    $locale = 'fr';
+                    break;
+                default:
+                    $locale = 'en';
+                    break;
+            }
+
+            echo '<meta class="yoast-locale" property="og:locale" content="' . esc_attr( $locale ) . '" />' . "\n";
         }
-
-        echo '<meta class="yoast-locale" property="og:locale" content="' . esc_attr( $locale ) . '" />' . "\n";
     }
 }
 add_action( 'wp_head', 'custom_og_locale_tag' );
 
-function setLangAttr() {
-    $current_lang = get_bloginfo('language');
+if ( ! function_exists( 'setLangAttr' ) ) {
+    function setLangAttr() {
+        $current_lang = get_bloginfo('language');
 
-    if (isset($current_lang) && !empty($current_lang)) {
-        switch ( $current_lang ) {
-            case 'es':
-                return 'lang="es"';
-            case 'fr':
-                return 'lang="fr"';
-            default:
-                return 'lang="en"'; // default to English if language is not found
+        if (isset($current_lang) && !empty($current_lang)) {
+            switch ( $current_lang ) {
+                case 'es':
+                    return 'lang="es"';
+                case 'fr':
+                    return 'lang="fr"';
+                default:
+                    return 'lang="en"';
+            }
         }
+        return 'lang="en"';
     }
-    return 'lang="en"'; // default to English if get_bloginfo('language') is not set
 }
 
 add_filter( 'language_attributes', 'setLangAttr' );

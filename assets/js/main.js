@@ -1254,35 +1254,74 @@ window.App = window.App || {};
 
     //Funciones de Adriel
     function initRecaptchaV3() {
-        const forms = document.querySelectorAll('.newsletter-subscribe-banner__form, .blog-listing__newsletter-form');
+        const forms = document.querySelectorAll('[data-newsletter-form]');
         if (!forms || !forms.length) return;
 
         const siteKey = (window.pmNewsletter && window.pmNewsletter.recaptchaSiteKey) || '';
         if (!siteKey) return;
+
+        // Carga diferida: el script de reCAPTCHA se inyecta solo cuando el form
+        // entra en el viewport (IntersectionObserver) o al primer intento de envío.
+        var rcLoaded  = false;
+        var rcLoading = false;
+
+        function loadRecaptcha(callback) {
+            if (rcLoaded) { callback && callback(); return; }
+            if (rcLoading) {
+                var poll = setInterval(function () {
+                    if (typeof grecaptcha !== 'undefined') {
+                        clearInterval(poll);
+                        rcLoaded = true;
+                        callback && callback();
+                    }
+                }, 100);
+                return;
+            }
+            rcLoading = true;
+            var s   = document.createElement('script');
+            s.src   = 'https://www.google.com/recaptcha/api.js?render=' + encodeURIComponent(siteKey);
+            s.async = true;
+            s.onload = function () { rcLoaded = true; callback && callback(); };
+            document.head.appendChild(s);
+        }
+
+        // Pre-cargar cuando el form sea visible (~200px antes del viewport)
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        loadRecaptcha();
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '200px' });
+            forms.forEach(function (form) { io.observe(form); });
+        }
+
+        function executeAndSubmit(form) {
+            grecaptcha.ready(function () {
+                grecaptcha.execute(siteKey, { action: 'newsletter_submit' })
+                    .then(function (token) { sendFormAjax(form, token); })
+                    .catch(function (error) {
+                        console.error('reCAPTCHA error:', error);
+                        showFormMessage(form, 'Security verification failed. Please reload the page.', false);
+                    });
+            });
+        }
 
         function attachSubmit(form) {
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
 
                 if (typeof grecaptcha === 'undefined') {
-                    showFormMessage(form, 'Security verification not ready. Please try again in a moment.', false);
+                    loadRecaptcha(function () { executeAndSubmit(form); });
                     return;
                 }
 
-                grecaptcha.ready(function () {
-                    grecaptcha.execute(siteKey, { action: 'newsletter_submit' })
-                        .then(function (token) {
-                            sendFormAjax(form, token);
-                        })
-                        .catch(function (error) {
-                            console.error('reCAPTCHA error:', error);
-                            showFormMessage(form, 'Security verification failed. Please reload the page.', false);
-                        });
-                });
+                executeAndSubmit(form);
             });
         }
 
-        // Siempre adjuntar el listener — grecaptcha.ready() maneja el timing internamente
         forms.forEach(attachSubmit);
     }
 
@@ -1387,6 +1426,8 @@ window.App = window.App || {};
     // Cada número define el orden de aparición (delay escalonado de 0.15s).
     function initFadeAnimations() {
         if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+        // En móvil los elementos quedan visibles sin animación — ahorra ~40ms de TBT en CPU lento.
+        if (window.innerWidth < 768) return;
 
         gsap.registerPlugin(ScrollTrigger);
 

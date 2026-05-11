@@ -19,21 +19,13 @@ $listing_description   = isset($blog_settings['description_listing']) ? $blog_se
 
 $display_categories_filter = ! empty($blog_settings['display_categories_filter']);
 $display_featured_posts    = ! empty($blog_settings['display_featured_posts']);
-$display_newsletter_form   = ! empty($blog_settings['display_newsletter_form']);
-
-$newsletter_heading       = isset($blog_settings['sidebar_heading']) ? $blog_settings['sidebar_heading'] : '';
-$newsletter_heading_level = isset($blog_settings['sidebar_heading_level']) ? $blog_settings['sidebar_heading_level'] : 'h3';
-$newsletter_description   = isset($blog_settings['sidebar_description']) ? $blog_settings['sidebar_description'] : '';
-$newsletter_placeholder   = isset($blog_settings['placeholder']) ? $blog_settings['placeholder'] : '';
-$newsletter_submit_text   = isset($blog_settings['submit_text']) ? $blog_settings['submit_text'] : '';
 
 $enable_load_more    = ! empty($blog_settings['enable_load_more']);
 $posts_per_page      = isset($blog_settings['posts_per_page']) ? (int) $blog_settings['posts_per_page'] : 8;
 $posts_per_page      = $posts_per_page > 0 ? $posts_per_page : 8;
 $load_more_text      = isset($blog_settings['button_text']) ? $blog_settings['button_text'] : '';
 
-$listing_heading_tag    = function_exists('pm_essence_heading_tag_or_null') ? pm_essence_heading_tag_or_null($listing_heading_level, 'h2') : 'h2';
-$newsletter_heading_tag = function_exists('pm_essence_heading_tag_or_null') ? pm_essence_heading_tag_or_null($newsletter_heading_level, 'h3') : 'h3';
+$listing_heading_tag = function_exists('pm_essence_heading_tag_or_null') ? pm_essence_heading_tag_or_null($listing_heading_level, 'h2') : 'h2';
 
 $selected_category_slug = isset($_GET['blog_category']) ? sanitize_title(wp_unslash($_GET['blog_category'])) : '';
 $selected_category      = $selected_category_slug ? get_term_by('slug', $selected_category_slug, 'category') : $current_term;
@@ -122,7 +114,6 @@ if ( $display_featured_posts ) {
 
 $has_categories_sidebar = $display_categories_filter && ! empty($categories);
 $has_top_posts_sidebar  = $display_featured_posts && ! empty($sidebar_featured_posts);
-$has_newsletter_sidebar = $display_newsletter_form && ($newsletter_heading || $newsletter_description || $newsletter_submit_text);
 
 $sticky_sidebar_target = '';
 
@@ -130,11 +121,9 @@ if ($has_categories_sidebar) {
     $sticky_sidebar_target = 'categories';
 } elseif ($has_top_posts_sidebar) {
     $sticky_sidebar_target = 'top-posts';
-} elseif ($has_newsletter_sidebar) {
-    $sticky_sidebar_target = 'newsletter';
 }
 
-$has_listing_content = $listing_heading || $listing_description || ! empty($listing_posts) || ! empty($featured_swiper_posts) || ! empty($sidebar_featured_posts) || $has_newsletter_sidebar;
+$has_listing_content = $listing_heading || $listing_description || ! empty($listing_posts) || ! empty($featured_swiper_posts) || ! empty($sidebar_featured_posts);
 
 if (! $has_listing_content) {
     return;
@@ -146,12 +135,12 @@ if (! $has_listing_content) {
 <section class="blog-listing container" data-blog-listing-root>
     <div class="row g-0">
         <div class="col-10 mx-auto">
-            <?php if ($listing_heading || $listing_description) : ?>
+            <?php if ($listing_description || $listing_heading_tag) : ?>
             <div class="blog-listing__intro row g-0">
                 <div class="col-md-12">
-                    <?php if ($listing_heading && $listing_heading_tag) : ?>
+                    <?php if ($listing_heading_tag) : ?>
                     <<?php echo tag_escape($listing_heading_tag); ?> class="blog-listing__heading">
-                    <?php echo esc_html($listing_heading); ?>
+                    <?php pll_e('Read More About Our Experiences'); ?>
                 </<?php echo tag_escape($listing_heading_tag); ?>>
                 <?php endif; ?>
 
@@ -169,7 +158,7 @@ if (! $has_listing_content) {
                 <aside class="blog-listing__sidebar<?php echo $sticky_sidebar_target ? ' blog-listing__sidebar--sticky blog-listing__sidebar--sticky-' . esc_attr($sticky_sidebar_target) : ''; ?>">
                     <?php if ($has_categories_sidebar) : ?>
                         <div class="blog-listing__sidebar-block blog-listing__sidebar-block--categories">
-                            <h3 class="blog-listing__sidebar-title">Categories</h3>
+                            <h3 class="blog-listing__sidebar-title"><?php pll_e('Categories'); ?></h3>
                             <ul class="blog-listing__categories">
                                 <?php foreach ($categories as $category) : ?>
                                     <?php
@@ -189,7 +178,7 @@ if (! $has_listing_content) {
 
                     <?php if ( function_exists('wpp_get_mostpopular') ) : ?>
                         <div class="blog-listing__sidebar-block blog-listing__sidebar-block--panel blog-listing__sidebar-block--top-posts">
-                            <h3 class="blog-listing__sidebar-title">Top Posts</h3>
+                            <h3 class="blog-listing__sidebar-title"><?php pll_e('Top Posts'); ?></h3>
                             <?php
                             wpp_get_mostpopular( array(
                                 'limit'              => 4,
@@ -205,7 +194,7 @@ if (! $has_listing_content) {
                         </div>
                     <?php elseif ($has_top_posts_sidebar) : ?>
                         <div class="blog-listing__sidebar-block blog-listing__sidebar-block--panel blog-listing__sidebar-block--top-posts">
-                            <h3 class="blog-listing__sidebar-title">Top Posts</h3>
+                            <h3 class="blog-listing__sidebar-title"><?php pll_e('Top Posts'); ?></h3>
                             <ul class="blog-listing__top-posts">
                                 <?php foreach ($sidebar_featured_posts as $featured_post) : ?>
                                     <li class="blog-listing__top-posts-item">
@@ -218,48 +207,6 @@ if (! $has_listing_content) {
                         </div>
                     <?php endif; ?>
 
-                    <?php if ($has_newsletter_sidebar) : ?>
-                    <div class="blog-listing__sidebar-block blog-listing__sidebar-block--newsletter">
-                        <?php if ($newsletter_heading && $newsletter_heading_tag) : ?>
-                        <<?php echo tag_escape($newsletter_heading_tag); ?> class="blog-listing__sidebar-title">
-                        <?php echo esc_html($newsletter_heading); ?>
-                    </<?php echo tag_escape($newsletter_heading_tag); ?>>
-                <?php endif; ?>
-
-                    <?php if ($newsletter_description) : ?>
-                        <div class="blog-listing__newsletter-copy">
-                            <?php echo wp_kses_post($newsletter_description); ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <form class="blog-listing__newsletter blog-listing__newsletter-form">
-                        <input
-                                type="email"
-                                class="blog-listing__newsletter-input blog-listing__newsletter-field"
-                                placeholder="<?php echo esc_attr($newsletter_placeholder ?: 'Type your email address'); ?>"
-                                required
-                        >
-                        <button
-                                type="submit"
-                                class="blog-listing__newsletter-submit arrow-circle__link"
-                        >
-                            <span class="arrow-circle__label"><?php echo esc_html($newsletter_submit_text ?: 'Subscribe'); ?></span>
-                            <span class="arrow-circle__icon">
-                                    <span class="arrow">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M17.25 15.75L21 12M21 12L17.25 8.25M21 12H3" stroke="currentColor" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </span>
-                                    <span class="circle">
-                                        <svg width="28" height="30" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="0.375" y="0.375" width="27.25" height="27.25" rx="13.625" stroke="currentColor" stroke-width="0.75"/>
-                                        </svg>
-                                    </span>
-                                </span>
-                        </button>
-                    </form>
-            </div>
-            <?php endif; ?>
                 </aside>
             </div>
             <div class="col-md-9 order-1 order-md-2">
@@ -299,7 +246,7 @@ if (! $has_listing_content) {
                                                     </h3>
 
                                                     <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-link card-text">
-                                                        Read more
+                                                        <?php pll_e('Read more'); ?>
                                                     </a>
                                                 </div>
                                             </article>
@@ -312,7 +259,7 @@ if (! $has_listing_content) {
 
                 <?php else : ?>
                     <div class="blog-listing__empty">
-                        <p>No posts were found for this category.</p>
+                        <p><?php pll_e('No posts were found for this category.'); ?></p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -348,7 +295,7 @@ if (! $has_listing_content) {
                                                     </h3>
 
                                                     <a href="<?php echo esc_url($featured_permalink); ?>" class="blog-listing__card-link card-text">
-                                                        Read more
+                                                        <?php pll_e('Read more'); ?>
                                                     </a>
                                                 </div>
                                             </article>
@@ -389,7 +336,7 @@ if (! $has_listing_content) {
                                             <h3 class="blog-listing__card-title card-title h5 h4-sm">
                                                 <a href="<?php echo esc_url($post_permalink); ?>"><?php echo esc_html($post_title); ?></a>
                                             </h3>
-                                            <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-link card-text">Read more</a>
+                                            <a href="<?php echo esc_url($post_permalink); ?>" class="blog-listing__card-link card-text"><?php pll_e('Read more'); ?></a>
                                         </div>
                                     </article>
                                 </div>
@@ -409,7 +356,7 @@ if (! $has_listing_content) {
                                 data-lang="<?php echo esc_attr($load_more_lang); ?>"
                                 data-nonce="<?php echo esc_attr(wp_create_nonce('pm_load_more')); ?>"
                             >
-                                <?php echo esc_html($load_more_text ?: 'Load more'); ?>
+                                <?php pll_e('Load more'); ?>
                             </button>
                         </div>
                     <?php endif; ?>

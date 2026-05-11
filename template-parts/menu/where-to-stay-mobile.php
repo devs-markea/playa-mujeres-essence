@@ -5,8 +5,8 @@
         </svg>
     </div>
     <div class="where-to-stay__content">
-        <h4>Where to stay</h4>
-        <p>Select the group you are travelling with and discover everything we have to offer you.</p>
+        <h4><?php pll_e('Where to stay'); ?></h4>
+        <p><?php pll_e('Select the group you are travelling with and discover everything we have to offer you.'); ?></p>
         <div class="where-to-stay__list">
             <?php
             $hotels = get_posts([

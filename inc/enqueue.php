@@ -21,18 +21,20 @@ function pm_enqueue_assets() {
     );
 
     // Lightbox — en gallery page, hotels_gallery o images_carousel (gallery-slider variant)
-    if ( is_page( 'gallery' ) || pm_page_has_section_layout( 'hotels_gallery' ) || pm_page_has_section_layout( 'images_carousel' ) ) {
-        wp_enqueue_style('pm-light-box2-css', PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/css/lightbox2.css',
-            array(),
-            $pm_essence_version,
-            'all'
-        );
-        wp_enqueue_script('pm-light-box2-js',
-            PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/js/lightbox2.js',
-            array('jquery'),
-            $pm_essence_version,
-            true);
-    }
+    wp_register_style(
+        'pm-light-box2-css',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/css/lightbox2.css',
+        array(),
+        '2.11.4',
+        'all'
+    );
+    wp_register_script(
+        'pm-light-box2-js',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/plugins/lightbox2/js/lightbox2.js',
+        array( 'jquery' ),
+        '2.11.4',
+        true
+    );
 
     // Bootstrap JS
     wp_enqueue_script(
@@ -111,7 +113,6 @@ function pm_enqueue_assets() {
         true
     );
 
-    // Mejor: que el JS no bloquee el parseo (WP soporta strategy en versiones modernas).
     if ( function_exists('wp_script_add_data') ) {
         wp_script_add_data('pm-swiper', 'strategy', 'defer');
     }
@@ -175,23 +176,19 @@ function pm_enqueue_assets() {
 
     // reCAPTCHA — solo en páginas con formulario de newsletter
     $recaptcha_site_key = defined('KEY_API_RECAPTCHA') ? KEY_API_RECAPTCHA : (string) get_theme_mod('pm_recaptcha_site_key', '');
-    $has_newsletter     = pm_page_has_section_layout('newsletter_subscribe_banner');
+    $has_newsletter     = pm_page_has_section_layout('newsletter_subscribe_banner')
+                        || is_category()
+                        || is_home()
+                        || is_singular('post')
+                        || is_page_template('page-templates/template-page-blog.php');
 
     if ( $recaptcha_site_key !== '' && $has_newsletter ) {
-        wp_enqueue_script(
-            'pm-recaptcha',
-            'https://www.google.com/recaptcha/api.js?render=' . rawurlencode($recaptcha_site_key),
-            array(),
-            null,
-            true
-        );
-
-        // Pasar ajaxurl y site key al JS de forma segura
+        // reCAPTCHA se carga de forma diferida desde JS (IntersectionObserver en initRecaptchaV3).
+        // Solo pasamos los datos necesarios — el script externo lo inyecta main.js al vuelo.
         wp_localize_script( 'main-js', 'pmNewsletter', array(
-            'ajaxurl'       => admin_url('admin-ajax.php'),
+            'ajaxurl'          => admin_url('admin-ajax.php'),
             'recaptchaSiteKey' => $recaptcha_site_key,
         ) );
-
     }
 
     /* ---------------------------------

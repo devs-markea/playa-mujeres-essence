@@ -32,14 +32,6 @@ if ( have_posts() ) :
 
         $display_categories_filter = ! empty( $blog_settings['single_page_display_categories_filter'] );
         $display_featured_posts    = ! empty( $blog_settings['single_page_display_featured_posts'] );
-        $display_newsletter_form   = ! empty( $blog_settings['single_page_display_newsletter_form'] );
-
-        $newsletter_heading       = isset( $blog_settings['sidebar_heading'] ) ? $blog_settings['sidebar_heading'] : '';
-        $newsletter_heading_level = isset( $blog_settings['sidebar_heading_level'] ) ? $blog_settings['sidebar_heading_level'] : 'h3';
-        $newsletter_description   = isset( $blog_settings['sidebar_description'] ) ? $blog_settings['sidebar_description'] : '';
-        $newsletter_placeholder   = isset( $blog_settings['placeholder'] ) ? $blog_settings['placeholder'] : '';
-        $newsletter_submit_text   = isset( $blog_settings['submit_text'] ) ? $blog_settings['submit_text'] : '';
-        $newsletter_heading_tag   = function_exists( 'pm_essence_heading_tag_or_null' ) ? pm_essence_heading_tag_or_null( $newsletter_heading_level, 'h3' ) : 'h3';
 
         $selected_category_slug = isset( $_GET['blog_category'] ) ? sanitize_title( wp_unslash( $_GET['blog_category'] ) ) : '';
         $selected_category      = $selected_category_slug ? get_term_by( 'slug', $selected_category_slug, 'category' ) : false;
@@ -217,7 +209,6 @@ if ( have_posts() ) :
 
         $has_categories_sidebar = $display_categories_filter && ! empty( $categories );
         $has_top_posts_sidebar  = $display_featured_posts && ! empty( $sidebar_featured_posts );
-        $has_newsletter_sidebar = $display_newsletter_form && ( $newsletter_heading || $newsletter_description || $newsletter_submit_text );
 
         $sticky_sidebar_target = '';
 
@@ -225,8 +216,6 @@ if ( have_posts() ) :
             $sticky_sidebar_target = 'categories';
         } elseif ( $has_top_posts_sidebar ) {
             $sticky_sidebar_target = 'top-posts';
-        } elseif ( $has_newsletter_sidebar ) {
-            $sticky_sidebar_target = 'newsletter';
         }
 
         $post_title    = get_the_title();
@@ -266,8 +255,8 @@ if ( have_posts() ) :
             _n( '%s Minute', '%s Minutes', $read_time_minutes, 'playa-mujeres-essence' ),
             number_format_i18n( $read_time_minutes )
         );
-        $related_posts_label = ( 2 === (int) $current_site_id ) ? 'Artículos relacionados' : 'Related Posts';
-        $read_more_label     = ( 2 === (int) $current_site_id ) ? 'Leer más' : 'Read more';
+        $related_posts_label = pll__('Related Posts');
+        $read_more_label     = pll__('Read more');
         ?>
         <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=63ea7f8a4825b500129efd91&product=inline-share-buttons&source=platform" async="async"></script>
 
@@ -279,7 +268,7 @@ if ( have_posts() ) :
                         <div class="col-12 col-lg-8 offset-lg-2">
                             <div class="single-blog-hero__subheading">
                                 <span class="single-blog-hero__subheading-line" aria-hidden="true"></span>
-                                <span class="single-blog-hero__subheading-label"><?php esc_html_e( 'Blog', 'playa-mujeres-essence' ); ?></span>
+                                <span class="single-blog-hero__subheading-label"><?php pll_e('Blog'); ?></span>
                             </div>
 
                             <h1 class="single-blog-hero__title"><?php echo esc_html( $post_title ); ?></h1>
@@ -333,7 +322,7 @@ if ( have_posts() ) :
                             <div class="row g-0">
                                 <div class="col-12 col-md-10 offset-md-2">
                                     <div class="single-post-share-this">
-                                        <label><?php echo ($current_site_id == 2) ? 'Compartir artículo' : 'Share this post'; ?></label>
+                                        <label><?php pll_e('Share this post'); ?></label>
                                         <div class="sharethis-inline-share-buttons"></div>
                                     </div>
                                 </div>
@@ -344,7 +333,7 @@ if ( have_posts() ) :
                         <aside class="blog-listing__sidebar<?php echo $sticky_sidebar_target ? ' blog-listing__sidebar--sticky blog-listing__sidebar--sticky-' . esc_attr($sticky_sidebar_target) : ''; ?>">
                             <?php if ($has_categories_sidebar) : ?>
                                 <div class="blog-listing__sidebar-block blog-listing__sidebar-block--categories">
-                                    <h3 class="blog-listing__sidebar-title">Categories</h3>
+                                    <h3 class="blog-listing__sidebar-title"><?php pll_e('Categories'); ?></h3>
                                     <ul class="blog-listing__categories">
                                         <?php foreach ($categories as $category) : ?>
                                             <?php
@@ -363,9 +352,25 @@ if ( have_posts() ) :
                                 </div>
                             <?php endif; ?>
 
-                            <?php if ($has_top_posts_sidebar) : ?>
+                            <?php if ( function_exists('wpp_get_mostpopular') ) : ?>
                                 <div class="blog-listing__sidebar-block blog-listing__sidebar-block--panel blog-listing__sidebar-block--top-posts">
-                                    <h3 class="blog-listing__sidebar-title">Top Posts</h3>
+                                    <h3 class="blog-listing__sidebar-title"><?php pll_e('Top Posts'); ?></h3>
+                                    <?php
+                                    wpp_get_mostpopular( array(
+                                        'limit'              => 4,
+                                        'range'              => 'all',
+                                        'thumbnail_width'    => 0,
+                                        'thumbnail_height'   => 0,
+                                        'display_post_title' => 1,
+                                        'wpp_start'          => '<ul class="blog-listing__top-posts">',
+                                        'wpp_end'            => '</ul>',
+                                        'post_html'          => '<li class="blog-listing__top-posts-item"><a href="{url}" class="blog-listing__top-posts-link">{text_title}</a></li>',
+                                    ) );
+                                    ?>
+                                </div>
+                            <?php elseif ($has_top_posts_sidebar) : ?>
+                                <div class="blog-listing__sidebar-block blog-listing__sidebar-block--panel blog-listing__sidebar-block--top-posts">
+                                    <h3 class="blog-listing__sidebar-title"><?php pll_e('Top Posts'); ?></h3>
                                     <ul class="blog-listing__top-posts">
                                         <?php foreach ($sidebar_featured_posts as $featured_post) : ?>
                                             <li class="blog-listing__top-posts-item">
@@ -378,48 +383,6 @@ if ( have_posts() ) :
                                 </div>
                             <?php endif; ?>
 
-                            <?php if ($has_newsletter_sidebar) : ?>
-                            <div class="blog-listing__sidebar-block blog-listing__sidebar-block--newsletter">
-                                <?php if ($newsletter_heading && $newsletter_heading_tag) : ?>
-                                <<?php echo tag_escape($newsletter_heading_tag); ?> class="blog-listing__sidebar-title">
-                                <?php echo esc_html($newsletter_heading); ?>
-                            </<?php echo tag_escape($newsletter_heading_tag); ?>>
-                        <?php endif; ?>
-
-                            <?php if ($newsletter_description) : ?>
-                                <div class="blog-listing__newsletter-copy">
-                                    <?php echo wp_kses_post($newsletter_description); ?>
-                                </div>
-                            <?php endif; ?>
-
-                            <form class="blog-listing__newsletter blog-listing__newsletter-form">
-                                <input
-                                        type="email"
-                                        class="blog-listing__newsletter-input blog-listing__newsletter-field"
-                                        placeholder="<?php echo esc_attr($newsletter_placeholder ?: 'Type your email address'); ?>"
-                                        required
-                                >
-                                <button
-                                        type="submit"
-                                        class="blog-listing__newsletter-submit arrow-circle__link"
-                                >
-                                    <span class="arrow-circle__label"><?php echo esc_html($newsletter_submit_text ?: 'Subscribe'); ?></span>
-                                    <span class="arrow-circle__icon">
-                                    <span class="arrow">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M17.25 15.75L21 12M21 12L17.25 8.25M21 12H3" stroke="currentColor" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </span>
-                                    <span class="circle">
-                                        <svg width="28" height="30" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="0.375" y="0.375" width="27.25" height="27.25" rx="13.625" stroke="currentColor" stroke-width="0.75"/>
-                                        </svg>
-                                    </span>
-                                </span>
-                                </button>
-                            </form>
-                    </div>
-                    <?php endif; ?>
                     </aside>
                     </div>
                 </div>
