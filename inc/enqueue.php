@@ -169,6 +169,7 @@ function pm_enqueue_assets() {
     wp_enqueue_script( 'main-js', get_template_directory_uri() . '/assets/js/main.js', $main_deps, $pm_essence_version, true );
     wp_script_add_data('main-js', 'strategy', 'defer');
 
+
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
     wp_register_script(
         'pm-youtube-background',
@@ -307,15 +308,20 @@ add_action( 'wp_enqueue_scripts', function () {
 
 /**
  * Deferir el JS de WordPress Popular Posts (render-blocking en todas las páginas).
- * Los posibles handles varían según la versión del plugin.
+ * Usa script_loader_tag para interceptar el HTML directamente — más fiable que
+ * wp_script_add_data cuando el plugin encola tarde o con prioridad alta.
  */
-add_action( 'wp_enqueue_scripts', function () {
-    foreach ( [ 'wpp-js', 'wordpress-popular-posts-js', 'wpp' ] as $handle ) {
-        if ( wp_script_is( $handle, 'enqueued' ) ) {
-            wp_script_add_data( $handle, 'strategy', 'defer' );
-        }
+add_filter( 'script_loader_tag', function ( string $tag, string $handle ): string {
+    $wpp_handles = [ 'wpp-js', 'wordpress-popular-posts-js', 'wpp' ];
+    if ( ! in_array( $handle, $wpp_handles, true ) ) {
+        return $tag;
     }
-}, 200 );
+    // Añadir defer solo si no tiene ya defer ni async
+    if ( strpos( $tag, ' defer' ) === false && strpos( $tag, ' async' ) === false ) {
+        $tag = str_replace( '<script ', '<script defer ', $tag );
+    }
+    return $tag;
+}, 10, 2 );
 
 // El defer de CSS lo maneja critical-css.php de forma global.
 

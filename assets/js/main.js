@@ -476,8 +476,6 @@ window.App = window.App || {};
             }
         });
     }
-
-    // Video hero: botón y scroll top
     function initVideoHeroControls() {
         if (!playButton || !heroVideo) return;
 
