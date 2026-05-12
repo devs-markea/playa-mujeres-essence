@@ -223,16 +223,20 @@ window.App = window.App || {};
 
         closeAllPanels();
 
-        body.classList.add(openClass);
+        // ── Lecturas de layout ANTES de cualquier escritura al DOM ──────────
+        // Evita forced reflow: leer offsetHeight/scrollHeight después de classList.add
+        // invalida el layout y obliga al browser a recalcular estilos en ese mismo frame.
+        const inner         = panelEl.querySelector('.mega-panel__inner');
+        const headerHeight  = header && inner ? header.offsetHeight : 0;
+        const contentHeight = inner ? inner.scrollHeight : 0;
+        // ────────────────────────────────────────────────────────────────────
 
+        // Escrituras al DOM (solo después de todas las lecturas)
+        body.classList.add(openClass);
         state.isWhereOpen       = isWhere;
         state.isExperiencesOpen = !isWhere;
 
-        const inner = panelEl.querySelector('.mega-panel__inner');
-
-        if (inner && header) {
-            const headerHeight  = header.offsetHeight;
-            const contentHeight = inner.scrollHeight;
+        if (inner && contentHeight) {
             panelEl.style.maxHeight = (contentHeight + headerHeight) + 'px';
         }
 

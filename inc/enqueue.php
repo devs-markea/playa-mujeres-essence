@@ -146,9 +146,14 @@ function pm_enqueue_assets() {
         true
     );
     wp_enqueue_script('pm-gsap');
-    wp_enqueue_script('pm-gsap-st');
-    wp_script_add_data('pm-gsap',    'strategy', 'defer');
-    wp_script_add_data('pm-gsap-st', 'strategy', 'defer');
+    wp_script_add_data('pm-gsap', 'strategy', 'defer');
+
+    // ScrollTrigger solo en desktop — en móvil initFadeAnimations hace early return
+    // y el script igual causaba 79ms de forced reflow durante su propia inicialización.
+    if ( ! wp_is_mobile() ) {
+        wp_enqueue_script('pm-gsap-st');
+        wp_script_add_data('pm-gsap-st', 'strategy', 'defer');
+    }
 
     // Swiper — solo en páginas que lo necesitan (debe encolarse antes de main-js)
     if ( $load_swiper ) {
@@ -265,11 +270,25 @@ function pm_preconnect_hints() {
     echo '<link rel="preconnect" href="https://use.typekit.net" crossorigin>' . "\n";
     echo '<link rel="preconnect" href="https://p.typekit.net" crossorigin>' . "\n";
 
+    // YouTube nocookie — necesario para el video-hero; ahorra ~300ms en LCP.
+    echo '<link rel="preconnect" href="https://www.youtube-nocookie.com">' . "\n";
+
     // Preload del CSS de Typekit — lo descarga en paralelo con el HTML.
     $kit_id = apply_filters( 'pm_essence_adobe_kit_id', 'jky6aby' );
     if ( ! empty( $kit_id ) ) {
         echo '<link rel="preload" href="https://use.typekit.net/' . esc_attr( $kit_id ) . '.css" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' . "\n";
         echo '<noscript><link rel="stylesheet" href="https://use.typekit.net/' . esc_attr( $kit_id ) . '.css"></noscript>' . "\n";
+    }
+
+    // Preload de las fuentes Meridien más usadas — necesario porque main.css (que declara
+    // los @font-face) ahora se carga diferido, así el browser las descubre desde el HTML.
+    $fonts_uri = PM_ESSENCE_TEMPLATE_URI . '/assets/fonts/meridien/';
+    $fonts     = [
+        'MeridienLTStd-Medium.woff2',
+        'MeridienLTStd-MediumItalic.woff2',
+    ];
+    foreach ( $fonts as $font ) {
+        echo '<link rel="preload" href="' . esc_url( $fonts_uri . $font ) . '" as="font" type="font/woff2" crossorigin>' . "\n";
     }
 }
 add_action( 'wp_head', 'pm_preconnect_hints', 1 );
@@ -285,6 +304,18 @@ add_action( 'wp_enqueue_scripts', function () {
     // Desencolamos aquí para evitar duplicado.
     wp_dequeue_style( 'pm-essence-fonts' );
 }, 100 );
+
+/**
+ * Deferir el JS de WordPress Popular Posts (render-blocking en todas las páginas).
+ * Los posibles handles varían según la versión del plugin.
+ */
+add_action( 'wp_enqueue_scripts', function () {
+    foreach ( [ 'wpp-js', 'wordpress-popular-posts-js', 'wpp' ] as $handle ) {
+        if ( wp_script_is( $handle, 'enqueued' ) ) {
+            wp_script_add_data( $handle, 'strategy', 'defer' );
+        }
+    }
+}, 200 );
 
 // El defer de CSS lo maneja critical-css.php de forma global.
 

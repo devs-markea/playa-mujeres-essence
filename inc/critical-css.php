@@ -65,11 +65,16 @@ add_filter( 'style_loader_tag', function ( string $html, string $handle ): strin
         'pm-bootstrap-css',   // 27.2 KiB
         'essence-components', // 128 KiB — mayor bloqueador de render
         'essence-mainstyles', // 11 KiB  — @font-faces locales
+        'essence-style',      // 0.3 KiB — style.css (solo header de tema)
         'pm-blog',            // 7 KiB   — solo páginas blog
         'pm-swiper',
         'pm-essence-fonts',
         'pm-light-box2-css',
         'custom-gallery-style',
+        // WordPress Popular Posts plugin — render-blocking en casi todas las páginas
+        'wpp-css',
+        'wpp-styles',
+        'wordpress-popular-posts-css',
     ];
 
     if ( ! in_array( $handle, $defer_handles, true ) ) {
