@@ -258,46 +258,47 @@ if ( have_posts() ) :
         $related_posts_label = pll__('Related Posts');
         $read_more_label     = pll__('Read more');
         ?>
-        <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=63ea7f8a4825b500129efd91&product=inline-share-buttons&source=platform" async="async"></script>
-
         <main id="primary" class="site-main site-main--single-blog" data-force-header-theme="menu">
 
-            <div class="container">
-                <section class="single-blog-hero">
-                    <div class="row g-0">
-                        <div class="col-12 col-lg-8 offset-lg-2">
-                            <div class="single-blog-hero__subheading">
-                                <span class="single-blog-hero__subheading-line" aria-hidden="true"></span>
-                                <span class="single-blog-hero__subheading-label"><?php pll_e('Blog'); ?></span>
-                            </div>
+            <section class="single-blog-hero container p-0 px-md-4">
+                <div class="row g-0 p-4 px-md-4">
+                    <div class="col-12 col-lg-8 offset-lg-2">
+                        <div class="single-blog-hero__subheading">
+                            <span class="single-blog-hero__subheading-line" aria-hidden="true"></span>
+                            <span class="single-blog-hero__subheading-label"><?php pll_e('Blog'); ?></span>
+                            <span class="single-blog-hero__subheading-line-two" aria-hidden="true"></span>
+                        </div>
 
-                            <h1 class="single-blog-hero__title"><?php echo esc_html( $post_title ); ?></h1>
+                        <h1 class="single-blog-hero__title"><?php echo esc_html( $post_title ); ?></h1>
 
-                            <div class="single-blog-hero__meta">
-                                <?php if ( $selected_category instanceof WP_Term ) : ?>
-                                    <span><?php echo esc_html( $selected_category->name ); ?></span>
-                                    <span class="single-blog-hero__meta-line" aria-hidden="true"></span>
-                                <?php endif; ?>
-                                <span><?php echo esc_html( $post_date ); ?></span>
-                                <?php if ( function_exists('get_favorites_button') ) : ?>
-                                    <span class="single-blog-hero__favorite">
+                        <div class="single-blog-hero__meta">
+                            <?php if ( $selected_category instanceof WP_Term ) : ?>
+                                <span><?php echo esc_html( $selected_category->name ); ?></span>
+                                <span class="single-blog-hero__meta-line" aria-hidden="true"></span>
+                            <?php endif; ?>
+                            <span><?php echo esc_html( $post_date ); ?></span>
+                            <?php if ( function_exists('get_favorites_button') ) : ?>
+                                <span class="single-blog-hero__favorite">
                                         <?php echo get_favorites_button( get_the_ID() ); ?>
                                     </span>
-                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if ( $hero_image ) : ?>
+                    <div class="row g-0">
+                        <div class="col-12">
+                            <div class="single-blog-hero__media">
+                                <?php echo $hero_image; ?>
                             </div>
                         </div>
                     </div>
+                <?php endif; ?>
+            </section>
 
-                    <?php if ( $hero_image ) : ?>
-                        <div class="row g-0">
-                            <div class="col-12">
-                                <div class="single-blog-hero__media">
-                                    <?php echo $hero_image; ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </section>
+            <div class="container">
+
 
                 <div class="row g-5">
                     <div class="col-12 col-md-8">
@@ -458,123 +459,4 @@ endif;
 get_footer();
 ?>
 
-<style>
-    /* ===============================
-   Newsletter Subscribe Banner
-   First Mobile
-   =============================== */
 
-    /* SECTION spacing */
-
-
-    /* background */
-    .newsletter-subscribe-banner__background {
-        position: relative;
-        min-height: 420px;
-        display: flex;
-        align-items: center;
-        background-size: cover;
-        background-position: center;
-    }
-
-    /* overlay */
-    .newsletter-subscribe-banner__overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        z-index: 1;
-    }
-
-    /* content layer */
-    .newsletter-subscribe-banner__content {
-        position: relative;
-        z-index: 2;
-        width: 100%;
-        border-top: 1px solid rgba(255, 255, 255, 0.25);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-        padding: 0;
-    }
-
-    .newsletter-subscribe-banner__inner {
-        padding: 40px 0;
-        max-width: 100%;
-    }
-
-    /* typography */
-    .newsletter-subscribe-banner__title {
-        color: #fff;
-        font-family: var(--pm-font-secondary);
-        font-size: 24px;
-        font-weight: 500;
-        font-style: italic;
-        letter-spacing: 2px;
-        margin-bottom: 0.75rem;
-    }
-
-    .newsletter-subscribe-banner__description {
-        color: #fff;
-        font-size: 16px;
-        font-weight: 300;
-        margin-bottom: 1.5rem;
-    }
-
-    /* form */
-    .newsletter-subscribe-banner__form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        max-width: 100%;
-    }
-
-    .newsletter-subscribe-banner__input {
-        width: 100%;
-        height: 48px;
-        padding: 0 1rem;
-        background: white;
-        font-size: 16px;
-        font-weight: 300;
-        color: var(--pm-secondary-800);
-        border: none;
-    }
-
-    .newsletter-subscribe-banner__submit {
-        height: 48px;
-        background: transparent;
-        color: #fff;
-        border: 0;
-    }
-
-    @media (min-width: 768px) {
-
-
-
-        .newsletter-subscribe-banner__background {
-            min-height: 520px;
-        }
-
-        .newsletter-subscribe-banner__inner {
-            padding: 3.5rem 0;
-            max-width: 620px;
-        }
-
-        .newsletter-subscribe-banner__content {
-            padding: 16px 0;
-        }
-
-        .newsletter-subscribe-banner__title {
-            font-size: 40px;
-            letter-spacing: 2px;
-        }
-
-        .newsletter-subscribe-banner__form {
-            flex-direction: row;
-            flex-wrap: wrap;
-            max-width: 75%;
-        }
-
-        .newsletter-subscribe-banner__input {
-            flex: 1 1 260px;
-        }
-    }
-
-</style>

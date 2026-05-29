@@ -2,7 +2,10 @@
 /**
  * Register translatable strings for Polylang.
  * Manage translations at: Languages → String translations (group: "pm-essence").
- * Usage in templates: pll__('string') or pll_e('string').
+ *
+ * Format: 'short-name' => 'Full string shown in templates with pll__()'
+ * The name (key) is only a label in the Polylang admin — keep it short.
+ * The string (value) must match exactly what pll__() / pll_e() receives in templates.
  */
 
 add_action( 'init', function () {
@@ -12,74 +15,80 @@ add_action( 'init', function () {
 
     $strings = [
         // General UI
-        'Read more'        => 'Read more',
-        'Load more'        => 'Load more',
-        'View more'        => 'View more',
-        'Close'            => 'Close',
-        'Back'             => 'Back',
-        'Next'             => 'Next',
-        'Previous'         => 'Previous',
-        'See all'          => 'See all',
+        'ui-read-more'     => 'Read more',
+        'ui-load-more'     => 'Load more',
+        'ui-view-more'     => 'View more',
+        'ui-close'         => 'Close',
+        'ui-back'          => 'Back',
+        'ui-next'          => 'Next',
+        'ui-previous'      => 'Previous',
+        'ui-see-all'       => 'See all',
 
         // Forms
-        'Send'             => 'Send',
-        'Send form'        => 'Send form',
-        'Submit'           => 'Submit',
-        'Name'             => 'Name',
-        'Last name'        => 'Last name',
-        'Email'            => 'Email',
-        'Phone'            => 'Phone',
-        'Message'          => 'Message',
-        'Required field'   => 'Required field',
-        'Sending...'       => 'Sending...',
-        'Message sent'     => 'Message sent',
-        'Error sending'    => 'Error sending',
+        'form-send'        => 'Send',
+        'form-send-form'   => 'Send form',
+        'form-submit'      => 'Submit',
+        'form-name'        => 'Name',
+        'form-lastname'    => 'Last name',
+        'form-email'       => 'Email',
+        'form-phone'       => 'Phone',
+        'form-message'     => 'Message',
+        'form-required'    => 'Required field',
+        'form-sending'     => 'Sending...',
+        'form-sent'        => 'Message sent',
+        'form-error'       => 'Error sending',
 
         // Navigation
-        'Menu'             => 'Menu',
-        'Search'           => 'Search',
-        'Book now'         => 'Book now',
-        'Reserve'          => 'Reserve',
-        'Where to stay'    => 'Where to stay',
-        'Experiences'      => 'Experiences',
+        'nav-menu'         => 'Menu',
+        'nav-search'       => 'Search',
+        'nav-book-now'     => 'Book now',
+        'nav-reserve'      => 'Reserve',
+        'nav-where-to-stay' => 'Where to stay',
+        'nav-experiences'  => 'Experiences',
 
         // Blog
-        'All'              => 'All',
-        'Filter'           => 'Filter',
-        'No results found' => 'No results found',
-        'Share'            => 'Share',
-        'Blog'             => 'Blog',
-        'Categories'       => 'Categories',
-        'Top Posts'        => 'Top Posts',
-        'Subscribe'        => 'Subscribe',
-        'Type your email address'                  => 'Type your email address',
-        'No posts were found for this category.'   => 'No posts were found for this category.',
-        'Previous posts'   => 'Previous posts',
-        'Next posts'       => 'Next posts',
-
-        // Blog listing
-        'Read More About Our Experiences'                                                           => 'Read More About Our Experiences',
-        'Related Posts'    => 'Related Posts',
-        'Share this post'  => 'Share this post',
+        'blog-hero-heading' => 'Discover Everything You Can Do At This Exclusive Destination',
+        'blog-all'         => 'All',
+        'blog-filter'      => 'Filter',
+        'blog-no-results'  => 'No results found',
+        'blog-share'       => 'Share',
+        'blog-label'       => 'Blog',
+        'blog-categories'  => 'Categories',
+        'blog-top-posts'   => 'Top Posts',
+        'blog-subscribe'   => 'Subscribe',
+        'blog-email-placeholder'  => 'Type your email address',
+        'blog-no-posts'           => 'No posts were found for this category.',
+        'blog-prev-posts'         => 'Previous posts',
+        'blog-next-posts'         => 'Next posts',
+        'blog-read-more-exp'      => 'Read More About Our Experiences',
+        'blog-related-posts'      => 'Related Posts',
+        'blog-share-post'         => 'Share this post',
 
         // Newsletter sidebar
-        'Newsletter'                                                                                => 'Newsletter',
-        'Subscribe for exclusive Playa Mujeres updates and luxury travel inspiration'               => 'Subscribe for exclusive Playa Mujeres updates and luxury travel inspiration',
+        'newsletter-label'   => 'Newsletter',
+        'newsletter-sidebar-desc' => 'Subscribe for exclusive Playa Mujeres updates and luxury travel inspiration',
 
         // Newsletter banner
-        'Join An Exclusive Club Of Sophisticated Travelers'                                         => 'Join An Exclusive Club Of Sophisticated Travelers',
-        'Receive our monthly Playa Mujeres newsletter that offers you the best recommendations for your next getaway.' => 'Receive our monthly Playa Mujeres newsletter that offers you the best recommendations for your next getaway.',
+        'newsletter-banner-title' => 'Join An Exclusive Club Of Sophisticated Travelers',
+        'newsletter-banner-desc'  => 'Receive our monthly Playa Mujeres newsletter that offers you the best recommendations for your next getaway.',
 
         // Mega menu / panels
-        'Discover a collection of world-class resorts in Playa Mujeres' => 'Discover a collection of world-class resorts in Playa Mujeres',
-        'Because paradise feels different for everyone.'                 => 'Because paradise feels different for everyone.',
-        'Select the group you are travelling with and discover everything we have to offer you.' => 'Select the group you are travelling with and discover everything we have to offer you.',
-        'Filter By Hotel'                                                => 'Filter By Hotel',
-        'You can filter by hotel, choose one from the list below.'       => 'You can filter by hotel, choose one from the list below.',
-        'View results'                                                   => 'View results',
+        'menu-resorts-desc'       => 'Discover a collection of world-class resorts in Playa Mujeres',
+        'menu-paradise-tagline'   => 'Because paradise feels different for everyone.',
+        'menu-group-desc'         => 'Select the group you are travelling with and discover everything we have to offer you.',
+        'menu-filter-hotel'       => 'Filter By Hotel',
+        'menu-filter-hotel-desc'  => 'You can filter by hotel, choose one from the list below.',
+        'menu-view-results'       => 'View results',
 
         // Weather widget
-        'Weather Now'      => 'Weather Now',
+        'widget-weather'   => 'Weather Now',
+
+        // Footer
+        'footer-find-us'   => 'Find Us',
+        'footer-hotels'    => 'Hotels',
+        'footer-links'     => 'Links',
+        'footer-address'   => 'ADDRESS: MZA 1 SMZA 3, PUNTA SAM, ISLA MUJERES, QUINTANA ROO, C.P. 77400.',
+        'footer-copyright' => '© Playa Mujeres Resort. All rights reserved. Powered by',
     ];
 
     foreach ( $strings as $name => $string ) {

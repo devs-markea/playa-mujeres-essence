@@ -17,20 +17,23 @@
 
             <div class="row g-2">
                 <?php foreach ($experiences as $experience) :
-                    $title     = get_the_title($experience->ID);
-                    $featured  = get_the_post_thumbnail_url($experience->ID);
-                    $hotel_url = get_permalink($experience->ID);
-                    $special_positions = [12428, 12427, 12429];
-                    $bg_position = in_array($experience->ID, $special_positions)
-                            ? 'background-position: bottom;'
-                            : '';
+                    $title       = get_the_title($experience->ID);
+                    $experience_url = get_permalink($experience->ID);
+                    $featured_id = get_post_thumbnail_id($experience->ID);
                     ?>
                     <div class="col-6 col-md-3">
-                        <div
-                                onclick="location.href='<?= esc_url($hotel_url); ?>';"
-                                class="cover-cc-bg p-2 experience-card__image-wrapper"
-                                style="<?= $bg_position ?> background-image:url('<?= esc_url($featured); ?>');">
-                        <h5><?= esc_html($title); ?></h5>
+                        <div onclick="location.href='<?= esc_url($experience_url); ?>';" class="experience-card__image-wrapper">
+                            <?php if ( $featured_id ) : ?>
+                                <?php echo wp_get_attachment_image( $featured_id, 'large', false, [
+                                    'class'   => 'experience-card__image',
+                                    'alt'     => '',
+                                    'loading' => 'lazy',
+                                    'decoding'=> 'async',
+                                ] ); ?>
+                            <?php endif; ?>
+                            <div class="experience-card__title-wrapper">
+                                <h5 class="experience-card__title"><?= esc_html($title); ?></h5>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>

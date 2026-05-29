@@ -22,6 +22,11 @@
                         </<?= esc_html($title_tag); ?>>
                     <?php endif; ?>
 
+                <?php if ($description) : ?>
+                    <div class="content-showcase__description">
+                        <?= wp_kses_post($description); ?>
+                    </div>
+                <?php endif; ?>
                     <!-- Desktop: rail vertical con indicador -->
                     <div class="content-showcase__rail content-showcase__rail--desktop">
                         <div class="content-showcase__indicator" aria-hidden="true"></div>

@@ -21,13 +21,23 @@
 
             <div class="row g-2">
                 <?php foreach ($experiences as $experience) :
-                    $title     = get_the_title($experience->ID);
-                    $featured  = get_the_post_thumbnail_url($experience->ID);
-                    $hotel_url = get_permalink($experience->ID);
+                    $title          = get_the_title($experience->ID);
+                    $experience_url = get_permalink($experience->ID);
+                    $featured_id    = get_post_thumbnail_id($experience->ID);
                     ?>
                     <div class="col-6 col-md-3">
-                        <div onclick="location.href='<?= esc_url($hotel_url); ?>';" class="cover-cc-bg p-2 experience-card__image-wrapper" style="background-image:url('<?= esc_url($featured); ?>');">
-                            <h5><?= esc_html($title); ?></h5>
+                        <div onclick="location.href='<?= esc_url($experience_url); ?>';" class="experience-card__image-wrapper">
+                            <?php if ( $featured_id ) : ?>
+                                <?php echo wp_get_attachment_image( $featured_id, 'large', false, [
+                                    'class'   => 'experience-card__image',
+                                    'alt'     => '',
+                                    'loading' => 'lazy',
+                                    'decoding'=> 'async',
+                                ] ); ?>
+                            <?php endif; ?>
+                            <div class="experience-card__title-wrapper">
+                                <h5 class="experience-card__title"><?= esc_html($title); ?></h5>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -35,39 +45,3 @@
         </div>
     </div>
 </div>
-
-<style>
-
-    .experience-card__image-wrapper::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: 0;
-        background: linear-gradient( to top, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0) 100% );
-        pointer-events: none;
-    }
-    .experience-card__image-wrapper {
-        position: relative;
-        cursor: pointer;
-        height: 162px;
-        border-radius: 0.5rem;
-        overflow: hidden;
-        background-size: cover;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-    }
-    .experience-card__image-wrapper h5 {
-        position: relative;
-        color: white;
-        z-index: 2;
-        font-size: 18px;
-        font-style: normal;
-        font-weight: var(--fw-regular);
-        line-height: normal;
-        letter-spacing: 1px;
-    }
-</style>

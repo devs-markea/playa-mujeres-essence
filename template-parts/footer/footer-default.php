@@ -18,10 +18,10 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
 
                 <div class="col-md-3 col-12 footer-top__find-us">
                     <div class="footer-top__menu-heading">
-                        <h6>Find Us</h6>
+                        <h6><?php pll_e('Find Us'); ?></h6>
                     </div>
                     <div class="address">
-                        <p>ADDRESS: MZA 1 SMZA 3, PUNTA SAM, ISLA MUJERES, QUINTANA ROO, C.P. 77400.</p>
+                        <p class="text-uppercase"><?php pll_e('ADDRESS: MZA 1 SMZA 3, PUNTA SAM, ISLA MUJERES, QUINTANA ROO, C.P. 77400.'); ?></p>
                     </div>
                     <?php
                     if ( $facebook_url || $instagram_url ) :
@@ -67,7 +67,7 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
 
                 <div class="col-md-3 col-12 footer-top__hotels">
                     <div class="footer-top__menu-heading">
-                        <h6>Hotels</h6>
+                        <h6><?php pll_e('Hotels'); ?></h6>
                     </div>
                     <?php
                     wp_nav_menu( array(
@@ -82,7 +82,7 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
 
                 <div class="col-md-3 col-12 footer-top__links">
                     <div class="footer-top__menu-heading">
-                        <h6>Links</h6>
+                        <h6><?php pll_e('Links'); ?></h6>
                     </div>
                     <?php
                     wp_nav_menu( array(
@@ -101,6 +101,7 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
 <div class="footer-bottom d-flex justify-content-center align-items-center">
     <div class="footer-bottom__copyright">
         <p>
+            <?php pll_e('© Playa Mujeres Resort. All rights reserved. Powered by'); ?>
             <?php if ( $footer_copyright ) : ?>
                 <?php echo wp_kses_post( $footer_copyright ); ?>
             <?php endif; ?>

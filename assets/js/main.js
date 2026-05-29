@@ -494,11 +494,8 @@ window.App = window.App || {};
             const vbgInst = window.VIDEO_BACKGROUNDS && window.VIDEO_BACKGROUNDS.get(heroVideo);
 
             if (isPlaying) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                setTimeout(() => {
-                    if (body) body.classList.add('body-overflow-hidden');
-                }, 600);
+                if (body) body.classList.add('body-overflow-hidden');
+                window.scrollTo({ top: 0, behavior: 'instant' });
 
                 if (vbgInst) {
                     vbgInst.unmute();
@@ -1394,128 +1391,68 @@ window.App = window.App || {};
     // Hero reveal — fade-in del body + zoom de imagen con GSAP
     // Aplica a: page-cover--variant-classic, page-cover--variant-essence (solo primary) y primary-showcase-hero
     function initPageCoverReveal() {
-        if (typeof gsap === 'undefined') return;
-
-        var essencePrimary = document.querySelector('.page-cover--variant-essence .page-cover__image--primary');
+        var essencePrimary   = document.querySelector('.page-cover--variant-essence .page-cover__image--primary');
         var signaturePrimary = document.querySelector('.page-cover--variant-signature .page-cover-signature__img');
         var img = essencePrimary
                || document.querySelector('.page-cover--variant-classic .page-cover__image')
                || document.querySelector('.primary-showcase-hero .hotel-hero__bg');
 
         window.__revealPage = function () {
-            gsap.to(document.body, {
-                opacity:  1,
-                duration: 0.5,
-                ease:     'power2.out',
+            // Fade-in del body con CSS transition
+            document.body.style.transition = 'opacity 0.5s ease';
+            requestAnimationFrame(function () {
+                document.body.style.opacity = '1';
             });
-            // La primary image del essence no lleva zoom, solo el fade del body
+            // Micro-zoom en imagen de page-cover (no essence ni signature)
             if (img && !essencePrimary && !signaturePrimary) {
-                gsap.fromTo(img,
-                    { scale: 1 },
-                    { scale: 1.01, duration: 0.5, ease: 'none' }
-                );
+                img.style.transition = 'transform 0.5s ease';
+                requestAnimationFrame(function () {
+                    img.style.transform = 'scale(1.01)';
+                });
             }
         };
 
-        // Si la imagen ya había cargado antes de que GSAP estuviera disponible
+        // Si la imagen ya había cargado antes de que el script estuviera disponible
         if (window.__pageCoverReady) {
             window.__revealPage();
         }
     }
 
-    // Fade-in animations — [data-animate] > .fade-in-{n}
-    // Uso: <div data-animate> <h1 class="fade-in-1">...</h1> <p class="fade-in-2">...</p> </div>
-    // Cada número define el orden de aparición (delay escalonado de 0.15s).
+    // Fade-in animations — [data-anim]
+    // CSS controla el estado visual; IntersectionObserver añade la clase .is-animated.
+    // En móvil los elementos son siempre visibles (via CSS @media).
     function initFadeAnimations() {
-        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-        // En móvil los elementos quedan visibles sin animación — ahorra ~40ms de TBT en CPU lento.
-        if (window.innerWidth < 768) return;
+        var allAnims = document.querySelectorAll('[data-anim]');
+        if (!allAnims.length) return;
 
-        gsap.registerPlugin(ScrollTrigger);
+        // Sin soporte de IntersectionObserver: mostrar todo de inmediato
+        if (!('IntersectionObserver' in window)) {
+            allAnims.forEach(function (el) { el.classList.add('is-animated'); });
+            return;
+        }
 
-        // Parsea el valor del atributo: "slide-up delay-3" → { type: 'slide-up', delay: 0.3 }
-        function parseAnim(value) {
-            var parts  = (value || '').trim().split(/\s+/);
-            var type   = 'fade';
-            var delay  = 0;
-            parts.forEach(function (part) {
-                if (part.indexOf('delay-') === 0) {
-                    delay = parseInt(part.replace('delay-', ''), 10) * 0.1;
-                } else if (part) {
-                    type = part;
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-animated');
+                    observer.unobserve(entry.target);
                 }
             });
-            return { type: type, delay: delay };
-        }
+        }, {
+            // Equivalente a ScrollTrigger start:'top 70%' — dispara cuando el top
+            // del elemento entra en el 70% inferior del viewport.
+            rootMargin: '0px 0px -30% 0px',
+            threshold:  0
+        });
 
-        // Propiedades iniciales según el tipo de animación
-        function getFromProps(type) {
-            var base = { opacity: 0, duration: 0.7, ease: 'power2.out' };
-            switch (type) {
-                case 'slide-up':    return Object.assign({}, base, { y: 32 });
-                case 'slide-down':  return Object.assign({}, base, { y: -32 });
-                case 'slide-left':  return Object.assign({}, base, { x: 32 });
-                case 'slide-right': return Object.assign({}, base, { x: -32 });
-                case 'fade':        return base;
-                default:            return Object.assign({}, base, { y: 32 });
-            }
-        }
-
-        function inViewport(el) {
+        allAnims.forEach(function (el) {
             var rect = el.getBoundingClientRect();
-            return rect.top < window.innerHeight && rect.bottom > 0;
-        }
-
-        // ── Elemento individual: data-anim="slide-up delay-2" ──
-        document.querySelectorAll('[data-anim]').forEach(function (el) {
-            var parsed    = parseAnim(el.getAttribute('data-anim'));
-            var fromProps = Object.assign({}, getFromProps(parsed.type), {
-                delay:    parsed.delay,
-                onComplete: function () { gsap.set(el, { clearProps: 'transform' }); },
-            });
-
-            if (inViewport(el)) {
-                gsap.from(el, fromProps);
+            // Ya visible al cargar: animar de inmediato sin delay
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                el.classList.add('is-animated');
             } else {
-                gsap.from(el, Object.assign({}, fromProps, {
-                    scrollTrigger: {
-                        trigger: el,
-                        start: 'top 70%',
-                        toggleActions: 'play none none none',
-                    }
-                }));
+                observer.observe(el);
             }
-        });
-
-        // ── Grupo: data-anim-wrap > data-anim-child="slide-up delay-1" ──
-        document.querySelectorAll('[data-anim-wrap]').forEach(function (wrap) {
-            var children = wrap.querySelectorAll('[data-anim-child]');
-            if (!children.length) return;
-
-            if (inViewport(wrap)) {
-                var tl = gsap.timeline();
-                children.forEach(function (child) {
-                    var parsed = parseAnim(child.getAttribute('data-anim-child'));
-                    tl.from(child, getFromProps(parsed.type), parsed.delay);
-                });
-            } else {
-                var tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: wrap,
-                        start: 'top 70%',
-                        toggleActions: 'play none none none',
-                    }
-                });
-                children.forEach(function (child) {
-                    var parsed = parseAnim(child.getAttribute('data-anim-child'));
-                    tl.from(child, getFromProps(parsed.type), parsed.delay);
-                });
-            }
-        });
-
-        // Recalcular posiciones tras carga completa (imágenes, layout final)
-        window.addEventListener('load', function () {
-            ScrollTrigger.refresh();
         });
     }
 
@@ -1754,18 +1691,15 @@ window.App = window.App || {};
             var mm = window.matchMedia ? window.matchMedia('(max-width: 990px)') : null;
             function shouldRun() { return !mm || mm.matches; }
 
-            if (window.gsap) window.gsap.set(bottomWrap, { autoAlpha: 0 });
+            bottomWrap.style.opacity    = '0';
+            bottomWrap.style.visibility = 'hidden';
+            bottomWrap.style.transition = 'opacity 0.2s ease';
 
             function animateBottomVisible(visible) {
                 bottomWrap.classList[visible ? 'add' : 'remove']('is-visible');
                 bottomWrap.setAttribute('aria-hidden', visible ? 'false' : 'true');
-                if (!window.gsap) {
-                    bottomWrap.style.opacity = visible ? '1' : '0';
-                    bottomWrap.style.visibility = visible ? 'visible' : 'hidden';
-                    return;
-                }
-                window.gsap.killTweensOf(bottomWrap);
-                window.gsap.to(bottomWrap, { autoAlpha: visible ? 1 : 0, duration: 0.20, ease: 'power1.out' });
+                bottomWrap.style.opacity    = visible ? '1' : '0';
+                bottomWrap.style.visibility = visible ? 'visible' : 'hidden';
             }
 
             animateBottomVisible(false);

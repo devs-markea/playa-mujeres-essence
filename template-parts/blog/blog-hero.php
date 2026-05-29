@@ -8,7 +8,7 @@ $args = wp_parse_args($args ?? array(), array(
 $blog_settings = is_array($args['blog_settings']) ? $args['blog_settings'] : array();
 $hero_post_ids = array_filter( array_map( 'absint', (array) $args['hero_post_ids'] ) );
 
-$heading_hero       = isset($blog_settings['page_heading']) ? $blog_settings['page_heading'] : '';
+$heading_hero       = function_exists('pll__') ? pll__('Discover Everything You Can Do At This Exclusive Destination') : __('Discover Everything You Can Do At This Exclusive Destination', 'pm-essence');
 $heading_level_hero = isset($blog_settings['page_heading_level']) ? $blog_settings['page_heading_level'] : 'h1';
 $description_hero   = isset($blog_settings['page_description']) ? $blog_settings['page_description'] : '';
 

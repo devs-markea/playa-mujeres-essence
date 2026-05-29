@@ -130,7 +130,9 @@ function pm_enqueue_assets() {
     }
     $load_swiper = apply_filters( 'pm_essence_should_load_swiper', $load_swiper );
 
-    // GSAP — siempre se carga: lo usan initPageCoverReveal e initFadeAnimations en todas las páginas
+    // GSAP — registrado pero NO encolado; initFadeAnimations y initPageCoverReveal
+    // ahora usan IntersectionObserver + CSS transitions (vanilla).
+    // Se mantiene el registro por si algún plugin externo lo necesita.
     wp_register_script(
         'pm-gsap',
         PM_ESSENCE_TEMPLATE_URI . '/assets/libs/gsap/gsap.min.js',
@@ -145,15 +147,6 @@ function pm_enqueue_assets() {
         '3.14.1',
         true
     );
-    wp_enqueue_script('pm-gsap');
-    wp_script_add_data('pm-gsap', 'strategy', 'defer');
-
-    // ScrollTrigger solo en desktop — en móvil initFadeAnimations hace early return
-    // y el script igual causaba 79ms de forced reflow durante su propia inicialización.
-    if ( ! wp_is_mobile() ) {
-        wp_enqueue_script('pm-gsap-st');
-        wp_script_add_data('pm-gsap-st', 'strategy', 'defer');
-    }
 
     // Swiper — solo en páginas que lo necesitan (debe encolarse antes de main-js)
     if ( $load_swiper ) {
@@ -161,14 +154,26 @@ function pm_enqueue_assets() {
         wp_enqueue_script('pm-swiper');
     }
 
-    // main-js: depende de GSAP, ScrollTrigger y opcionalmente Swiper — siempre al final.
-    $main_deps = array( 'jquery', 'pm-gsap', 'pm-gsap-st' );
+    // main-js: sin dependencia de GSAP/ScrollTrigger — solo jQuery y opcionalmente Swiper.
+    $main_deps = array( 'jquery' );
     if ( $load_swiper ) {
         $main_deps[] = 'pm-swiper';
     }
     wp_enqueue_script( 'main-js', get_template_directory_uri() . '/assets/js/main.js', $main_deps, $pm_essence_version, true );
     wp_script_add_data('main-js', 'strategy', 'defer');
 
+
+    // ShareThis — solo en entradas individuales del blog
+    if ( is_singular( 'post' ) ) {
+        wp_enqueue_script(
+            'pm-sharethis',
+            'https://platform-api.sharethis.com/js/sharethis.js#property=63ea7f8a4825b500129efd91&product=inline-share-buttons&source=platform',
+            array(),
+            null,
+            true
+        );
+        wp_script_add_data( 'pm-sharethis', 'strategy', 'async' );
+    }
 
     // youtube-background (solo se encola cuando hay un video hero de YouTube)
     wp_register_script(

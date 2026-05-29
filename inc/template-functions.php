@@ -350,7 +350,7 @@ if ( ! function_exists( 'pm_essence_nav_menu' ) ) {
             array(
                 'menu'           => $menu_id,
                 'container'      => false,
-                'menu_class'     => 'navbar-nav d-flex mb-0 pm-navbar pm-navbar-' . esc_attr( $location ),
+                'menu_class'     => 'navbar-nav d-flex flex-column flex-lg-row mb-0 pm-navbar pm-navbar-' . esc_attr( $location ),
                 'fallback_cb'    => '__return_false',
                 'depth'          => 2,
                 'pm_location'    => $location

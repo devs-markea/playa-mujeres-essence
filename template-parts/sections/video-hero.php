@@ -69,7 +69,7 @@ $video = pm_parse_video($video_url);
                 data-vbg-muted="true"
                 data-vbg-controls="false"
                 data-vbg-loop="true"
-                data-vbg-no-cookie="true"
+                data-vbg-no-cookie="false"
                 data-vbg-always-play="true"
                 aria-hidden="true"
             ></div>

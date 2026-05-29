@@ -356,7 +356,7 @@ if ($pill_mode === 'taxonomy') {
 
                 <div class="content-collection__load-more">
                     <button type="button" class="content-collection__load-more-btn" data-collection-load-more style="display:none;">
-                        Load More
+                        <?php pll_e('Load more'); ?>
                     </button>
                 </div>
             </div>
