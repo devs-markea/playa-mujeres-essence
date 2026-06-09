@@ -17,7 +17,7 @@
             shuffle($hotels);
             ?>
 
-            <div class="row g-2">
+            <div class="row g-3">
                 <?php foreach ($hotels as $hotel) :
                     $logo_data = function_exists('pm_get_hotel_primary_showcase_logo_dark') ? pm_get_hotel_primary_showcase_logo_dark($hotel->ID) : null;
                     $featured  = get_the_post_thumbnail_url($hotel->ID);

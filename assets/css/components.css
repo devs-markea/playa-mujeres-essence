@@ -140,7 +140,9 @@
 }
 
 .pm-header__menu .pm-navbar .menu-item > a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 0;
     font-size: 0.875rem;
     font-weight: var(--fw-light);
@@ -679,26 +681,32 @@ html:not(.is-touch) .hotel-card__image-wrapper:hover .hotel-card__image {
 .hotel-card__logo-wrapper {
     position: relative;
     z-index: 2;
-    width: 80px;
-    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0;
 }
 
 .hotel-card__logo-wrapper .hotel-card__logo {
-    width: 100%;
+    width: 95px;
     height: auto;
     display: block;
+    object-fit: contain;
 }
 
 .hotel-card__logo {
     width: 100%;
-    max-width: 4.6rem;
+    max-width: 100%;
     height: auto;
 
 }
 
 @media (min-width: 768px) {
     .hotel-card__logo {
-        max-width: 5.6rem;
+        max-width: 100%;
+    }
+    .hotel-card__logo-wrapper .hotel-card__logo {
+        width: 104px;
     }
 }
 
@@ -1155,6 +1163,19 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     background: none;
     border: none;
     color: inherit;
+    transition: color 0.2s ease, opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.play-button .play-button__inner .play-button__icon rect,
+.play-button .play-button__inner .play-button__icon path {
+    stroke: white;
+    transition: stroke 0.2s ease;
+}
+
+.play-button .play-button__inner:hover .play-button__icon rect,
+.play-button .play-button__inner:hover .play-button__icon path {
+    stroke: var(--pm-primary-50);
 }
 
 .video-hero {
@@ -1228,8 +1249,24 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     pointer-events: none;
 }
 
-.play-button__inner.is-playing {
+.play-button__icon-close {
+    display: none;
+}
 
+.play-button__inner.is-playing {
+    flex-direction: row-reverse;
+}
+
+.play-button__inner.is-playing .play-button__icon-play {
+    display: none;
+}
+
+.play-button__inner.is-playing .play-button__icon-close {
+    display: inline;
+}
+
+.play-button .play-button__inner:hover {
+    color: var(--pm-primary-900);
 }
 
 .body-overflow-hidden {

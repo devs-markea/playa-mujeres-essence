@@ -479,13 +479,20 @@ window.App = window.App || {};
     function initVideoHeroControls() {
         if (!playButton || !heroVideo) return;
 
+        const playLabel    = playButton.querySelector('.play-button__label');
+        const originalLabel = playLabel ? playLabel.textContent : '';
+        const playingLabel  = playButton.dataset.playingLabel || '';
+
         let isPlaying = false;
 
-        playButton.addEventListener('click', function (e) {
-            e.preventDefault();
-            isPlaying = !isPlaying;
+        function setVideoState(playing) {
+            isPlaying = playing;
 
             playButton.classList.toggle('is-playing', isPlaying);
+
+            if (playLabel) {
+                playLabel.textContent = isPlaying ? playingLabel : originalLabel;
+            }
 
             if (header) {
                 header.classList.toggle('pm-header--hidden', isPlaying);
@@ -517,6 +524,11 @@ window.App = window.App || {};
             if (info) info.classList.toggle('is-hidden', isPlaying);
             if (divider) divider.classList.toggle('is-hidden', isPlaying);
             if (overlayVideo) overlayVideo.classList.toggle('is-hidden', isPlaying);
+        }
+
+        playButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            setVideoState(!isPlaying);
         });
     }
 

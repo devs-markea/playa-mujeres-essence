@@ -15,7 +15,7 @@
 
             ?>
 
-            <div class="row g-2">
+            <div class="row g-3">
                 <?php foreach ($experiences as $experience) :
                     $title       = get_the_title($experience->ID);
                     $experience_url = get_permalink($experience->ID);

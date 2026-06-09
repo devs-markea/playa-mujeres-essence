@@ -20,6 +20,9 @@ add_action( 'init', function () {
         'ui-view-more'     => 'View more',
         'ui-close'         => 'Close',
         'ui-back'          => 'Back',
+
+        // Video hero
+        'video-hero-return' => 'Return to home page',
         'ui-next'          => 'Next',
         'ui-previous'      => 'Previous',
         'ui-see-all'       => 'See all',

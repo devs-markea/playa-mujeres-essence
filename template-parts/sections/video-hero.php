@@ -69,7 +69,7 @@ $video = pm_parse_video($video_url);
                 data-vbg-muted="true"
                 data-vbg-controls="false"
                 data-vbg-loop="true"
-                data-vbg-no-cookie="false"
+                data-vbg-no-cookie="true"
                 data-vbg-always-play="true"
                 aria-hidden="true"
             ></div>
@@ -134,17 +134,17 @@ $video = pm_parse_video($video_url);
             </div>
         </div>
         <div class="play-button">
-            <button class="play-button__inner" id="play-button-hero">
-                <span>Discover Playa Mujeres</span>
-                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <?php $return_label = function_exists( 'pll__' ) ? pll__( 'Return to home page' ) : __( 'Return to home page', 'pm-essence' ); ?>
+            <button class="play-button__inner" id="play-button-hero" data-playing-label="<?php echo esc_attr( $return_label ); ?>">
+                <span class="play-button__label">Discover Playa Mujeres</span>
+                <svg class="play-button__icon" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="0.5" y="0.5" width="27" height="27" rx="13.5" stroke="white"/>
-                    <path d="M11 19.1963V8.80371L20.001 14L11 19.1963Z" stroke="white"/>
+                    <path class="play-button__icon-play" d="M11 19.1963V8.80371L20.001 14L11 19.1963Z" stroke="white"/>
+                    <path class="play-button__icon-close" d="M9 9L19 19M19 9L9 19" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
         </div>
     </div>
-
-
 
 </section>
 
