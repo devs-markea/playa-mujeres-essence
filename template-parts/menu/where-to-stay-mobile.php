@@ -5,7 +5,7 @@
         </svg>
     </div>
     <div class="where-to-stay__content">
-        <h4><?php pll_e('Where to stay'); ?></h4>
+        <p class="pm-menu-panel__title"><?php pll_e('Where to stay'); ?></p>
         <p><?php pll_e('Select the group you are travelling with and discover everything we have to offer you.'); ?></p>
         <div class="where-to-stay__list">
             <?php

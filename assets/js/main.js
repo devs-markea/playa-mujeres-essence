@@ -1922,6 +1922,9 @@ window.App = window.App || {};
         }
 
         if (!header) return;
+
+        // Crítico para interactividad inmediata — corre antes del primer paint.
+        initPageCoverReveal(); // puede necesitar revelar el body (opacity 0 en page-cover)
         initToTopButton();
         initLangSwitcher();
         initDesktopSubmenus();
@@ -1930,21 +1933,27 @@ window.App = window.App || {};
         initMegaPanels();
         initVideoHeroControls();
         initScrollHandler();
-        initHotelsParallax();
-        initContentShowcaseClassic();
-        initContentShowcaseEssence();
-        initImagesCarouselClassicSwiper();
-        initImagesCarouselGallerySwipers();
-        initContentCarouselClassicSwiper();
-        initBlogHeroSwiper();
-        initBlogListingFeaturedSwiper();
-        initBlogListingLoadMore();
-        initWeatherToggle();
-        initPageCoverReveal();
-        initFadeAnimations();
-        initDynamicCollectionFilter();
-        lazyLoadImages('.img-fluid');
-        initFavoritesI18n();
+
+        // Diferir operaciones costosas que fuerzan reflow de layout al frame siguiente,
+        // permitiendo que el browser pinte el LCP antes de ejecutar este trabajo.
+        requestAnimationFrame(function () {
+            setTimeout(function () {
+                initHotelsParallax();       // mutaciones DOM + getBoundingClientRect
+                initFadeAnimations();       // getBoundingClientRect en todos los [data-anim]
+                initContentShowcaseClassic();
+                initContentShowcaseEssence();
+                initImagesCarouselClassicSwiper();
+                initImagesCarouselGallerySwipers();
+                initContentCarouselClassicSwiper();
+                initBlogHeroSwiper();
+                initBlogListingFeaturedSwiper();
+                initBlogListingLoadMore();
+                initWeatherToggle();
+                initDynamicCollectionFilter();
+                lazyLoadImages('.img-fluid');
+                initFavoritesI18n();
+            }, 0);
+        });
     };
 
     function initFavoritesI18n() {

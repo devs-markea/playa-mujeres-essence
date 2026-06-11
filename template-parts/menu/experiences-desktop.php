@@ -32,7 +32,7 @@
                                 ] ); ?>
                             <?php endif; ?>
                             <div class="experience-card__title-wrapper">
-                                <h5 class="experience-card__title"><?= esc_html($title); ?></h5>
+                                <p class="experience-card__title"><?= esc_html($title); ?></p>
                             </div>
                         </div>
                     </div>

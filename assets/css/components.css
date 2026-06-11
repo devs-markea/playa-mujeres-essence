@@ -511,8 +511,8 @@ body.is-experiences-open .trigger-experiences svg {
     z-index: -10;
 }
 
-.pm-menu-mobile__footer .social-links h4,
-.pm-menu-mobile__footer .weather-now h4 {
+.pm-menu-mobile__footer .social-links p,
+.pm-menu-mobile__footer .weather-now p {
     font-family: var(--pm-font-secondary);
     font-size: 16px;
     font-style: italic;
@@ -520,11 +520,11 @@ body.is-experiences-open .trigger-experiences svg {
     color: var(--pm-secondary-900);
 }
 
-.pm-menu-mobile__footer .weather-now h4{
+.pm-menu-mobile__footer .weather-now p{
     margin-bottom: 8px;
 }
 
-.pm-menu-mobile__footer .social-links h4{
+.pm-menu-mobile__footer .social-links p{
     margin-bottom: 16px;
 }
 
@@ -563,7 +563,7 @@ body.is-experiences-open .trigger-experiences svg {
     text-align: center;
 }
 
-.pm-menu-experiences__content h4 {
+.pm-menu-experiences__content .pm-menu-panel__title {
     color: var(--pm-secondary-900);
     font-size: 20px;
     font-style: normal;
@@ -613,7 +613,7 @@ body.is-experiences-open .trigger-experiences svg {
     text-align: center;
 }
 
-.where-to-stay__content h4 {
+.where-to-stay__content .pm-menu-panel__title {
     color: var(--pm-secondary-900);
     font-size: 20px;
     font-style: normal;
@@ -953,8 +953,8 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     margin-bottom: 48px;
 }
 
-.pm-menu-desktop__footer .social-links h4,
-.pm-menu-desktop__footer .weather-now h4 {
+.pm-menu-desktop__footer .social-links p,
+.pm-menu-desktop__footer .weather-now p {
     font-family: var(--pm-font-secondary);
     font-size: 16px;
     font-style: italic;
@@ -962,11 +962,11 @@ body.is-where-to-stay-open .pm-header__menu .pm-navbar .menu-item.current_page_i
     color: var(--pm-secondary-900);
 }
 
-.pm-menu-desktop__footer .weather-now h4 {
+.pm-menu-desktop__footer .weather-now p {
     margin-bottom: 8px;
 }
 
-.pm-menu-desktop__footer .social-links h4 {
+.pm-menu-desktop__footer .social-links p {
     margin-bottom: 16px;
 }
 

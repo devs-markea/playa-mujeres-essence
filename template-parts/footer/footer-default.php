@@ -18,7 +18,7 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
 
                 <div class="col-md-3 col-12 footer-top__find-us">
                     <div class="footer-top__menu-heading">
-                        <h6><?php pll_e('Find Us'); ?></h6>
+                        <p class="footer-menu-heading"><?php pll_e('Find Us'); ?></p>
                     </div>
                     <div class="address">
                         <p class="text-uppercase"><?php pll_e('ADDRESS: MZA 1 SMZA 3, PUNTA SAM, ISLA MUJERES, QUINTANA ROO, C.P. 77400.'); ?></p>
@@ -67,7 +67,7 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
 
                 <div class="col-md-3 col-12 footer-top__hotels">
                     <div class="footer-top__menu-heading">
-                        <h6><?php pll_e('Hotels'); ?></h6>
+                        <p class="footer-menu-heading"><?php pll_e('Hotels'); ?></p>
                     </div>
                     <?php
                     wp_nav_menu( array(
@@ -82,7 +82,7 @@ $instagram_url = trim( get_theme_mod( 'pm_social_instagram_url', '' ) );
 
                 <div class="col-md-3 col-12 footer-top__links">
                     <div class="footer-top__menu-heading">
-                        <h6><?php pll_e('Links'); ?></h6>
+                        <p class="footer-menu-heading"><?php pll_e('Links'); ?></p>
                     </div>
                     <?php
                     wp_nav_menu( array(

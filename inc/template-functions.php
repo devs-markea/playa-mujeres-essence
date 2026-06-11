@@ -457,7 +457,7 @@ if ( ! function_exists( 'pm_essence_show_social_links' ) ) {
             if ( $facebook_url || $instagram_url ) :
                 ?>
                 <div class="social-links">
-                    <h4>Social Links</h4>
+                    <p>Social Links</p>
                     <div>
                         <?php if ( $facebook_url ) : ?>
                             <a href="<?php echo esc_url( $facebook_url ); ?>" class="social-links__item" target="_blank" rel="noopener noreferrer" aria-label="Facebook">

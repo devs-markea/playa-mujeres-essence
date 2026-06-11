@@ -30,7 +30,7 @@
                 <div class="weather-now"
                      data-weather-widget
                      data-weather-ajax="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
-                    <h4><?php pll_e('Weather Now'); ?></h4>
+                    <p><?php pll_e('Weather Now'); ?></p>
                     <div class="weather-now__content">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g opacity="0.5">

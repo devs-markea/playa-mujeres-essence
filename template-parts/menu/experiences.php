@@ -5,7 +5,7 @@
         </svg>
     </div>
     <div class="pm-menu-experiences__content">
-        <h4><?php pll_e('Experiences'); ?></h4>
+        <p class="pm-menu-panel__title"><?php pll_e('Experiences'); ?></p>
         <p><?php pll_e('Because paradise feels different for everyone.'); ?></p>
         <div class="pm-menu-experiences__list">
             <?php
