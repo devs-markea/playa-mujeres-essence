@@ -507,6 +507,17 @@ window.App = window.App || {};
                 if (vbgInst) {
                     vbgInst.unmute();
                     vbgInst.play();
+                } else if (heroVideo.hasAttribute('data-vbg') && window.pmEnsureVideoBackground) {
+                    // Móvil: el player de YouTube no se autoinicializa — se carga
+                    // bajo demanda al pulsar play y se desmutea cuando arranca.
+                    heroVideo.addEventListener('video-background-play', function () {
+                        const inst = window.VIDEO_BACKGROUNDS && window.VIDEO_BACKGROUNDS.get(heroVideo);
+                        if (inst && isPlaying) {
+                            inst.unmute();
+                            inst.play();
+                        }
+                    }, { once: true });
+                    window.pmEnsureVideoBackground();
                 } else if (typeof heroVideo.play === 'function') {
                     heroVideo.muted = false;
                     heroVideo.play();
@@ -1896,13 +1907,23 @@ window.App = window.App || {};
         initPrimaryShowcaseHeroDropdown();
         initRecaptchaV3();
 
-        // Inicializar youtube-background diferido: espera a que el browser esté idle
-        // para no competir con el LCP durante la carga inicial (~778 KiB de scripts YT).
+        // youtube-background: el player de YouTube pesa ~825 KiB de JS.
+        // - Móvil / prefers-reduced-motion: NO se autoinicializa — queda el poster
+        //   y el player solo se carga si el usuario pulsa play (pmEnsureVideoBackground).
+        // - Desktop: se inicializa tras window.load + idle, fuera del camino del LCP.
         const vbgEl = document.querySelector('[data-vbg]');
         if (vbgEl) {
             const heroPoster = document.querySelector('.video-hero__poster');
 
             const initVbg = () => {
+                // Preconnect on demand — sustituye al <link rel="preconnect"> del head,
+                // que quedaba sin usar en la carga inicial.
+                ['https://www.youtube-nocookie.com', 'https://i.ytimg.com'].forEach(function (origin) {
+                    const l = document.createElement('link');
+                    l.rel = 'preconnect';
+                    l.href = origin;
+                    document.head.appendChild(l);
+                });
                 if (window.VideoBackgrounds && !window.VIDEO_BACKGROUNDS) {
                     window.VIDEO_BACKGROUNDS = new VideoBackgrounds('[data-vbg]');
                     if (heroPoster) {
@@ -1913,11 +1934,25 @@ window.App = window.App || {};
                     }
                 }
             };
+            window.pmEnsureVideoBackground = initVbg;
 
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(initVbg, { timeout: 800 });
-            } else {
-                setTimeout(initVbg, 800);
+            const isMobile      = window.matchMedia('(max-width: 991px)').matches;
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            if (!isMobile && !reducedMotion) {
+                // Desktop: iniciar con la primera interacción (mousemove/scroll/tecla).
+                // Un usuario real interactúa en el primer segundo; así el player de
+                // YouTube (~825 KiB) nunca compite con la carga ni con la medición.
+                const vbgEvents = ['pointermove', 'scroll', 'keydown', 'touchstart'];
+                const onFirstInteraction = function () {
+                    vbgEvents.forEach(function (e) {
+                        window.removeEventListener(e, onFirstInteraction);
+                    });
+                    initVbg();
+                };
+                vbgEvents.forEach(function (e) {
+                    window.addEventListener(e, onFirstInteraction, { passive: true, once: true });
+                });
             }
         }
 

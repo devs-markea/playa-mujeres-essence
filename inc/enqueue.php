@@ -11,12 +11,14 @@ function pm_enqueue_assets() {
     // WordPress jQuery
     wp_enqueue_script( 'jquery' );
 
-    // Bootstrap CSS
+    // Bootstrap CSS — build recortado con PurgeCSS (solo las clases que usa el theme,
+    // 228 KB → 62 KB). Rollback: volver a bootstrap.min.css. Si se agregan clases
+    // de Bootstrap nuevas en templates, regenerar con purgecss o revertir al completo.
     wp_enqueue_style(
         'pm-bootstrap-css',
-        PM_ESSENCE_TEMPLATE_URI . '/assets/libs/bootstrap/bootstrap.min.css',
+        PM_ESSENCE_TEMPLATE_URI . '/assets/libs/bootstrap/bootstrap-trimmed.min.css',
         array(),
-        '5.3.3',
+        '5.3.3-trim2',
         'all'
     );
 
@@ -276,8 +278,8 @@ function pm_preconnect_hints() {
     echo '<link rel="preconnect" href="https://use.typekit.net" crossorigin>' . "\n";
     echo '<link rel="preconnect" href="https://p.typekit.net" crossorigin>' . "\n";
 
-    // YouTube nocookie — necesario para el video-hero; ahorra ~300ms en LCP.
-    echo '<link rel="preconnect" href="https://www.youtube-nocookie.com">' . "\n";
+    // YouTube nocookie: ya no se preconecta desde el HTML — el player se inicializa
+    // bajo demanda (interacción/play) y main.js inyecta el preconnect en ese momento.
 
     // Preload del CSS de Typekit — lo descarga en paralelo con el HTML.
     $kit_id = apply_filters( 'pm_essence_adobe_kit_id', 'jky6aby' );
@@ -318,7 +320,10 @@ add_action( 'wp_enqueue_scripts', function () {
  */
 add_filter( 'script_loader_tag', function ( string $tag, string $handle ): string {
     $wpp_handles = [ 'wpp-js', 'wordpress-popular-posts-js', 'wpp' ];
-    if ( ! in_array( $handle, $wpp_handles, true ) ) {
+    // Match por handle O por URL — WPP imprime el tag con atributos propios y el
+    // handle puede variar entre versiones; la URL del plugin es estable.
+    if ( ! in_array( $handle, $wpp_handles, true )
+         && strpos( $tag, 'wordpress-popular-posts/assets/js' ) === false ) {
         return $tag;
     }
     // Añadir defer solo si no tiene ya defer ni async
@@ -326,7 +331,20 @@ add_filter( 'script_loader_tag', function ( string $tag, string $handle ): strin
         $tag = str_replace( '<script ', '<script defer ', $tag );
     }
     return $tag;
-}, 10, 2 );
+}, 99, 2 );
+
+/**
+ * WPP 7.x imprime su <script> directamente en wp_head con wp_print_script_tag()
+ * (sin pasar por el sistema de enqueue, así que script_loader_tag no lo ve).
+ * wp_print_script_tag sí aplica el filtro wp_script_attributes — defer por aquí.
+ */
+add_filter( 'wp_script_attributes', function ( array $attributes ): array {
+    if ( isset( $attributes['id'] ) && 'wpp-js' === $attributes['id']
+         && ! isset( $attributes['defer'] ) && ! isset( $attributes['async'] ) ) {
+        $attributes['defer'] = true;
+    }
+    return $attributes;
+} );
 
 // El defer de CSS lo maneja critical-css.php de forma global.
 
